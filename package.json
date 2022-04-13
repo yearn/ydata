@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "@types/node": "^17.0.23",
+    "@yfi/sdk": "^2.0.0",
+    "axios": "^0.26.1",
+    "ethereum-multicall": "^2.10.0",
+    "ethers": "^5.6.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.2",
+    "moment-duration-format": "^2.3.2"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.181",
+    "@types/moment-duration-format": "^2.2.3",
+    "prettier": "^2.6.2"
+  }
+}

@@ -1,0 +1,15 @@
+.env
+*.log
+.cache
+.DS_Store
+yarn-error.log
+
+.history/
+.vscode/
+out/
+docs/
+ignore/
+node_modules/
+coverage/
+
+dist/
