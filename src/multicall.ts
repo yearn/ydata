@@ -7,7 +7,7 @@ import {
     ContractCallReturnContext,
 } from 'ethereum-multicall';
 import { Strategy, StrategyParams, StrategyAddressQueueIndex } from './types';
-import { isValidTimestamp, toIsoString, toHumanDateText } from './date_utils';
+import { isValidTimestamp, toIsoString, toHumanDateText } from './utils';
 import { getABI } from './contracts/ABI';
 import StratABI from './contracts/ABI/Strategy.json';
 import TokenABI from './contracts/ABI/Token.json';

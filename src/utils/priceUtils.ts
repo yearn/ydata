@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 import { Contract, providers, BigNumberish } from 'ethers';
-import TokenABI from './contracts/ABI/Token.json';
-import OracleABI from './contracts/ABI/Oracle.json';
-import { Strategy, Token } from './types';
+import TokenABI from '../contracts/ABI/Token.json';
+import OracleABI from '../contracts/ABI/Oracle.json';
+import { Strategy, Token } from '../types';
 
 export const USDC_DECIMALS = 6;
 

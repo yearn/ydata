@@ -1,3 +1,26 @@
+export type StrategyScores = {
+    name: string;
+    codeReviewScore: number;
+    testingScore: number;
+    auditScore: number;
+    protocolSafetyScore: number;
+    complexityScore: number;
+    teamKnowledgeScore: number;
+    longevityScore: number;
+    TVL: number;
+};
+
+export type VaultScores = {
+    codeReviewScore: number;
+    testingScore: number;
+    auditScore: number;
+    protocolSafetyScore: number;
+    complexityScore: number;
+    teamKnowledgeScore: number;
+    longevityScore: number;
+    TVL: number;
+};
+
 export type Groups = {
     groups: Grouping[];
 };

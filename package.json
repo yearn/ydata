@@ -10,8 +10,16 @@
     "moment-duration-format": "^2.3.2"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.1",
     "@types/lodash": "^4.14.181",
+    "@types/mocha": "^9.1.0",
     "@types/moment-duration-format": "^2.2.3",
-    "prettier": "^2.6.2"
+    "chai": "^4.3.6",
+    "mocha": "^9.2.2",
+    "prettier": "^2.6.2",
+    "ts-node": "^10.7.0"
+  },
+  "scripts": {
+    "test": "mocha --check-leaks -r ts-node/register \"test/**/*.spec.ts\""
   }
 }
