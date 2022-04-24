@@ -10,4 +10,4 @@ export * from './network-config';
 export * from './address-config';
 
 export * from './context';
-export * from './score';
+export * from './scores';

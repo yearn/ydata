@@ -287,7 +287,7 @@ export const mapStrategiesCalls = (
     });
 };
 
-export const getStrategies = async (
+export const getStrategiesMulticall = async (
     addresses: string[]
 ): Promise<Strategy[]> => {
     if (addresses.length === 0) {

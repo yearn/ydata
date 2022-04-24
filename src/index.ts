@@ -1,1 +1,1 @@
-export { VaultRisk } from './vault-risk';
+export { VaultRisk } from './vaultRisk';

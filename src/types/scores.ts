@@ -1,22 +1,19 @@
-export type StrategyScores = {
-    name: string;
+export type RiskFrameworkScores = {
     codeReviewScore: number;
     testingScore: number;
     auditScore: number;
     protocolSafetyScore: number;
     complexityScore: number;
     teamKnowledgeScore: number;
+}
+
+export type StrategyScores = RiskFrameworkScores & {
+    name: string;
     longevityScore: number;
     TVL: number;
 };
 
-export type VaultScores = {
-    codeReviewScore: number;
-    testingScore: number;
-    auditScore: number;
-    protocolSafetyScore: number;
-    complexityScore: number;
-    teamKnowledgeScore: number;
+export type VaultScores = RiskFrameworkScores & {
     longevityScore: number;
     TVL: number;
 };
