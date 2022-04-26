@@ -20,6 +20,6 @@
     "ts-node": "^10.7.0"
   },
   "scripts": {
-    "test": "mocha --check-leaks -r ts-node/register \"test/**/*.spec.ts\""
+    "test": "mocha --check-leaks -r ts-node/register \"test/**/*.spec.ts\" --timeout 30000"
   }
 }

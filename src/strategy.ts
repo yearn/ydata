@@ -4,7 +4,7 @@ import { getStrategiesMulticall } from './multicall';
 import { getStrategiesByVaults } from './subgraph';
 import { toArray } from './utils';
 
-const getFilteredStrategies = async (
+export const getFilteredStrategies = async (
   sdk: Yearn<1>,
   context?: StrategyContext
 ): Promise<Strategy[]> => {
