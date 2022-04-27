@@ -1,1 +1,0 @@
-export { VaultRisk } from './vaultRisk';
