@@ -1,4 +1,4 @@
-# Yearn Labs
+# Yearn DATA Analytics
 
 ## Research Reports
 
