@@ -37,7 +37,7 @@ def get_usdc_price(token_address: str, block: Union[int, str] = "latest") -> Dec
     fees = Decimal(0.997) ** (len(path) - 1)
 
     decimals = call(token_address, "decimals")
-    amount = 10 ** decimals
+    amount = 10**decimals
     quotes = call(UNISWAPV2_ROUTER, "getAmountsOut", amount, path, block=block)
-    price = Decimal(quotes[-1]) / 10 ** USDC_DECIMALS
+    price = Decimal(quotes[-1]) / 10**USDC_DECIMALS
     return price / fees

@@ -1,4 +1,5 @@
 from typing import List, NamedTuple, TYPE_CHECKING
+
 if TYPE_CHECKING:
     from .strategies import Strategy
 
@@ -27,7 +28,7 @@ class Vault:
         self.token = token
         self.strategies = strategies
 
-        # set vault as self for strategies
+        # set vault to self for strategies
         for strategy in self.strategies:
             strategy.vault = self
 
