@@ -1,5 +1,6 @@
-from typing import List, NamedTuple
-from .strategy import Strategy
+from typing import List, NamedTuple, TYPE_CHECKING
+if TYPE_CHECKING:
+    from .strategies import Strategy
 
 
 class Token(NamedTuple):
@@ -10,20 +11,28 @@ class Token(NamedTuple):
 
 
 class Vault:
+    address: str
+    name: str
+    token: Token
+    strategies: List["Strategy"]
     """
     Contains vault-level information
     """
 
     def __init__(
-        self, address: str, name: str, token: Token, strategies: List[Strategy]
+        self, address: str, name: str, token: Token, strategies: List["Strategy"]
     ):
         self.address = address
         self.name = name
         self.token = token
         self.strategies = strategies
 
+        # set vault as self for strategies
+        for strategy in self.strategies:
+            strategy.vault = self
+
     def __repr__(self):
-        return f"Vault({self.name})"
+        return f"<Vault name={self.name}>"
 
     def __eq__(self, other):
         return self.address == other.address
