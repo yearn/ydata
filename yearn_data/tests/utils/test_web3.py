@@ -19,6 +19,6 @@ def test_fetch_abi(address):
 
 
 @pytest.mark.parametrize("address", [USDC_VAULT, DAI_VAULT])
-def test_fetch_value(address):
+def test_call(address):
     value = call(address, "performanceFee")
     assert value == 2000
