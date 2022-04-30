@@ -1,4 +1,5 @@
-from typing import List, NamedTuple, TYPE_CHECKING
+from typing import TYPE_CHECKING
+from typing import List, NamedTuple
 
 if TYPE_CHECKING:
     from .strategies import Strategy
