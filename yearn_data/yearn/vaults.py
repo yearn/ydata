@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 from typing import List, NamedTuple
+from ..risk.scores import VaultRisk
 
 if TYPE_CHECKING:
     from .strategies import Strategy
@@ -29,7 +30,7 @@ class Vault:
         self.token = token
         self.strategies = strategies
 
-        # set vault to self for strategies
+        # set vault to self for its strategies
         for strategy in self.strategies:
             strategy.vault = self
 
@@ -41,3 +42,8 @@ class Vault:
 
     def __hash__(self):
         return hash(self.address)
+
+    @property
+    def risk_scores(self) -> VaultRisk:
+        """return vault-level risk scores"""
+        raise NotImplementedError()

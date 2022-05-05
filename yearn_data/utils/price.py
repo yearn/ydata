@@ -1,5 +1,5 @@
 import os
-from typing import Union
+from typing import Union, Dict
 from decimal import Decimal
 from web3 import Web3
 import logging
@@ -28,10 +28,13 @@ UNISWAPV2_ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 
 
 def get_usdc_price(token_address: str, block: Union[int, str] = "latest") -> Decimal:
+    token_address = Web3.toChecksumAddress(token_address)
     weth = WETH[Network(w3.eth.chain_id)]
     usdc = USDC[Network(w3.eth.chain_id)]
-    if token_address == weth:
+    if token_address.lower() == weth.lower():
         path = [weth, usdc]
+    if token_address.lower() == usdc.lower():
+        return Decimal("1.0")
     else:
         path = [token_address, weth, usdc]
     fees = Decimal(0.997) ** (len(path) - 1)
@@ -39,5 +42,7 @@ def get_usdc_price(token_address: str, block: Union[int, str] = "latest") -> Dec
     decimals = call(token_address, "decimals")
     amount = 10**decimals
     quotes = call(UNISWAPV2_ROUTER, "getAmountsOut", amount, path, block=block)
+
     price = Decimal(quotes[-1]) / 10**USDC_DECIMALS
-    return price / fees
+    price /= fees
+    return price

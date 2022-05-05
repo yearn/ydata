@@ -1,8 +1,8 @@
 import os
 import pytest
 from web3 import Web3
-from ...utils.web3 import fetch_abi, call, fetch_events
 from dotenv import load_dotenv
+from ...utils.web3 import fetch_abi, call, fetch_events
 
 load_dotenv()
 

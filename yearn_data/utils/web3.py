@@ -14,22 +14,24 @@ load_dotenv()
 
 w3 = Web3(Web3.HTTPProvider(os.environ['WEB3_PROVIDER']))
 logger = logging.getLogger(__name__)
-_cache: Dict = dict()
+abi_cache: Dict = dict()
 
-ABI_ENDPOINT = f"https://api.etherscan.io/api?module=contract&action=getabi&address="
+MAX_BLOCK = 99999999
+ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+API_ENDPOINT = f"https://api.etherscan.io/api?&apiKey={os.environ['ETHERSCAN_TOKEN']}"
 
 
 def fetch_abi(address: str) -> List[Dict]:
-    abi = _cache.get(address)
+    address = Web3.toChecksumAddress(address)
+    abi = abi_cache.get(address)
     if not abi:
-        apiKey = os.environ["ETHERSCAN_TOKEN"]
-        url = ABI_ENDPOINT + address + f"&apiKey={apiKey}"
-        response = requests.get(url)
+        params = {"address": address, "module": "contract", "action": "getabi"}
+        response = requests.get(API_ENDPOINT, params)
         if response.status_code != 200:
             logger.debug(f"Failed to fetch abi from address={address}")
             response.raise_for_status()
         abi = response.json()["result"]
-        _cache[address] = abi
+        abi_cache[address] = abi
     return json.loads(abi)
 
 
@@ -70,4 +72,3 @@ def fetch_events(
     # convert raw binary event data to easily manipulable Python objects
     events = [get_event_data(event_abi_codec, event_abi, entry) for entry in logs]
     return events
-

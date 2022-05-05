@@ -1,5 +1,5 @@
 import os
-from typing import Set, List
+from typing import Set, List, Dict
 from web3 import Web3
 import requests
 import logging
@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from .vaults import Vault, Token
 from .strategies import Strategy
-from .accounts import Account
+from ..risk.framework import RiskFrameworkScores
 
 load_dotenv()
 
@@ -15,13 +15,16 @@ w3 = Web3(Web3.HTTPProvider(os.environ['WEB3_PROVIDER']))
 logger = logging.getLogger(__name__)
 
 API_ENDPOINT = "https://api.yearn.finance/v1/chains/"
+RISK_FRAMEWORK = (
+    "https://raw.githubusercontent.com/yearn/yearn-watch/main/utils/risks.json"
+)
 
 
 class Yearn:
     endpoint: str
-    _accounts: Set[Account]
     _vaults: Set[Vault]
     _strategies: Set[Strategy]
+    _risk_framework: List[Dict]
 
     """
     Interface for providing information about our assets and clients
@@ -29,16 +32,44 @@ class Yearn:
 
     def __init__(self):
         self.endpoint = API_ENDPOINT + f"{w3.eth.chain_id}/"
-        self._accounts = None
         self._vaults = None
         self._strategies = None
+
+        # fetch risk framework scores
+        response = requests.get(RISK_FRAMEWORK)
+        if response.status_code != 200:
+            logger.debug("Failed to load the risk framework")
+            response.raise_for_status()
+        self._risk_framework = [
+            score for score in response.json() if score['network'] == w3.eth.chain_id
+        ]
+
+    def get_strategy_scores(self, strategy_name: str) -> RiskFrameworkScores:
+        name = strategy_name.lower()
+        for group in self._risk_framework:
+            if any(
+                [exclude.lower() in name for exclude in group['criteria']['exclude']]
+            ):
+                continue
+            if any(
+                [include.lower() in name for include in group['criteria']['nameLike']]
+            ):
+                return RiskFrameworkScores(
+                    auditScore=group['auditScore'],
+                    codeReviewScore=group['codeReviewScore'],
+                    complexityScore=group['complexityScore'],
+                    protocolSafetyScore=group['protocolSafetyScore'],
+                    teamKnowledgeScore=group['teamKnowledgeScore'],
+                    testingScore=group['testingScore'],
+                )
+        return RiskFrameworkScores()
 
     def load_vaults(self):
         url = self.endpoint + "vaults/all"
         response = requests.get(url)
         if response.status_code != 200:
             logger.debug("Failed to load vaults from api")
-            raise response.raise_for_status()
+            response.raise_for_status()
         data = response.json()
 
         self._vaults = set({})
@@ -58,6 +89,7 @@ class Yearn:
                 Strategy(
                     address=strategy['address'],
                     name=strategy['name'],
+                    risk_scores=self.get_strategy_scores(strategy['name']),
                 )
                 for strategy in vault['strategies']
             ]
