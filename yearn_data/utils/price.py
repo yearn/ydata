@@ -13,36 +13,17 @@ load_dotenv()
 w3 = Web3(Web3.HTTPProvider(os.environ['WEB3_PROVIDER']))
 logger = logging.getLogger(__name__)
 
-WETH = {
-    Network.Mainnet: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    Network.Fantom: '0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83',
-    Network.Arbitrum: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
-}
-USDC = {
-    Network.Mainnet: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    Network.Fantom: '0x04068DA6C83AFCFA0e13ba15A6696662335D5B75',
-    Network.Arbitrum: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
+ORACLE = {
+    Network.Mainnet: '0x83d95e0d5f402511db06817aff3f9ea88224b030',
+    Network.Fantom: '0x57aa88a0810dfe3f9b71a9b179dd8bf5f956c46a',
 }
 USDC_DECIMALS = 6
-UNISWAPV2_ROUTER = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 
 
 def get_usdc_price(token_address: str, block: Union[int, str] = "latest") -> Decimal:
     token_address = Web3.toChecksumAddress(token_address)
-    weth = WETH[Network(w3.eth.chain_id)]
-    usdc = USDC[Network(w3.eth.chain_id)]
-    if token_address.lower() == weth.lower():
-        path = [weth, usdc]
-    if token_address.lower() == usdc.lower():
-        return Decimal("1.0")
-    else:
-        path = [token_address, weth, usdc]
-    fees = Decimal(0.997) ** (len(path) - 1)
-
-    decimals = call(token_address, "decimals")
-    amount = 10**decimals
-    quotes = call(UNISWAPV2_ROUTER, "getAmountsOut", amount, path, block=block)
-
-    price = Decimal(quotes[-1]) / 10**USDC_DECIMALS
-    price /= fees
-    return price
+    oracle = ORACLE[Network(w3.eth.chain_id)]
+    usdc_price = Decimal(
+        call(oracle, "getPriceUsdcRecommended", token_address, block=block)
+    )
+    return usdc_price / Decimal(10**USDC_DECIMALS)
