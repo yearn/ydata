@@ -3,7 +3,7 @@ from typing import List, Union
 from decimal import Decimal
 from dataclasses import dataclass
 
-from ..utils.web3 import call, erc20_from
+from ..utils.web3 import get_contract, call, erc20_from
 from ..utils.labels import get_labels
 from ..utils.price import get_usdc_price
 from ..yearn.vaults import Vault
@@ -95,6 +95,10 @@ class Strategy:
 
     def describe(self) -> StrategyInfo:
         addresses = erc20_from(self.address)
-        tokens = [call(address, "symbol") for address in addresses]
+        tokens = []
+        for address in addresses:
+            token = get_contract(address)
+            if hasattr(token.caller, "symbol"):
+                tokens.append(token.caller.symbol())
         labels = [label for address in addresses for label in get_labels(address)]
         return StrategyInfo(self.risk_scores, list(set(labels)), list(set(tokens)))

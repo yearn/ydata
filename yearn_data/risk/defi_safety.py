@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from difflib import SequenceMatcher
 from typing import Dict, List, Union
 import requests
 import logging
@@ -38,7 +39,7 @@ class DeFiSafetyScores:
             return self.__add__(other)
 
     def __truediv__(self, scalar):
-        new_score = DeFiSafetyScores(self.overallScore)
+        new_score = DeFiSafetyScores(self.overallScore / scalar)
         for key in new_score.__dict__.keys():
             if key == 'overallScore':
                 continue
@@ -106,6 +107,7 @@ class DeFiSafety:
             self.load_scores()
         candidates = {}
         for k, v in self._scores.items():
-            if name.lower() in k.lower():
+            sim = SequenceMatcher(None, name.lower(), k.lower()).ratio()
+            if sim > 0.5:
                 candidates[k] = v
         return candidates
