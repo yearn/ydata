@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from difflib import SequenceMatcher
 from typing import Dict, List, Union
 import requests
 import logging
@@ -103,11 +102,14 @@ class DeFiSafety:
         return list(self._scores.keys())
 
     def scores(self, name: str) -> Dict[str, DeFiSafetyScores]:
+        # remap labels
+        if 'curve' in name.lower():
+            name = "Curve Finance"
+
         if self._scores is None:
             self.load_scores()
         candidates = {}
         for k, v in self._scores.items():
-            sim = SequenceMatcher(None, name.lower(), k.lower()).ratio()
-            if sim > 0.5:
+            if name.lower() in k.lower():
                 candidates[k] = v
         return candidates

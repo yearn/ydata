@@ -1,7 +1,7 @@
 import pytest
 from ...risk.defi_safety import DeFiSafety
 
-protocols = ["yearn", "uniswap"]
+protocols = ["yearn", "curve"]
 
 defi_safety = DeFiSafety()
 
