@@ -5,8 +5,8 @@ from .framework import RiskFrameworkScores
 
 @dataclass
 class StrategyRisk(RiskFrameworkScores):
-    TVLImpact: int = 5
-    longevityImpact: int = 5
+    TVLImpact: float = 5
+    longevityImpact: float = 5
 
 
 @dataclass

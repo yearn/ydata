@@ -72,3 +72,31 @@ def fetch_events(
     # convert raw binary event data to easily manipulable Python objects
     events = [get_event_data(event_abi_codec, event_abi, entry) for entry in logs]
     return events
+
+
+def erc20_from(
+    address: str,
+    from_block: Union[int, Literal["latest"]] = "latest",
+    to_block: Union[int, Literal["latest"]] = "latest",
+) -> List[str]:
+    to_block = MAX_BLOCK if to_block == "latest" else to_block
+    params = {
+        "address": address,
+        "module": "account",
+        "action": "tokentx",
+        "startblock": str(from_block),
+        "endblock": str(to_block),
+    }
+    response = requests.get(API_ENDPOINT, params)
+    if response.status_code != 200:
+        logger.debug(f"Failed to fetch erc20 transfers from address={address}")
+        response.raise_for_status()
+    txns = response.json()['result']
+
+    # get the tokens that were handled by the strategy
+    result = set({})
+    for tx in txns:
+        if tx["from"].lower() == address.lower():
+            token_address = tx['contractAddress']
+            result.add(token_address.lower())
+    return list(result)

@@ -7,15 +7,15 @@ DAYS = 60 * 60 * 24
 
 @dataclass
 class RiskFrameworkScores:
-    auditScore: int = 5
-    codeReviewScore: int = 5
-    complexityScore: int = 5
-    protocolSafetyScore: int = 5
-    teamKnowledgeScore: int = 5
-    testingScore: int = 5
+    auditScore: float = 5.0
+    codeReviewScore: float = 5.0
+    complexityScore: float = 5.0
+    protocolSafetyScore: float = 5.0
+    teamKnowledgeScore: float = 5.0
+    testingScore: float = 5.0
 
 
-def tvl_impact(tvl: Decimal) -> int:
+def tvl_impact(tvl: Decimal) -> float:
     if tvl == 0:
         return 0
     elif tvl < 1_000_000:
@@ -30,7 +30,7 @@ def tvl_impact(tvl: Decimal) -> int:
         return 5
 
 
-def longevity_impact(longevity: Decimal) -> int:
+def longevity_impact(longevity: Decimal) -> float:
     if longevity < 7 * DAYS:
         return 5
     elif longevity <= 30 * DAYS:

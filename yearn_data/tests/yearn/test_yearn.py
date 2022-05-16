@@ -1,5 +1,13 @@
 import pytest
-from ...yearn import Yearn
+from ...yearn import Yearn, Strategy
+from ...risk.framework import RiskFrameworkScores
+
+GENLEVCOMP_V3 = Strategy(
+    "0x1676055fE954EE6fc388F9096210E5EbE0A9070c", "GenLevCompV3", RiskFrameworkScores()
+)
+SSC_DAI_IB = Strategy(
+    "0x3280499298ACe3FD3cd9C2558e9e8746ACE3E52d", "ssc_dai_ib", RiskFrameworkScores()
+)
 
 yearn = Yearn()
 
@@ -13,6 +21,12 @@ def test_load_strategies():
 
 
 @pytest.mark.parametrize("name", ["GenLevCompV3", "ssc_dai_ib"])
-def test_get_strategy_scores(name):
-    scores = yearn.get_strategy_scores(name)
+def test_get_framework_scores(name):
+    scores = yearn.get_framework_scores(name)
     assert hasattr(scores, 'auditScore')
+
+
+@pytest.mark.parametrize("strategy", [GENLEVCOMP_V3, SSC_DAI_IB])
+def test_describe_strategy(strategy):
+    info = yearn.describe(strategy)
+    assert 'Maker' in [protocol['Name'] for protocol in info.protocols]

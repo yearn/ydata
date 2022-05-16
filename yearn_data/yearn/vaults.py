@@ -1,33 +1,48 @@
-from typing import TYPE_CHECKING
-from typing import List, NamedTuple
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Dict, List
 from ..risk.scores import VaultRisk
 
 if TYPE_CHECKING:
     from .strategies import Strategy
 
 
-class Token(NamedTuple):
+@dataclass
+class Token:
     address: str
     decimals: int
     name: str
     symbol: str
 
 
+@dataclass
+class VaultInfo:
+    riskScores: VaultRisk
+    protocols: List
+    tokens: List
+
+
 class Vault:
     address: str
     name: str
     token: Token
+    inception: str
     strategies: List["Strategy"]
     """
     Contains vault-level information
     """
 
     def __init__(
-        self, address: str, name: str, token: Token, strategies: List["Strategy"]
+        self,
+        address: str,
+        name: str,
+        token: Token,
+        inception: str,
+        strategies: List["Strategy"],
     ):
         self.address = address
         self.name = name
         self.token = token
+        self.inception = inception
         self.strategies = strategies
 
         # set vault to self for its strategies
@@ -46,4 +61,7 @@ class Vault:
     @property
     def risk_scores(self) -> VaultRisk:
         """return vault-level risk scores"""
+        raise NotImplementedError()
+
+    def describe(self) -> VaultInfo:
         raise NotImplementedError()

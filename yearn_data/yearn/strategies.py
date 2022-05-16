@@ -1,9 +1,10 @@
 import time
-from typing import Union
+from typing import List, Union
 from decimal import Decimal
 from dataclasses import dataclass
 
-from ..utils.web3 import call
+from ..utils.web3 import call, erc20_from
+from ..utils.labels import get_labels
 from ..utils.price import get_usdc_price
 from ..yearn.vaults import Vault
 from ..risk.framework import (
@@ -25,6 +26,13 @@ class StrategyParams:
     totalDebt: Decimal  # Total outstanding debt that Strategy has
     totalGain: Decimal  # Total returns that Strategy has realized for Vault
     totalLoss: Decimal  # Total losses that Strategy has realized for Vault
+
+
+@dataclass
+class StrategyInfo:
+    riskScores: StrategyRisk
+    protocols: List
+    tokens: List
 
 
 class Strategy:
@@ -84,3 +92,9 @@ class Strategy:
             longevityImpact=longevity_impact(self.longevity),
             **self._risk_scores.__dict__,
         )
+
+    def describe(self) -> StrategyInfo:
+        addresses = erc20_from(self.address)
+        tokens = [call(address, "symbol") for address in addresses]
+        labels = [label for address in addresses for label in get_labels(address)]
+        return StrategyInfo(self.risk_scores, list(set(labels)), list(set(tokens)))

@@ -1,5 +1,5 @@
 import os
-from typing import Union, Dict
+from typing import Union
 from decimal import Decimal
 from web3 import Web3
 import logging

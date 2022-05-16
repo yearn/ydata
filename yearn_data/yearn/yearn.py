@@ -1,13 +1,14 @@
 import os
-from typing import Set, List, Dict
+from typing import Set, List, Dict, Union
 from web3 import Web3
 import requests
 import logging
 from dotenv import load_dotenv
 
-from .vaults import Vault, Token
-from .strategies import Strategy
+from .vaults import Vault, Token, VaultInfo
+from .strategies import Strategy, StrategyInfo
 from ..risk.framework import RiskFrameworkScores
+from ..risk.defi_safety import DeFiSafety
 
 load_dotenv()
 
@@ -25,6 +26,7 @@ class Yearn:
     _vaults: Set[Vault]
     _strategies: Set[Strategy]
     _risk_framework: List[Dict]
+    _defi_safety: DeFiSafety
 
     """
     Interface for providing information about our assets and clients
@@ -44,7 +46,10 @@ class Yearn:
             score for score in response.json() if score['network'] == w3.eth.chain_id
         ]
 
-    def get_strategy_scores(self, strategy_name: str) -> RiskFrameworkScores:
+        # fetch defi safety scores
+        self._defi_safety = DeFiSafety()
+
+    def get_framework_scores(self, strategy_name: str) -> RiskFrameworkScores:
         name = strategy_name.lower()
         for group in self._risk_framework:
             if any(
@@ -89,7 +94,7 @@ class Yearn:
                 Strategy(
                     address=strategy['address'],
                     name=strategy['name'],
-                    risk_scores=self.get_strategy_scores(strategy['name']),
+                    risk_scores=self.get_framework_scores(strategy['name']),
                 )
                 for strategy in vault['strategies']
             ]
@@ -98,6 +103,7 @@ class Yearn:
                     address=vault['address'],
                     name=vault['name'],
                     token=token,
+                    inception=vault['inception'],
                     strategies=strategies,
                 )
             )
@@ -114,3 +120,32 @@ class Yearn:
         if self._strategies is None:
             self.load_vaults()
         return list(self._strategies)
+
+    def describe(
+        self, product: Union[Strategy, Vault]
+    ) -> Union[StrategyInfo, VaultInfo]:
+        if isinstance(product, Strategy):
+            return self.__describe_strategy(product)
+        elif isinstance(product, Vault):
+            return self.__describe_vault(product)
+        else:
+            raise NotImplementedError("Product should be a strategy or a vault")
+
+    def __describe_strategy(self, strategy: Strategy) -> StrategyInfo:
+        info = strategy.describe()
+
+        # append defi safety scores
+        protocol_info = []
+        for protocol in info.protocols:
+            # arithmetic average of candidate scores
+            candidates = self._defi_safety.scores(protocol)
+            scores = sum(candidates.values()) / len(candidates)
+            protocol_info.append({"Name": protocol, "DeFiSafetyScores": scores})
+        info.protocols = protocol_info
+
+        return info
+
+    def __describe_vault(self, vault: Vault) -> VaultInfo:
+        info = vault.describe()
+
+        return info

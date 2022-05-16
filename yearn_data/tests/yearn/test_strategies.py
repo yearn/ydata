@@ -26,3 +26,10 @@ def test_tvl(strategy):
 @pytest.mark.parametrize("strategy", [GENLEVCOMP_V3, SSC_DAI_IB])
 def test_risk_scores(strategy):
     assert hasattr(strategy.risk_scores, "longevityImpact")
+
+
+@pytest.mark.parametrize("strategy", [GENLEVCOMP_V3, SSC_DAI_IB])
+def test_describe(strategy):
+    info = strategy.describe()
+    assert 'Maker' in info.protocols
+    assert 'DAI' in info.tokens
