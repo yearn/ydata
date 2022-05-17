@@ -16,6 +16,7 @@ w3 = Web3(Web3.HTTPProvider(os.environ['WEB3_PROVIDER']))
 logger = logging.getLogger(__name__)
 abi_cache: Dict = dict()
 
+BLOCK_SIZE = 100000
 MAX_BLOCK = 99999999
 ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 API_ENDPOINT = f"https://api.etherscan.io/api?&apiKey={os.environ['ETHERSCAN_TOKEN']}"
@@ -58,19 +59,31 @@ def fetch_events(
     event_abi = event._get_event_abi()
     event_abi_codec = event.web3.codec
 
-    _, event_filter_params = construct_event_filter_params(
-        event_abi,
-        event_abi_codec,
-        contract_address=event.address,
-        fromBlock=from_block,
-        toBlock=to_block,
-    )
+    if from_block == "latest":
+        from_block = w3.eth.get_block("latest")["number"]
+    if to_block == "latest":
+        to_block = w3.eth.get_block("latest")["number"]
 
-    # call node over JSON-RPC API
-    logs = event.web3.eth.get_logs(event_filter_params)
+    events = []
+    for _from_block in range(from_block, to_block, BLOCK_SIZE):
+        _to_block = min(to_block, _from_block + BLOCK_SIZE)
 
-    # convert raw binary event data to easily manipulable Python objects
-    events = [get_event_data(event_abi_codec, event_abi, entry) for entry in logs]
+        _, event_filter_params = construct_event_filter_params(
+            event_abi,
+            event_abi_codec,
+            contract_address=event.address,
+            fromBlock=_from_block,
+            toBlock=_to_block,
+        )
+
+        # call node over JSON-RPC API
+        logs = event.web3.eth.get_logs(event_filter_params)
+
+        # convert raw binary event data to easily manipulable Python objects
+        events.extend(
+            [get_event_data(event_abi_codec, event_abi, entry) for entry in logs]
+        )
+
     return events
 
 

@@ -1,4 +1,5 @@
 import pytest
+
 from ...yearn import Yearn, Strategy
 from ...risk.framework import RiskFrameworkScores
 
@@ -10,6 +11,12 @@ SSC_DAI_IB = Strategy(
 )
 
 yearn = Yearn()
+
+DAI_VAULT = [
+    vault
+    for vault in yearn.vaults
+    if vault.address == "0xdA816459F1AB5631232FE5e97a05BBBb94970c95"
+][0]
 
 
 def test_load_vaults():
@@ -30,3 +37,10 @@ def test_get_framework_scores(name):
 def test_describe_strategy(strategy):
     info = yearn.describe(strategy)
     assert 'Maker' in [protocol['Name'] for protocol in info.protocols]
+
+
+@pytest.mark.parametrize("vault", [DAI_VAULT])
+def test_describe_vault(vault):
+    info = yearn.describe(vault)
+    assert 'Maker' in [protocol['Name'] for protocol in info.protocols]
+    assert len(info.top_wallets) == 10

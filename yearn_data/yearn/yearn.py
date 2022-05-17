@@ -142,7 +142,7 @@ class Yearn:
             if len(candidates) > 0:
                 scores = sum(candidates.values()) / len(candidates)
             else:
-                scores = None
+                continue
             protocol_info.append({"Name": protocol, "DeFiSafetyScores": scores})
         info.protocols = protocol_info
 
@@ -150,5 +150,19 @@ class Yearn:
 
     def __describe_vault(self, vault: Vault) -> VaultInfo:
         info = vault.describe()
+
+        # append defi safety scores
+        no_defi_safety = []
+        for protocol in info.protocols:
+            # arithmetic average of candidate scores
+            candidates = self._defi_safety.scores(protocol["Name"])
+            if len(candidates) > 0:
+                scores = sum(candidates.values()) / len(candidates)
+            else:
+                no_defi_safety.append(protocol)
+                continue
+            protocol["DeFiSafetyScores"] = scores
+        for protocol in no_defi_safety:
+            info.protocols.remove(protocol)
 
         return info

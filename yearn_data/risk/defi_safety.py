@@ -27,7 +27,7 @@ class DeFiSafetyScores:
                 continue
             self_score = getattr(self, key)
             other_score = getattr(other, key)
-            if self_score and other_score:
+            if self_score is not None and other_score is not None:
                 setattr(new_score, key, self_score + other_score)
         return new_score
 
@@ -43,7 +43,7 @@ class DeFiSafetyScores:
             if key == 'overallScore':
                 continue
             self_score = getattr(self, key)
-            if self_score:
+            if self_score is not None:
                 setattr(new_score, key, self_score / scalar)
         return new_score
 
