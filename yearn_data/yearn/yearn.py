@@ -1,12 +1,14 @@
 import os
-from typing import Set, List, Dict, Union
+from typing import Set, List, Dict, Union, Any
 from web3 import Web3
+import jsons
+import pandas as pd
 import requests
 import logging
 from dotenv import load_dotenv
 
-from .vaults import Vault, Token, VaultInfo
-from .strategies import Strategy, StrategyInfo
+from .vaults import Vault, Token
+from .strategies import Strategy
 from ..risk.framework import RiskFrameworkScores
 from ..risk.defi_safety import DeFiSafety
 
@@ -26,6 +28,7 @@ class Yearn:
     _vaults: Set[Vault]
     _strategies: Set[Strategy]
     _risk_framework: List[Dict]
+    _risk_weights: pd.DataFrame
     _defi_safety: DeFiSafety
 
     """
@@ -45,6 +48,14 @@ class Yearn:
         self._risk_framework = [
             score for score in response.json() if score['network'] == w3.eth.chain_id
         ]
+
+        # fetch risk metric weights
+        # TODO: decide where to put the csv
+        # maybe we should create a RiskAnalysis class to separate out all the risk-related stuff?
+        sample_path = os.path.join(
+            os.path.dirname(__file__), '..', '..', 'data', 'sample_risk_weights.csv'
+        )
+        self._risk_weights = pd.read_csv(sample_path, header=0)
 
         # fetch defi safety scores
         self._defi_safety = DeFiSafety()
@@ -121,9 +132,7 @@ class Yearn:
             self.load_vaults()
         return list(self._strategies)
 
-    def describe(
-        self, product: Union[Strategy, Vault]
-    ) -> Union[StrategyInfo, VaultInfo]:
+    def describe(self, product: Union[Strategy, Vault]) -> Dict[str, Any]:
         if isinstance(product, Strategy):
             return self.__describe_strategy(product)
         elif isinstance(product, Vault):
@@ -131,7 +140,7 @@ class Yearn:
         else:
             raise NotImplementedError("Product should be a strategy or a vault")
 
-    def __describe_strategy(self, strategy: Strategy) -> StrategyInfo:
+    def __describe_strategy(self, strategy: Strategy) -> Dict[str, Any]:
         info = strategy.describe()
 
         # append defi safety scores
@@ -146,9 +155,12 @@ class Yearn:
             protocol_info.append({"Name": protocol, "DeFiSafetyScores": scores})
         info.protocols = protocol_info
 
-        return info
+        # append risk score interval
+        info_json = jsons.dump(info)
+        info_json['overallScore'] = jsons.dump(strategy.risk_score(self._risk_weights))
+        return info_json
 
-    def __describe_vault(self, vault: Vault) -> VaultInfo:
+    def __describe_vault(self, vault: Vault) -> Dict[str, Any]:
         info = vault.describe()
 
         # append defi safety scores
@@ -165,4 +177,7 @@ class Yearn:
         for protocol in no_defi_safety:
             info.protocols.remove(protocol)
 
-        return info
+        # append risk score interval
+        info_json = jsons.dump(info)
+        info_json['overallScore'] = jsons.dump(vault.risk_score(self._risk_weights))
+        return info_json

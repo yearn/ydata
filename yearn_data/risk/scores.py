@@ -43,3 +43,10 @@ class StrategyRisk(RiskFrameworkScores):
 @dataclass
 class VaultRisk(RiskFrameworkScores):
     pass
+
+
+@dataclass
+class RiskScoreInterval:
+    low: float = 5
+    median: float = 5
+    high: float = 5

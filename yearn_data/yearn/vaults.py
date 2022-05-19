@@ -1,9 +1,11 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Dict
+from typing import TYPE_CHECKING, List, Dict, Tuple
 from decimal import Decimal
+import numpy as np
+import pandas as pd
 
 from ..utils.web3 import fetch_events, ZERO_ADDRESS
-from ..risk.scores import StrategyRisk, VaultRisk
+from ..risk.scores import RiskScoreInterval, StrategyRisk, VaultRisk
 
 if TYPE_CHECKING:
     from .strategies import Strategy
@@ -22,7 +24,7 @@ class VaultInfo:
     riskScores: VaultRisk
     protocols: List
     tokens: List
-    top_wallets: Dict
+    topWallets: List
 
 
 class Vault:
@@ -88,8 +90,29 @@ class Vault:
             vault_scores.testingScore,
         )
 
+    def risk_score(self, weights: pd.DataFrame = None) -> RiskScoreInterval:
+        scores = self.risk_scores
+        if weights is None:
+            weights = pd.DataFrame(
+                5.0 * np.ones((1, len(scores.__dict__))),
+                columns=list(scores.__dict__.keys()),
+            )
+
+        samples = np.zeros(len(weights))
+        for idx, record in weights.iterrows():
+            samples[idx] = sum(
+                v * getattr(record, k) for k, v in scores.__dict__.items()
+            ) / sum(record)
+
+        q1, q3 = np.percentile(samples, [25, 75])
+        iqr = q3 - q1
+        median = np.median(samples)
+        return RiskScoreInterval(
+            low=median - 1.5 * iqr, median=median, high=median + 1.5 * iqr
+        )
+
     @property
-    def wallets(self) -> Dict[str, Decimal]:
+    def wallets(self) -> List[Tuple[str, Decimal]]:
         # FIXME: currently assumes that the share price does not change
         events = fetch_events(self.address, "Transfer", self.inception)
         denom = 10**self.token.decimals
@@ -113,8 +136,7 @@ class Vault:
                 else:
                     wallets[address] = -shares
 
-        wallets = {k: max(Decimal(0), v) for k, v in wallets.items()}
-        return wallets
+        return [(k, max(Decimal(0), v)) for k, v in wallets.items()]
 
     def describe(self) -> VaultInfo:
         _protocols: Dict[str, float] = {}
@@ -141,11 +163,12 @@ class Vault:
         protocols = [{"Name": k, "TVL Ratio": v} for k, v in _protocols.items()]
         tokens = [{"Name": k, "TVL Ratio": v} for k, v in _tokens.items()]
 
+        # wallet TVL distribution
         wallets = self.wallets
-        wallets_tvl = sum(wallets.values())
-        wallets = dict(
-            sorted(wallets.items(), key=lambda item: item[1], reverse=True)[:10]
-        )
-        top_wallets = {k: float(v / wallets_tvl) for k, v in wallets.items()}
+        wallets_tvl = sum([wallet[1] for wallet in wallets])
+        wallets = list(sorted(wallets, key=lambda item: item[1], reverse=True)[:10])
+        top_wallets = [
+            (wallet[0], float(wallet[1] / wallets_tvl)) for wallet in wallets
+        ]
 
         return VaultInfo(self.risk_scores, protocols, tokens, top_wallets)

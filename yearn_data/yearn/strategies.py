@@ -2,6 +2,8 @@ import time
 from typing import List, Union
 from decimal import Decimal
 from dataclasses import dataclass
+import numpy as np
+import pandas as pd
 
 from ..utils.web3 import get_contract, call, erc20_from
 from ..utils.labels import get_labels
@@ -12,20 +14,7 @@ from ..risk.framework import (
     longevity_impact,
     tvl_impact,
 )
-from ..risk.scores import StrategyRisk
-
-
-@dataclass
-class StrategyParams:
-    performanceFee: Decimal  # Strategist's fee (basis points)
-    activation: Decimal  # Activation block.timestamp
-    debtRatio: Decimal  # Maximum borrow amount (in BPS of total assets)
-    minDebtPerHarvest: Decimal  # Lower limit on the increase of debt since last harvest
-    maxDebtPerHarvest: Decimal  # Upper limit on the increase of debt since last harvest
-    lastReport: Decimal  # block.timestamp of the last time a report occured
-    totalDebt: Decimal  # Total outstanding debt that Strategy has
-    totalGain: Decimal  # Total returns that Strategy has realized for Vault
-    totalLoss: Decimal  # Total losses that Strategy has realized for Vault
+from ..risk.scores import RiskScoreInterval, StrategyRisk
 
 
 @dataclass
@@ -66,8 +55,8 @@ class Strategy:
             vault_address = call(self.address, "vault")
         else:
             vault_address = self.vault.address
-        params = StrategyParams(*call(vault_address, "strategies", self.address))
-        return Decimal(time.time()) - params.activation
+        params = call(vault_address, "strategies", self.address)
+        return Decimal(time.time()) - params[1]  # activation
 
     @property
     def tvl(self) -> Decimal:
@@ -91,6 +80,27 @@ class Strategy:
             TVLImpact=tvl_impact(self.tvl),
             longevityImpact=longevity_impact(self.longevity),
             **self._risk_scores.__dict__,
+        )
+
+    def risk_score(self, weights: pd.DataFrame = None) -> RiskScoreInterval:
+        scores = self.risk_scores
+        if weights is None:
+            weights = pd.DataFrame(
+                5.0 * np.ones((1, len(scores.__dict__))),
+                columns=list(scores.__dict__.keys()),
+            )
+
+        samples = np.zeros(len(weights))
+        for idx, record in weights.iterrows():
+            samples[idx] = sum(
+                v * getattr(record, k) for k, v in scores.__dict__.items()
+            ) / sum(record)
+
+        q1, q3 = np.percentile(samples, [25, 75])
+        iqr = q3 - q1
+        median = np.median(samples)
+        return RiskScoreInterval(
+            low=median - 1.5 * iqr, median=median, high=median + 1.5 * iqr
         )
 
     def describe(self) -> StrategyInfo:
