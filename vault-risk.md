@@ -11,8 +11,8 @@ Currently the project can provide strategy-level metrics and the vault-level ris
 ### Strategy Risk Metrics
 
 * `overallScore` - a profile-specific scalar score representing the risk of the strategy, see Overall Score
-  * `high` - profile score for a risk-seeking user
-  * `low` - profile score for a risk-averse user
+  * `high` - profile score for a risk-averse user
+  * `low` - profile score for a risk-seeking user
   * `median` - profile score for a median representative user
 * `protocols` - associated protocols
   * `name` - name of the protocol shown in [the Process Quality Reviews (PQR) in DeFi Safety](https://www.defisafety.com/pqrs)
@@ -32,8 +32,8 @@ Currently the project can provide strategy-level metrics and the vault-level ris
 ### Vault Risk Metrics
 
 * `overallScore` - a profile-specific scalar score representing the risk of the vault, see Overall Score
-  * `high` - profile score for a risk-seeking user
-  * `low` - profile score for a risk-averse user
+  * `high` - profile score for a risk-averse user
+  * `low` - profile score for a risk-seeking user
   * `median` - profile score for a median representative user
 * `protocols` - associated protocols
   * `name` - name of the protocol shown in [the Process Quality Reviews (PQR) in DeFi Safety](https://www.defisafety.com/pqrs)
