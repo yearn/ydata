@@ -45,6 +45,6 @@ def test_wallets(vault):
 @pytest.mark.parametrize("vault", [USDC_VAULT, DAI_VAULT])
 def test_describe(vault):
     info = vault.describe()
-    assert 'Maker' in [protocol['Name'] for protocol in info.protocols]
-    assert 'DAI' in [token['Name'] for token in info.tokens]
+    assert 'Maker' in [protocol['name'] for protocol in info.protocols]
+    assert 'DAI' in [token['name'] for token in info.tokens]
     assert len(info.topWallets) == 10

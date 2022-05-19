@@ -160,8 +160,8 @@ class Vault:
         if total_tvl > 0:
             _protocols = {k: v / total_tvl for k, v in _protocols.items()}
             _tokens = {k: v / total_tvl for k, v in _tokens.items()}
-        protocols = [{"Name": k, "TVL Ratio": v} for k, v in _protocols.items()]
-        tokens = [{"Name": k, "TVL Ratio": v} for k, v in _tokens.items()]
+        protocols = [{"name": k, "TVLRatio": v} for k, v in _protocols.items()]
+        tokens = [{"name": k, "TVLRatio": v} for k, v in _tokens.items()]
 
         # wallet TVL distribution
         wallets = self.wallets

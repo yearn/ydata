@@ -36,11 +36,11 @@ def test_get_framework_scores(name):
 @pytest.mark.parametrize("strategy", [GENLEVCOMP_V3, SSC_DAI_IB])
 def test_describe_strategy(strategy):
     info = yearn.describe(strategy)
-    assert 'Maker' in [protocol['Name'] for protocol in info['protocols']]
+    assert 'Maker' in [protocol['name'] for protocol in info['protocols']]
 
 
 @pytest.mark.parametrize("vault", [DAI_VAULT])
 def test_describe_vault(vault):
     info = yearn.describe(vault)
-    assert 'Maker' in [protocol['Name'] for protocol in info['protocols']]
+    assert 'Maker' in [protocol['name'] for protocol in info['protocols']]
     assert len(info['topWallets']) == 10

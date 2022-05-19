@@ -152,7 +152,7 @@ class Yearn:
                 scores = sum(candidates.values()) / len(candidates)
             else:
                 continue
-            protocol_info.append({"Name": protocol, "DeFiSafetyScores": scores})
+            protocol_info.append({"name": protocol, "DeFiSafetyScores": scores})
         info.protocols = protocol_info
 
         # append risk score interval
@@ -167,7 +167,7 @@ class Yearn:
         no_defi_safety = []
         for protocol in info.protocols:
             # arithmetic average of candidate scores
-            candidates = self._defi_safety.scores(protocol["Name"])
+            candidates = self._defi_safety.scores(protocol["name"])
             if len(candidates) > 0:
                 scores = sum(candidates.values()) / len(candidates)
             else:
