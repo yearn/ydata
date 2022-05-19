@@ -1,5 +1,6 @@
 # Yearn DATA Analytics
 
+
 ## Research Reports
 
 We share the research outputs from the YFI Data Analysis team in [the `research` directory](./research/).
@@ -7,15 +8,8 @@ We share the research outputs from the YFI Data Analysis team in [the `research`
 
 ## Vault-level Risk
 
-~~Currently the most of the code is copypasta from [the yearn-watch repository](https://github.com/yearn/yearn-watch).~~
+This project aims to provide additional quantitative metrics on top of the existing [Risk Framework](https://github.com/yearn/yearn-watch/blob/main/utils/risks.json), to help discover informative risk measures and collect the data necessary to build the metrics. 
+Furthermore, the project also aims to provide aggregated views for Yearn's Vaults and associated DeFi protocols.
+See [the project README](./vault-risk.md) for more details.
 
-The code is currently undergoing a refactoring to Python.
-
-
-### Metrics
-
-TODO
-
-### Usage Examples
-
-TODO
+Usage examples for this project can be seen in [`examples/risk.ipynb`](./examples/risk.ipynb).
