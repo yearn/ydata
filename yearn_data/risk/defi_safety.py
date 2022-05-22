@@ -3,11 +3,44 @@ from typing import Dict, List, Union
 import requests
 import logging
 
+from .defi_safety_protocol import protocol
+
 logger = logging.getLogger(__name__)
 
 API_ENDPOINT = (
-    "https://www.defisafety.com/api/pqrs?status=Active&reviewStatus=Completed"
+    'https://www.defisafety.com/api/pqrs?status=Active&reviewStatus=Completed'
 )
+
+etherscan_label_to_protocol_map = {
+    '1inch.exchange': protocol['1inch.exchange'],
+    'aave': protocol['aave v3'],
+    'aave v2': protocol['aave v2'],
+    'balancer': protocol['balancer v2'],
+    'compound': protocol['compound'],
+    'curve.fi': protocol['curve finance'],
+    'fei protocol': None,
+    'idle.finance': protocol['idle v4'],
+    'inverse finance': protocol['inverse finance'],
+    'lido': protocol['lido'],
+    'liquity': protocol['liquity'],
+    'maker': protocol['makerdao'],
+    'old contract': None,
+    'origin protocol': protocol['origin'],
+    'pooltogether': protocol['pooltogether v4'],
+    'reflexer finance': protocol['reflexer finance'],
+    'reserve protocol': None,
+    'shapeshift': protocol['shapeshift'],
+    'sushiswap': protocol['sushiswap  v2'],
+    'synthetix': protocol['synthetix pq'],
+    'trusttoken': None,
+    'usdc': None,
+    'uniswap': protocol['uniswap v3'],
+    'vaults': None,
+    'vesper finance': protocol['vesper'],
+    'wrapped bitcoin': None,
+    'yearn.finance': protocol['yearn finance v2'],
+    'ygov.finance': None
+}
 
 
 @dataclass
@@ -63,7 +96,7 @@ class DeFiSafety:
         offset = 0
         no_data = False
         while not no_data:
-            url = API_ENDPOINT + "&offset=" + str(offset)
+            url = API_ENDPOINT + '&offset=' + str(offset)
             response = requests.get(url)
             if response.status_code == 200:
                 data = response.json()['data']
@@ -102,14 +135,15 @@ class DeFiSafety:
         return list(self._scores.keys())
 
     def scores(self, name: str) -> Dict[str, DeFiSafetyScores]:
-        # remap labels
-        if 'curve' in name.lower():
-            name = "Curve Finance"
-
         if self._scores is None:
             self.load_scores()
         candidates = {}
         for k, v in self._scores.items():
-            if name.lower() in k.lower():
+            name_lower = name.lower()
+            mapper = etherscan_label_to_protocol_map
+            is_matching_protocol = mapper.get(name_lower) == k
+
+            if is_matching_protocol or name_lower in k.lower():
                 candidates[k] = v
+                break
         return candidates
