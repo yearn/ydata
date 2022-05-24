@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
+from ..utils.yearn_meta import get_strategy_protocols
 from ..utils.web3 import get_contract, call, erc20_from
 from ..utils.labels import get_labels
 from ..utils.price import get_usdc_price
@@ -111,4 +112,5 @@ class Strategy:
             if hasattr(token.caller, "symbol"):
                 tokens.append(token.caller.symbol())
         labels = [label for address in addresses for label in get_labels(address)]
+        labels.extend(get_strategy_protocols(self.address))
         return StrategyInfo(self.risk_scores, list(set(labels)), list(set(tokens)))

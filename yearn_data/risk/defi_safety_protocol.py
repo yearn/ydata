@@ -203,7 +203,7 @@ DefiSafetyProcotol = TypedDict('DefiSafetyProcotol', {
     'cyclone protocol': str,
 })
 
-protocol: DefiSafetyProcotol = {
+defi_safety_protocol: DefiSafetyProcotol = {
     'quarry': 'Quarry',
     'defi saver': 'Defi Saver',
     'marinade': 'Marinade',

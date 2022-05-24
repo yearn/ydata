@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 import requests
 import logging
 
-from .defi_safety_protocol import protocol
+from .defi_safety_protocol import defi_safety_protocol
 
 logger = logging.getLogger(__name__)
 
@@ -11,35 +11,60 @@ API_ENDPOINT = (
     'https://www.defisafety.com/api/pqrs?status=Active&reviewStatus=Completed'
 )
 
-etherscan_label_to_protocol_map = {
-    '1inch.exchange': protocol['1inch.exchange'],
-    'aave': protocol['aave v3'],
-    'aave v2': protocol['aave v2'],
-    'balancer': protocol['balancer v2'],
-    'compound': protocol['compound'],
-    'curve.fi': protocol['curve finance'],
+protocol_to_defi_safety_protocol_map = {
+    '1inch': defi_safety_protocol['1inch.exchange'],
+    '1inch.exchange': defi_safety_protocol['1inch.exchange'],
+    '88mph': defi_safety_protocol['88mph v3.0'],
+    'aave': defi_safety_protocol['aave v3'],
+    'aave v2': defi_safety_protocol['aave v2'],
+    'alphahomora': defi_safety_protocol['alpha homora v2'],
+    'angleprotocol': None,
+    'balancer': defi_safety_protocol['balancer v2'],
+    'compound': defi_safety_protocol['compound'],
+    'compoundfinance': defi_safety_protocol['compound'],
+    'convexfinance': defi_safety_protocol['convex finance'],
+    'creamfinance': defi_safety_protocol['c.r.e.a.m finance v2'],
+    'curve.fi': defi_safety_protocol['curve finance'],
+    'curvefinance': defi_safety_protocol['curve finance'],
+    'dydx': defi_safety_protocol['dydx layer 2'],
     'fei protocol': None,
-    'idle.finance': protocol['idle v4'],
-    'inverse finance': protocol['inverse finance'],
-    'lido': protocol['lido'],
-    'liquity': protocol['liquity'],
-    'maker': protocol['makerdao'],
+    'fiat dao': None,
+    'hegic': defi_safety_protocol['hegic v8888'],
+    'idle.finance': defi_safety_protocol['idle v4'],
+    'idlefinance': defi_safety_protocol['idle v4'],
+    'inverse finance': defi_safety_protocol['inverse finance'],
+    'inversefinance': defi_safety_protocol['inverse finance'],
+    'iron bank': None,
+    'ironbank': None,
+    'keeperdao': None,
+    'league dao': None,
+    'lido': defi_safety_protocol['lido'],
+    'lidofinance': defi_safety_protocol['lido'],
+    'liquity': defi_safety_protocol['liquity'],
+    'maker': defi_safety_protocol['makerdao'],
+    'makerdao': defi_safety_protocol['makerdao'],
+    'mushroomfinance': None,
+    'notional finance': defi_safety_protocol['notional finance'],
     'old contract': None,
-    'origin protocol': protocol['origin'],
-    'pooltogether': protocol['pooltogether v4'],
-    'reflexer finance': protocol['reflexer finance'],
+    'origin protocol': defi_safety_protocol['origin'],
+    'pooltogether': defi_safety_protocol['pooltogether v4'],
+    'reflexer finance': defi_safety_protocol['reflexer finance'],
     'reserve protocol': None,
-    'shapeshift': protocol['shapeshift'],
-    'sushiswap': protocol['sushiswap  v2'],
-    'synthetix': protocol['synthetix pq'],
+    'shapeshift': defi_safety_protocol['shapeshift'],
+    'sushi': defi_safety_protocol['sushiswap  v2'],
+    'sushiswap': defi_safety_protocol['sushiswap  v2'],
+    'synthetix': defi_safety_protocol['synthetix pq'],
+    'tokemak': defi_safety_protocol['tokemak'],
     'trusttoken': None,
+    'uniswap': defi_safety_protocol['uniswap v3'],
+    'universe': None,
     'usdc': None,
-    'uniswap': protocol['uniswap v3'],
     'vaults': None,
-    'vesper finance': protocol['vesper'],
+    'vesper finance': defi_safety_protocol['vesper'],
+    'vesperfinance': defi_safety_protocol['vesper'],
     'wrapped bitcoin': None,
-    'yearn.finance': protocol['yearn finance v2'],
-    'ygov.finance': None
+    'yearn.finance': defi_safety_protocol['yearn finance v2'],
+    'ygov.finance': None,
 }
 
 
@@ -140,7 +165,7 @@ class DeFiSafety:
         candidates = {}
         for k, v in self._scores.items():
             name_lower = name.lower()
-            mapper = etherscan_label_to_protocol_map
+            mapper = protocol_to_defi_safety_protocol_map
             is_matching_protocol = mapper.get(name_lower) == k
 
             if is_matching_protocol or name_lower in k.lower():
