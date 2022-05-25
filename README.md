@@ -13,3 +13,13 @@ Furthermore, the project also aims to provide aggregated views for Yearn's Vault
 See [the project README](./vault-risk.md) for more details.
 
 Usage examples for this project can be seen in [`examples/risk.ipynb`](./examples/risk.ipynb).
+
+
+### FastAPI
+
+To run FastAPI on port 8000
+```bash
+python main.py & \
+uvicorn risk_api:app --reload
+```
+Auto-generated docs can be seen at [localhost:8000/docs](localhost:8000/docs)

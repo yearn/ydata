@@ -1,5 +1,5 @@
 import os
-from typing import Set, List, Dict, Union, Any
+from typing import Set, List, Dict, Union
 from web3 import Web3
 import jsons
 import pandas as pd
@@ -132,7 +132,7 @@ class Yearn:
             self.load_vaults()
         return list(self._strategies)
 
-    def describe(self, product: Union[Strategy, Vault]) -> Dict[str, Any]:
+    def describe(self, product: Union[Strategy, Vault]) -> str:
         if isinstance(product, Strategy):
             return self.__describe_strategy(product)
         elif isinstance(product, Vault):
@@ -140,7 +140,7 @@ class Yearn:
         else:
             raise NotImplementedError("Product should be a strategy or a vault")
 
-    def __describe_strategy(self, strategy: Strategy) -> Dict[str, Any]:
+    def __describe_strategy(self, strategy: Strategy) -> str:
         info = strategy.describe()
 
         # append defi safety scores
@@ -158,9 +158,9 @@ class Yearn:
         # append risk score interval
         info_json = jsons.dump(info)
         info_json['overallScore'] = jsons.dump(strategy.risk_score(self._risk_weights))
-        return info_json
+        return str(info_json).replace("\'", "\"").replace("None", "null")
 
-    def __describe_vault(self, vault: Vault) -> Dict[str, Any]:
+    def __describe_vault(self, vault: Vault) -> str:
         info = vault.describe()
 
         # append defi safety scores
@@ -180,4 +180,4 @@ class Yearn:
         # append risk score interval
         info_json = jsons.dump(info)
         info_json['overallScore'] = jsons.dump(vault.risk_score(self._risk_weights))
-        return info_json
+        return str(info_json).replace("\'", "\"").replace("None", "null")
