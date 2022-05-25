@@ -1,5 +1,5 @@
 import logging
-from functools import cache
+from cachetools.func import ttl_cache
 from typing import Literal, TypedDict
 
 import requests
@@ -11,35 +11,38 @@ logger = logging.getLogger(__name__)
 YEARN_META_URL = 'https://meta.yearn.network'
 
 
-LocalizedData = TypedDict('LocalizedData', {
-    'name': str,
-    'description': str
-})
+LocalizedData = TypedDict('LocalizedData', {'name': str, 'description': str})
 
-Localization = TypedDict('Localization', {
-    'en': LocalizedData,
-    'fr': LocalizedData,
-    'es': LocalizedData,
-    'de': LocalizedData,
-    'pt': LocalizedData,
-    'el': LocalizedData,
-    'tr': LocalizedData,
-    'vi': LocalizedData,
-    'zh': LocalizedData,
-    'hi': LocalizedData,
-    'ja': LocalizedData,
-    'id': LocalizedData,
-    'ru': LocalizedData
-})
+Localization = TypedDict(
+    'Localization',
+    {
+        'en': LocalizedData,
+        'fr': LocalizedData,
+        'es': LocalizedData,
+        'de': LocalizedData,
+        'pt': LocalizedData,
+        'el': LocalizedData,
+        'tr': LocalizedData,
+        'vi': LocalizedData,
+        'zh': LocalizedData,
+        'hi': LocalizedData,
+        'ja': LocalizedData,
+        'id': LocalizedData,
+        'ru': LocalizedData,
+    },
+)
 
-StrategyMeta = TypedDict('StrategyMeta', {
-    '$schema': Literal['strategy'],
-    'name': str,
-    'description': str,
-    'addresses': list[str],
-    'protocols': list[str],
-    'localization': Localization
-})
+StrategyMeta = TypedDict(
+    'StrategyMeta',
+    {
+        '$schema': Literal['strategy'],
+        'name': str,
+        'description': str,
+        'addresses': list[str],
+        'protocols': list[str],
+        'localization': Localization,
+    },
+)
 
 
 def fetch_strategies(network: Network = Network.Mainnet) -> list[StrategyMeta]:
@@ -52,7 +55,7 @@ def fetch_strategies(network: Network = Network.Mainnet) -> list[StrategyMeta]:
     return response.json()
 
 
-@cache
+@ttl_cache(ttl=3600)
 def map_strategy_protocols() -> dict[str, list[str]]:
     protocols: dict[str, list[str]] = {}
 
