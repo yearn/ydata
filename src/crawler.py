@@ -3,7 +3,7 @@ import sys
 import time
 import logging
 from dotenv import load_dotenv
-from json import JSONDecodeError
+from requests.exceptions import HTTPError
 from sqlmodel import create_engine, SQLModel, Session
 
 from src.yearn import Network, Yearn
@@ -70,8 +70,11 @@ if __name__ == "__main__":
                                 _vault.info = vault_info
                                 session.add(_vault)
                             session.commit()
-                    except JSONDecodeError:
-                        logger.error(f"Failed to fetch data from vault {vault.name}")
+                    except HTTPError:
+                        logger.error(
+                            f"Failed to fetch data from vault {vault.name}",
+                            exc_info=True,
+                        )
 
                     # strategy-level data
                     for strategy in vault.strategies:
@@ -94,9 +97,10 @@ if __name__ == "__main__":
                                     _strategy.info = strategy_info
                                     session.add(_strategy)
                                 session.commit()
-                        except JSONDecodeError:
+                        except HTTPError:
                             logger.error(
-                                f"Failed to fetch data from strategy {strategy.name}"
+                                f"Failed to fetch data from strategy {strategy.name}",
+                                exc_info=True,
                             )
 
         except KeyboardInterrupt:

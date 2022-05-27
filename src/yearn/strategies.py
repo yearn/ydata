@@ -73,8 +73,9 @@ class Strategy:
         tokens = []
         for address in addresses:
             token = w3.get_contract(address)
-            if hasattr(token.caller, "symbol"):
+            if token is not None and hasattr(token.caller, "symbol"):
                 tokens.append(token.caller.symbol())
+
         labels = set(
             [label for address in addresses for label in w3.get_scan_labels(address)]
         )

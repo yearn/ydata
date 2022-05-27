@@ -3,6 +3,8 @@ import os
 import logging
 from typing import List, Dict, Union, Literal
 import json
+from json import JSONDecodeError
+from requests.exceptions import HTTPError
 import requests
 from functools import cache
 from enum import IntEnum
@@ -66,10 +68,14 @@ class Web3Provider:
         return json.loads(abi)
 
     @cache
-    def get_contract(self, address: str) -> Contract:
-        abi = self.fetch_abi(address)
-        address = Web3.toChecksumAddress(address)
-        return self.provider.eth.contract(address=address, abi=abi)
+    def get_contract(self, address: str) -> Union[Contract, None]:
+        try:
+            abi = self.fetch_abi(address)
+            address = Web3.toChecksumAddress(address)
+            return self.provider.eth.contract(address=address, abi=abi)
+        except (JSONDecodeError, HTTPError):
+            logger.error(f"Failed to fetch contract for {address}")
+        return None
 
     def call(
         self,
@@ -79,6 +85,8 @@ class Web3Provider:
         block: Union[int, Literal["latest"]] = "latest",
     ):
         contract = self.get_contract(address)
+        if contract is None:
+            return None
         return getattr(contract.caller, fn)(*fn_args, block_identifier=block)
 
     def fetch_events(
@@ -90,6 +98,8 @@ class Web3Provider:
     ) -> List[AttributeDict]:
         # get event abi
         contract = self.get_contract(address)
+        if contract is None:
+            return []
         event = getattr(contract.events, event_name)
         event_abi = event._get_event_abi()
         event_abi_codec = event.web3.codec
@@ -124,9 +134,10 @@ class Web3Provider:
     def erc20_tokens(
         self,
         address: str,
-        from_block: Union[int, Literal["latest"]] = "latest",
+        from_block: Union[int, Literal["first"]] = "first",
         to_block: Union[int, Literal["latest"]] = "latest",
     ) -> List[str]:
+        from_block = 0 if from_block == "first" else from_block
         to_block = MAX_BLOCK if to_block == "latest" else to_block
         params = {
             "address": address,

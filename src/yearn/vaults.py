@@ -146,8 +146,5 @@ class Vault:
                 for wallet in wallets
             ]
         else:
-            top_wallets = [
-                VaultWalletInfo(wallet[0], 0.0)
-                for wallet in wallets
-            ]
+            top_wallets = [VaultWalletInfo(wallet[0], 0.0) for wallet in wallets]
         return VaultInfo(protocols, tokens, top_wallets)
