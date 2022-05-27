@@ -140,8 +140,14 @@ class Vault:
         wallets = self.wallets
         wallets_tvl = sum([wallet[1] for wallet in wallets])
         wallets = list(sorted(wallets, key=lambda item: item[1], reverse=True)[:10])
-        top_wallets = [
-            VaultWalletInfo(wallet[0], float(wallet[1] / wallets_tvl))
-            for wallet in wallets
-        ]
+        if wallets_tvl > 0.0:
+            top_wallets = [
+                VaultWalletInfo(wallet[0], float(wallet[1] / wallets_tvl))
+                for wallet in wallets
+            ]
+        else:
+            top_wallets = [
+                VaultWalletInfo(wallet[0], 0.0)
+                for wallet in wallets
+            ]
         return VaultInfo(protocols, tokens, top_wallets)
