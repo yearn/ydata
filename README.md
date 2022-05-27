@@ -17,10 +17,12 @@ See [the project README](./src/risk_framework/README.md) for more details.
 TODO: need to rewrite examples for the new structure
 
 
-### Prerequisites
+## Prerequisites
 
 This project uses Poetry for dependency management.
 Please refer to the [documentation](https://python-poetry.org/docs/master/) for installing Poetry.
+
+Run the following command to install the dependencies:
 ```
 poetry install
 ```
@@ -39,6 +41,9 @@ FTMSCAN_TOKEN=
 # Database
 DATABASE_URI=sqlite:///db.sqlite3
 ```
+
+Furthermore, you will need to have Docker and Docker Compose that can support compose file format of version 2.0 or higher, see the [documentation](https://docs.docker.com/compose/compose-file/compose-versioning/) for the list of compatible versions and installation guides.
+
 
 
 ### Running the API
