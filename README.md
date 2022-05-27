@@ -10,16 +10,26 @@ We share the research outputs from the YFI Data Analysis team in [the `research`
 
 This project aims to provide additional quantitative metrics on top of the existing [Risk Framework](https://github.com/yearn/yearn-watch/blob/main/utils/risks.json), to help discover informative risk measures and collect the data necessary to build the metrics. 
 Furthermore, the project also aims to provide aggregated views for Yearn's Vaults and associated DeFi protocols.
-See [the project README](./vault-risk.md) for more details.
+See [the project README](./src/risk_framework/README.md) for more details.
 
-Usage examples for this project can be seen in [`examples/risk.ipynb`](./examples/risk.ipynb).
+~~Usage examples for this project can be seen in [`examples/risk.ipynb`](./examples/risk.ipynb).~~
+
+TODO: need to rewrite examples for the new structure
 
 
-### FastAPI
+### Installation
 
-To run FastAPI on port 8000
-```bash
-python main.py & \
-uvicorn risk_api:app --reload
+This project uses Poetry for dependency management.
+Please refer to the [documentation](https://python-poetry.org/docs/master/) for installing Poetry.
 ```
-Auto-generated docs can be seen at [localhost:8000/docs](localhost:8000/docs)
+poetry install
+```
+
+
+### Running the API
+
+To run the API locally at port 8000,
+```bash
+docker-compose up --build
+```
+Auto-generated docs can be seen at [localhost:8000/docs](http://localhost:8000/docs)
