@@ -17,7 +17,7 @@ See [the project README](./src/risk_framework/README.md) for more details.
 TODO: need to rewrite examples for the new structure
 
 
-### Installation
+### Prerequisites
 
 This project uses Poetry for dependency management.
 Please refer to the [documentation](https://python-poetry.org/docs/master/) for installing Poetry.
@@ -25,10 +25,25 @@ Please refer to the [documentation](https://python-poetry.org/docs/master/) for 
 poetry install
 ```
 
+You will also need to set up the Web3 provider endpoints and chain explorers in the environment file `.env`.
+The necessary variables and some of their default values are shown in `.env.example`:
+```
+# Mainnet
+ETH_PROVIDER=
+ETHERSCAN_TOKEN=
+
+# Fantom
+FTM_PROVIDER=https://rpc.ftm.tools/
+FTMSCAN_TOKEN=
+
+# Database
+DATABASE_URI=sqlite:///db.sqlite3
+```
+
 
 ### Running the API
 
-To run the API locally at port 8000,
+To run the API locally at port 8000:
 ```bash
 docker-compose up --build
 ```

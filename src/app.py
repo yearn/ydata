@@ -32,7 +32,7 @@ def get_vault(address):
 
 @app.get("/strategies")
 def get_all_strategies():
-    """Fetch strategy-level risk metrics for all available vaults"""
+    """Fetch strategy-level risk metrics for all available strategies"""
     with Session(engine) as session:
         query = select(Strategy)
         strategies = session.exec(query).all()
@@ -41,7 +41,7 @@ def get_all_strategies():
 
 @app.get("/strategies/{address}")
 def get_strategy(address):
-    """Fetch strategy-level risk metrics for a specific vault"""
+    """Fetch strategy-level risk metrics for a specific strategy"""
     with Session(engine) as session:
         strategy = session.get(Strategy, address.lower())
     if strategy is None:
