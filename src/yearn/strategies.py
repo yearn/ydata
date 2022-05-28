@@ -56,13 +56,18 @@ class Strategy:
         w3 = Web3Provider(self.network)
         if self.vault is None:
             vault_address = w3.call(self.address, "vault")
+            if vault_address is None:
+                return Decimal(0.0)
             decimals = Decimal(w3.call(vault_address, "decimals"))
             token_address = w3.call(vault_address, "token")
         else:
             decimals = Decimal(self.vault.token.decimals)
             token_address = self.vault.token.address
 
-        total_assets = Decimal(w3.call(self.address, "estimatedTotalAssets"))
+        total_assets = w3.call(self.address, "estimatedTotalAssets")
+        if total_assets is None:
+            return Decimal(0.0)
+        total_assets = Decimal(total_assets)
         total_assets /= 10**decimals
         usdc_price = w3.get_usdc_price(token_address)
         return total_assets * usdc_price
