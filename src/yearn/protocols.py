@@ -95,6 +95,7 @@ ProtocolList: List[Protocol] = [
     Protocol("Universe"),
     Protocol("veDAO", exclude=["ve[a-zA-Z0-9_]*"]),
     Protocol("Vesper Finance"),
+    Protocol("Yearn Finance", include=["ygov"]),
 ]
 
 
