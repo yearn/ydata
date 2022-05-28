@@ -5,7 +5,10 @@ skip-string-normalization = true
 name = "yearn-data-analytics"
 version = "0.1.0"
 description = ""
-authors = ["borrito <yh01dlx@gmail.com>"]
+authors = [
+    "borrito <yh01dlx@gmail.com>",
+    "huggingbot <83656073+huggingbot@users.noreply.github.com>",
+]
 packages = [
     { include = "src" }
 ]

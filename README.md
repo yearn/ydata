@@ -28,7 +28,7 @@ poetry install
 ```
 
 You will also need to set up the Web3 provider endpoints and chain explorers in the environment file `.env`.
-The necessary variables and some of their default values are shown in `.env.example`:
+The necessary variables and some of their default values are shown in [`.env.example`](./.env.example):
 ```
 # Mainnet
 ETH_PROVIDER=
@@ -42,9 +42,10 @@ FTMSCAN_TOKEN=
 DATABASE_URI=sqlite:///db.sqlite3
 ```
 
-Furthermore, you will need to have Docker and Docker Compose that can support compose file format of version 2.0 or higher, see the [documentation](https://docs.docker.com/compose/compose-file/compose-versioning/) for the list of compatible versions and installation guides.
+Furthermore, you need to have Docker and Docker Compose that can support compose file format of version 2.0 or higher, see the [documentation](https://docs.docker.com/compose/compose-file/compose-versioning/) for the list of compatible versions and installation guides.
 
 
+## Usage Examples
 
 ### Running the API
 
