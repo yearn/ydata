@@ -12,10 +12,14 @@ app = FastAPI()
 
 @app.get("/", include_in_schema=False)
 def root():
-    return Response(
-        content="Welcome to Yearn Data Analytics!",
-        media_type="text/plain"
-    )
+    message = """
+
+    Welcome to Yearn Data Analytics!
+
+    The current endpoint for the risk framework API is /api.
+
+    """
+    return Response(content=message, media_type="text/plain")
 
 
 @app.get("/api", include_in_schema=False)
