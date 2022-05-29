@@ -1,7 +1,7 @@
 import os
 import json
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from sqlmodel import create_engine, Session, select
 
 from src.models import Vault, Strategy
@@ -10,8 +10,16 @@ engine = create_engine(os.environ["DATABASE_URI"])
 app = FastAPI()
 
 
-@app.get("/api")
-def redirect_API_root():
+@app.get("/", include_in_schema=False)
+def root():
+    return Response(
+        content="Welcome to Yearn Data Analytics!",
+        media_type="text/plain"
+    )
+
+
+@app.get("/api", include_in_schema=False)
+def redirect_api_docs():
     """Redirect to the OpenAPI documentation"""
     return RedirectResponse("/docs")
 
