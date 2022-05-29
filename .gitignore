@@ -22,7 +22,8 @@ venv/
 
 *.db
 
-amplify/
-aws-exports.js
-.secret-*
-**.sample
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+.ebignore
