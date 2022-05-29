@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import signal
 import logging
 from requests.exceptions import HTTPError
 from sqlmodel import create_engine, SQLModel, Session
@@ -21,7 +22,16 @@ engine = create_engine(os.environ["DATABASE_URI"])
 SQLModel.metadata.create_all(engine)
 
 
+def handle_signal(*args):
+    logger.error("Interrupted by user")
+    sys.exit()
+
+
 if __name__ == "__main__":
+    # handle signals
+    signal.signal(signal.SIGINT, handle_signal)
+    signal.signal(signal.SIGTERM, handle_signal)
+
     # initialize Yearn instances
     yearn_chains = []
     for network in Network:
@@ -100,10 +110,6 @@ if __name__ == "__main__":
                                 f"Failed to fetch data from strategy {strategy.name}",
                                 exc_info=True,
                             )
-
-        except KeyboardInterrupt:
-            logger.error("Interrupted by user")
-            sys.exit()
 
         except Exception as e:
             logger.error(e, exc_info=True)
