@@ -177,10 +177,14 @@ class Web3Provider:
 
     def get_scan_labels(self, address: str) -> List[str]:
         url = self.scan_url + f"/address/{address}"
-        response = requests.get(url, headers=HEADERS)
+        try:
+            response = requests.get(url, headers=HEADERS)
+        except HTTPError:
+            logger.debug(f"Failed to get labels from address={address}")
+            return []
         if response.status_code != 200:
             logger.debug(f"Failed to get labels from address={address}")
-            response.raise_for_status()
+            return []
         text = response.text
 
         labels = []
