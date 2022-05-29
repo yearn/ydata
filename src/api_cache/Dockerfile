@@ -10,6 +10,6 @@ RUN export PATH=$HOME/.local/bin:$PATH \
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi
 
-WORKDIR /app/src/database
+WORKDIR /app/src/api_cache
 
 CMD ["python", "main.py"]

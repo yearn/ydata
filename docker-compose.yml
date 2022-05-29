@@ -6,16 +6,16 @@ services:
       context: ./
       dockerfile: ./src/fastapi/Dockerfile
     ports:
-      - 8000:8000
+      - 80:8000
     volumes:
       - database:/data
     environment:
       - DATABASE_URI
 
-  database:
+  api_cache:
     build:
       context: ./
-      dockerfile: ./src/database/Dockerfile
+      dockerfile: ./src/api_cache/Dockerfile
     volumes:
       - database:/data
     environment:

@@ -1,12 +1,19 @@
 import os
 import json
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 from sqlmodel import create_engine, Session, select
 
 from src.models import Vault, Strategy
 
 engine = create_engine(os.environ["DATABASE_URI"])
 app = FastAPI()
+
+
+@app.get("/")
+def redirect_root():
+    """Redirect to the OpenAPI documentation"""
+    return RedirectResponse("/docs")
 
 
 @app.get("/vaults")
