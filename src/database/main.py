@@ -2,7 +2,6 @@ import os
 import sys
 import time
 import logging
-from dotenv import load_dotenv
 from requests.exceptions import HTTPError
 from sqlmodel import create_engine, SQLModel, Session
 
@@ -10,7 +9,6 @@ from src.yearn import Network, Yearn
 from src.risk_framework import RiskAnalysis
 from src.models import Vault, Strategy
 
-load_dotenv()
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s.%(msecs)03d %(levelname)s %(module)s: %(message)s",

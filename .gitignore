@@ -21,3 +21,8 @@ env/
 venv/
 
 *.db
+
+amplify/
+aws-exports.js
+.secret-*
+**.sample

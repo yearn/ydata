@@ -9,6 +9,7 @@ import requests
 from functools import cache
 from enum import IntEnum
 from web3 import Web3
+from web3.exceptions import ContractLogicError
 from web3.contract import Contract
 from web3.datastructures import AttributeDict
 from web3._utils.filters import construct_event_filter_params
@@ -87,7 +88,10 @@ class Web3Provider:
         contract = self.get_contract(address)
         if contract is None:
             return None
-        return getattr(contract.caller, fn)(*fn_args, block_identifier=block)
+        try:
+            return getattr(contract.caller, fn)(*fn_args, block_identifier=block)
+        except ContractLogicError:
+            return None
 
     def fetch_events(
         self,
