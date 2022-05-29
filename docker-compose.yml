@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  fastapi:
+    build:
+      context: ./
+      dockerfile: ./src/fastapi/Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - database:/data
+    environment:
+      - DATABASE_URI
+
+  database:
+    build:
+      context: ./
+      dockerfile: ./src/database/Dockerfile
+    volumes:
+      - database:/data
+    environment:
+      - ETH_PROVIDER
+      - ETHERSCAN_TOKEN
+      - FTM_PROVIDER
+      - FTMSCAN_TOKEN
+      - DATABASE_URI
+
+volumes:
+  database:
