@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List, TypedDict, Literal, List, Set, Dict, Union
 import requests
+from requests.exceptions import HTTPError
 import logging
 
 from src.yearn.networks import Network
@@ -105,19 +106,27 @@ class Yearn:
     def fetch_vaults(self) -> List[VaultData]:
         # fetch data from api
         url = API_ENDPOINT + f"/{self.network}/vaults/all"
-        response = requests.get(url)
+        try:
+            response = requests.get(url)
+        except HTTPError:
+            logger.error(f"Failed to load vaults for {self.network.name}")
+            return {}
         if response.status_code != 200:
-            logger.debug(f"Failed to load vaults from {url}")
-            response.raise_for_status()
+            logger.error(f"Failed to load vaults for {self.network.name}")
+            return {}
         return response.json()
 
     def fetch_strategy_metadata(self) -> List[StrategyMeta]:
         # fetch strategy metadata
         url = META_ENDPOINT + f"/strategies/{self.network}/all"
-        response = requests.get(url)
+        try:
+            response = requests.get(url)
+        except HTTPError:
+            logger.error(f"Failed to load metadata for {self.network.name}")
+            return {}
         if response.status_code != 200:
-            logger.debug(f"Failed to load vaults from {url}")
-            response.raise_for_status()
+            logger.error(f"Failed to load metadata for {self.network.name}")
+            return {}
         return response.json()
 
     def map_strategy_protocols(self) -> Dict[str, Set[Protocol]]:
