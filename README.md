@@ -49,8 +49,8 @@ Furthermore, you need to have Docker and Docker Compose that can support compose
 
 ### Running the API
 
-To run the API locally at port 8000:
+To run the API locally at port 80:
 ```bash
 docker-compose up --build
 ```
-Auto-generated docs can be seen at [localhost:8000/docs](http://localhost:8000/docs)
+Auto-generated docs can be seen at [localhost/docs](http://localhost/docs)
