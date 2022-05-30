@@ -6,7 +6,6 @@ import json
 from json import JSONDecodeError
 from requests.exceptions import HTTPError
 import requests
-from functools import cache
 from enum import IntEnum
 from web3 import Web3
 from web3.exceptions import ContractLogicError
@@ -57,7 +56,6 @@ class Web3Provider:
             self.oracle = "0x57aa88a0810dfe3f9b71a9b179dd8bf5f956c46a"
         self.provider = Web3(Web3.HTTPProvider(provider))
 
-    @cache
     def fetch_abi(self, address: str) -> List[Dict]:
         address = Web3.toChecksumAddress(address)
         params = {"address": address, "module": "contract", "action": "getabi"}
@@ -68,7 +66,6 @@ class Web3Provider:
         abi = response.json()["result"]
         return json.loads(abi)
 
-    @cache
     def get_contract(self, address: str) -> Union[Contract, None]:
         try:
             abi = self.fetch_abi(address)
