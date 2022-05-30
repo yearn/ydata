@@ -4,12 +4,9 @@ import logging
 import requests
 
 from src.yearn import Protocol, get_protocol
+from src.constants import DSAFETY_API_ENDPOINT
 
 logger = logging.getLogger(__name__)
-
-API_ENDPOINT = (
-    "https://www.defisafety.com/api/pqrs?status=Active&reviewStatus=Completed"
-)
 
 
 @dataclass
@@ -66,7 +63,7 @@ class DeFiSafety:
         offset = 0
         no_data = False
         while not no_data:
-            url = API_ENDPOINT + "&offset=" + str(offset)
+            url = DSAFETY_API_ENDPOINT + "&offset=" + str(offset)
             response = requests.get(url)
             if response.status_code == 200:
                 data = response.json()["data"]

@@ -8,12 +8,9 @@ from src.yearn.networks import Network
 from src.yearn.protocols import Protocol, get_protocol
 from src.yearn.vaults import Vault, Token
 from src.yearn.strategies import Strategy
+from src.constants import YEARN_V1_API_ENDPOINT,META_ENDPOINT
 
 logger = logging.getLogger(__name__)
-
-API_ENDPOINT = "https://api.yearn.finance/v1/chains"
-META_ENDPOINT = "https://meta.yearn.network"
-
 
 @dataclass
 class TokenData:
@@ -105,7 +102,7 @@ class Yearn:
 
     def fetch_vaults(self) -> List[VaultData]:
         # fetch data from api
-        url = API_ENDPOINT + f"/{self.network}/vaults/all"
+        url = YEARN_V1_API_ENDPOINT + f"/{self.network}/vaults/all"
         try:
             response = requests.get(url)
         except HTTPError:

@@ -16,6 +16,7 @@ STRAT2 = Strategy(
     "StrategyLenderYieldOptimiser",
 )
 yearn = Yearn(Network.Mainnet)
+
 USDC_VAULT = [
     vault
     for vault in yearn.vaults

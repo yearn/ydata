@@ -3,6 +3,7 @@ import sys
 import time
 import signal
 import logging
+from dotenv import load_dotenv
 from requests.exceptions import HTTPError
 from sqlmodel import create_engine, SQLModel, Session
 import gc
@@ -18,6 +19,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+load_dotenv()
 # create database engine
 engine = create_engine(os.environ["DATABASE_URI"])
 SQLModel.metadata.create_all(engine)
