@@ -5,6 +5,7 @@ import signal
 import logging
 from requests.exceptions import HTTPError
 from sqlmodel import create_engine, SQLModel, Session
+import gc
 
 from src.yearn import Network, Yearn
 from src.risk_framework import RiskAnalysis
@@ -46,6 +47,9 @@ if __name__ == "__main__":
     logger.info("Entering main loop")
     start_time = time.time()
     while True:
+        # garbage collection to save memory usage
+        gc.collect()
+
         try:
             # refresh data
             logger.info("Refreshing data for all chains")
@@ -55,6 +59,9 @@ if __name__ == "__main__":
 
             for yearn in yearn_chains:
                 for vault in yearn.vaults:
+                    # garbage collection to save memory usage
+                    gc.collect()
+
                     logger.info(f"Updating vault {vault.name} on {vault.network.name}")
 
                     # ====================
