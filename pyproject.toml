@@ -22,7 +22,6 @@ jsons = "1.6.2"
 sqlmodel = "0.0.6"
 fastapi = "0.78.0"
 uvicorn = "0.17.6"
-psycopg2 = "^2.9.3"
 
 [tool.poetry.dev-dependencies]
 python-dotenv = "0.20.0"
