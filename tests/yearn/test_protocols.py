@@ -1,7 +1,5 @@
 from src.yearn.protocols import Protocol, ProtocolList
-
-AAVE_V3 = ProtocolList[ProtocolList.index(Protocol("Aave"))]
-AAVE_V2 = ProtocolList[ProtocolList.index(Protocol("Aave V2"))]
+from .tst_yearn_constants import AAVE_V3,AAVE_V2
 
 
 def test_aave_match():

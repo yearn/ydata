@@ -1,11 +1,8 @@
 import pytest
 from dotenv import load_dotenv
-from src.yearn import Network, Yearn
+from .tst_yearn_constants import YEARN_MAINNET, YEARN_FANTOM
 
 load_dotenv()
-
-YEARN_MAINNET = Yearn(Network.Mainnet)
-YEARN_FANTOM = Yearn(Network.Fantom)
 
 
 @pytest.mark.parametrize("yearn", [YEARN_MAINNET, YEARN_FANTOM])

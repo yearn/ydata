@@ -1,11 +1,8 @@
 import os
 import pytest
 import pandas as pd
-from src.risk_framework.scores import StrategyRiskScores, VaultRiskScores
+from .tst_risk_framework_constants import STRAT_SCORE,VAULT_SCORE
 
-
-STRAT_SCORE = StrategyRiskScores(1, 2, 1, 2, 1, 2, 1, 2)
-VAULT_SCORE = VaultRiskScores(1, 1, 1, 1, 1, 5)
 
 file_path = os.path.join(
     os.path.dirname(__file__), "..", "..", "src", "risk_framework", "weights.csv"
