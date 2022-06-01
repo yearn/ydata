@@ -1,7 +1,7 @@
 import pytest
 from dotenv import load_dotenv
-from src.yearn import Web3Provider
-from .tst_yearn_constants import USDC_VAULT,WFTM_VAULT, USDC_MAINNET,USDC_FANTOM
+from src.yearn import Network, Web3Provider
+from .tst_yearn_constants import USDC_VAULT, WFTM_VAULT, USDC_MAINNET, USDC_FANTOM
 
 load_dotenv()
 
@@ -39,6 +39,9 @@ def test_erc20_tokens(network, address, num_blocks):
     addresses = w3.erc20_tokens(address, from_block)
     assert len(addresses) > 0
 
+
+USDC_MAINNET = (Network.Mainnet, "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+USDC_FANTOM = (Network.Fantom, "0x04068da6c83afcfa0e13ba15a6696662335d5b75")
 
 
 @pytest.mark.parametrize("network, address", [USDC_MAINNET, USDC_FANTOM])

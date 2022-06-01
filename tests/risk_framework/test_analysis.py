@@ -5,12 +5,10 @@ from dotenv import load_dotenv
 from src.risk_framework import RiskAnalysis
 from .tst_risk_framework_constants import STRAT1,STRAT2, USDC_VAULT, CRV_VAULT
 
-
 load_dotenv()
 
 
 risk = RiskAnalysis()
-
 
 @pytest.mark.parametrize("strategy", [STRAT1, STRAT2])
 def test_strategy_scores(strategy):
