@@ -2,12 +2,11 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import TYPE_CHECKING, Dict, List, Tuple
 
-from src.yearn.networks import Network, Web3Provider
+from src.subgraph import SubgraphClient
+from src.yearn.networks import Network
 
 if TYPE_CHECKING:
     from src.yearn.strategies import Strategy
-
-from src.constants import ZERO_ADDRESS
 
 
 @dataclass
@@ -85,31 +84,12 @@ class Vault:
 
     @property
     def wallets(self) -> List[Tuple[str, Decimal]]:
-        # FIXME: currently assumes that the share price does not change
-        w3 = Web3Provider(self.network)
-        events = w3.fetch_events(self.address, "Transfer", self.inception)
-        denom = 10**self.token.decimals
-
-        wallets: Dict[str, Decimal] = {}
-        for event in events:
-            if event["args"]["sender"] == ZERO_ADDRESS:  # deposits
-                deposit = event["args"]
-                address = deposit["receiver"]
-                shares = Decimal(deposit["value"] / denom)
-                if address in wallets:
-                    wallets[address] += shares
-                else:
-                    wallets[address] = shares
-            elif event["args"]["receiver"] == ZERO_ADDRESS:  # withdrawals
-                withdrawal = event["args"]
-                address = withdrawal["sender"]
-                shares = Decimal(withdrawal["value"] / denom)
-                if address in wallets:
-                    wallets[address] -= shares
-                else:
-                    wallets[address] = -shares
-
-        return [(k, max(Decimal(0), v)) for k, v in wallets.items()]
+        subgraph = SubgraphClient(self.network)
+        wallets = subgraph.top_wallets(self, num_accounts=10)
+        return [
+            (wallet.address, max(Decimal(0), wallet.balanceShares))
+            for wallet in wallets
+        ]
 
     def describe(self) -> VaultInfo:
         _protocols: Dict[str, float] = {}

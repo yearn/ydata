@@ -102,7 +102,7 @@ class Yearn:
         self.network = network
         self.refresh()
 
-    def fetch_vaults(self) -> List[VaultData]:
+    def fetch_vaults(self) -> Union[List[VaultData], Dict]:
         # fetch data from api
         url = YEARN_V1_API_ENDPOINT + f"/{self.network}/vaults/all"
         try:
@@ -115,7 +115,7 @@ class Yearn:
             return {}
         return response.json()
 
-    def fetch_strategy_metadata(self) -> List[StrategyMeta]:
+    def fetch_strategy_metadata(self) -> Union[List[StrategyMeta], Dict]:
         # fetch strategy metadata
         url = META_ENDPOINT + f"/strategies/{self.network}/all"
         try:
