@@ -1,7 +1,7 @@
-from src.yearn import Network, Strategy,Yearn
 from src.risk_framework.scores import StrategyRiskScores, VaultRiskScores
+from src.yearn import Network, Strategy, Yearn
 
-#imported into test_analysis
+# imported into test_analysis
 YEARN_MAINNET = Yearn(Network.Mainnet)
 
 YEARN_FANTOM = Yearn(Network.Fantom)
@@ -26,7 +26,6 @@ CRV_VAULT = [
     if vault.address == "0x0446acaB3e0242fCf33Aa526f1c95a88068d5042"
 ][0]
 
-#import into test_scores
+# import into test_scores
 STRAT_SCORE = StrategyRiskScores(1, 2, 1, 2, 1, 2, 1, 2)
 VAULT_SCORE = VaultRiskScores(1, 1, 1, 1, 1, 5)
-

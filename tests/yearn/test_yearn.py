@@ -1,6 +1,7 @@
 import pytest
 from dotenv import load_dotenv
-from .tst_yearn_constants import YEARN_MAINNET, YEARN_FANTOM
+
+from .tst_yearn_constants import YEARN_FANTOM, YEARN_MAINNET
 
 load_dotenv()
 

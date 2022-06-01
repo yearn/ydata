@@ -1,24 +1,24 @@
+import logging
 import os
 from dataclasses import dataclass
-from typing import List, Union, Dict
-import jsons
-import logging
-import requests
-import pandas as pd
+from typing import Dict, List, Union
 
-from src.yearn import Network, Strategy, Vault
+import jsons
+import pandas as pd
+import requests
+
 from src.risk_framework.defi_safety import DeFiSafety
 from src.risk_framework.scores import (
     StrategyRiskScores,
     VaultRiskScores,
-    tvl_impact,
     longevity_impact,
+    tvl_impact,
 )
+from src.yearn import Network, Strategy, Vault
 
 logger = logging.getLogger(__name__)
 
 from src.constants import RISK_FRAMEWORK
-
 
 
 @dataclass

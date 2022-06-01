@@ -1,7 +1,9 @@
 import pytest
 from dotenv import load_dotenv
+
 from src.yearn import Network, Web3Provider
-from .tst_yearn_constants import USDC_VAULT, WFTM_VAULT, USDC_MAINNET, USDC_FANTOM
+
+from .tst_yearn_constants import USDC_FANTOM, USDC_MAINNET, USDC_VAULT, WFTM_VAULT
 
 load_dotenv()
 

@@ -1,11 +1,13 @@
-import os
 import json
+import os
 from enum import Enum
+
 from dotenv import load_dotenv
+from sqlmodel import Session, create_engine, select
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse, Response
-from sqlmodel import create_engine, Session, select
-from src.models import Vault, Strategy
+from src.models import Strategy, Vault
 
 load_dotenv()
 

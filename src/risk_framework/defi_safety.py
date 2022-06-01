@@ -1,10 +1,11 @@
-from dataclasses import dataclass
-from typing import Union, Dict
 import logging
+from dataclasses import dataclass
+from typing import Dict, Union
+
 import requests
 
-from src.yearn import Protocol, get_protocol
 from src.constants import DSAFETY_API_ENDPOINT
+from src.yearn import Protocol, get_protocol
 
 logger = logging.getLogger(__name__)
 

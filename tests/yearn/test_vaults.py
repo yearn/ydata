@@ -1,6 +1,7 @@
 import pytest
 from dotenv import load_dotenv
-from .tst_yearn_constants import VLT_USDC_VAULT, CRV_VAULT
+
+from .tst_yearn_constants import CRV_VAULT, VLT_USDC_VAULT
 
 load_dotenv()
 

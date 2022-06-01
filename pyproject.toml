@@ -15,6 +15,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
+python-dotenv = "0.20.0"
 requests = "2.27.1"
 web3 = "5.29.1"
 pandas = "1.4.2"
@@ -24,10 +25,13 @@ fastapi = "0.78.0"
 uvicorn = "0.17.6"
 
 [tool.poetry.dev-dependencies]
-python-dotenv = "0.20.0"
 pytest = "6.2.5"
 mypy = "0.950"
 black = "22.3.0"
+isort = "^5.10.1"
+pre-commit = "^2.19.0"
+pre-commit-hooks = "^4.2.0"
+types-requests = "^2.27.29"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

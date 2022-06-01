@@ -1,7 +1,7 @@
 import time
-from typing import List, Union, Set
-from decimal import Decimal
 from dataclasses import dataclass
+from decimal import Decimal
+from typing import List, Set, Union
 
 from src.yearn.networks import Network, Web3Provider
 from src.yearn.protocols import Protocol, get_protocol

@@ -1,8 +1,9 @@
 import os
-import pytest
-import pandas as pd
-from .tst_risk_framework_constants import STRAT_SCORE,VAULT_SCORE
 
+import pandas as pd
+import pytest
+
+from .tst_risk_framework_constants import STRAT_SCORE, VAULT_SCORE
 
 file_path = os.path.join(
     os.path.dirname(__file__), "..", "..", "src", "risk_framework", "weights.csv"

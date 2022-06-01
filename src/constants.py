@@ -1,12 +1,11 @@
-
-#import into yearn/yearn.py
+# import into yearn/yearn.py
 YEARN_V1_API_ENDPOINT = "https://api.yearn.finance/v1/chains"
 META_ENDPOINT = "https://meta.yearn.network"
 
-#import into yearn/vaults.py
+# import into yearn/vaults.py
 ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
-#imported into yearn/network.py
+# imported into yearn/network.py
 BLOCK_SIZE = 100000
 MAX_BLOCK = 99999999
 USDC_DECIMALS = 6
@@ -24,7 +23,5 @@ DSAFETY_API_ENDPOINT = (
     "https://www.defisafety.com/api/pqrs?status=Active&reviewStatus=Completed"
 )
 
-#import into risk_framework/scores.py
+# import into risk_framework/scores.py
 DAYS = 60 * 60 * 24
-
-

@@ -1,19 +1,21 @@
-from decimal import Decimal
-import os
-import logging
-from typing import List, Dict, Union, Literal
 import json
-from json import JSONDecodeError
-from requests.exceptions import HTTPError
-import requests
+import logging
+import os
+from decimal import Decimal
 from enum import IntEnum
+from json import JSONDecodeError
+from typing import Dict, List, Literal, Union
+
+import requests
+from requests.exceptions import HTTPError
 from web3 import Web3
-from web3.exceptions import ContractLogicError
+from web3._utils.events import get_event_data
+from web3._utils.filters import construct_event_filter_params
 from web3.contract import Contract
 from web3.datastructures import AttributeDict
-from web3._utils.filters import construct_event_filter_params
-from web3._utils.events import get_event_data
-from src.constants import BLOCK_SIZE,MAX_BLOCK,USDC_DECIMALS,HEADERS
+from web3.exceptions import ContractLogicError
+
+from src.constants import BLOCK_SIZE, HEADERS, MAX_BLOCK, USDC_DECIMALS
 
 logger = logging.getLogger(__name__)
 

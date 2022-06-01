@@ -1,16 +1,18 @@
+import logging
 from dataclasses import dataclass
-from typing import List, TypedDict, Literal, List, Set, Dict, Union
+from typing import Dict, List, Literal, Set, TypedDict, Union
+
 import requests
 from requests.exceptions import HTTPError
-import logging
 
+from src.constants import META_ENDPOINT, YEARN_V1_API_ENDPOINT
 from src.yearn.networks import Network
 from src.yearn.protocols import Protocol, get_protocol
-from src.yearn.vaults import Vault, Token
 from src.yearn.strategies import Strategy
-from src.constants import YEARN_V1_API_ENDPOINT,META_ENDPOINT
+from src.yearn.vaults import Token, Vault
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class TokenData:

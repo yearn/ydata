@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Dict, Tuple
 from decimal import Decimal
+from typing import TYPE_CHECKING, Dict, List, Tuple
 
 from src.yearn.networks import Network, Web3Provider
 
 if TYPE_CHECKING:
     from src.yearn.strategies import Strategy
-    
+
 from src.constants import ZERO_ADDRESS
 
 

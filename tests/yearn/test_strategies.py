@@ -1,6 +1,7 @@
 import pytest
 from dotenv import load_dotenv
-from .tst_yearn_constants import STRAT1, STRAT2, DAYS
+
+from .tst_yearn_constants import DAYS, STRAT1, STRAT2
 
 load_dotenv()
 

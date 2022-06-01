@@ -1,5 +1,6 @@
 from src.yearn.protocols import Protocol, ProtocolList
-from .tst_yearn_constants import AAVE_V3,AAVE_V2
+
+from .tst_yearn_constants import AAVE_V2, AAVE_V3
 
 
 def test_aave_match():

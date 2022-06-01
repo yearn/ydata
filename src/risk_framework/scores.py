@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
+
 import numpy as np
 import pandas as pd
 
@@ -100,7 +101,7 @@ class StrategyRiskScores:
         median = np.median(samples)
         return RiskProfileScores(
             low=median - 1.5 * iqr,
-            median=median,
+            median=float(median),
             high=median + 1.5 * iqr,
         )
 
@@ -131,6 +132,6 @@ class VaultRiskScores:
         median = np.median(samples)
         return RiskProfileScores(
             low=median - 1.5 * iqr,
-            median=median,
+            median=float(median),
             high=median + 1.5 * iqr,
         )

@@ -2,16 +2,20 @@ import gc
 import logging
 import os
 import signal
-from dotenv import load_dotenv
 import sys
 from functools import wraps
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Type
 
+from dotenv import load_dotenv
 from requests.exceptions import HTTPError
 from sqlmodel import Session, SQLModel, create_engine
+
 from src.models import Strategy, Vault
 from src.risk_framework import RiskAnalysis
-from src.yearn import Network, Yearn
+from src.yearn import Network
+from src.yearn import Strategy as TStrategy
+from src.yearn import Vault as TVault
+from src.yearn import Yearn
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,7 +37,8 @@ def handle_signal(*args: Any) -> None:
 
 
 def handle_exception(
-    exception: Exception = Exception, handler: Optional[Callable[[Any], str]] = None
+    exception: Type[Exception] = Exception,
+    handler: Optional[Callable[[Any], str]] = None,
 ) -> Callable:
     def decorator(fn: Callable) -> Callable:
         @wraps(fn)
@@ -50,9 +55,9 @@ def handle_exception(
 
 
 @handle_exception(
-    HTTPError, lambda _, strategy: f"Failed to fetch data from strategy {strategy.name}"
+    HTTPError, lambda strategy: f"Failed to fetch data from strategy {strategy.name}"
 )
-def __commit_strategy(strategy: Strategy, risk: RiskAnalysis) -> None:
+def __commit_strategy(strategy: TStrategy, risk: RiskAnalysis) -> None:
     strategy_info = risk.describe(strategy)
 
     with Session(engine) as session:
@@ -73,9 +78,9 @@ def __commit_strategy(strategy: Strategy, risk: RiskAnalysis) -> None:
 
 
 @handle_exception(
-    HTTPError, lambda _, vault: f"Failed to fetch data from vault {vault.name}"
+    HTTPError, lambda vault: f"Failed to fetch data from vault {vault.name}"
 )
-def __commit_vault(vault: Vault, risk: RiskAnalysis) -> None:
+def __commit_vault(vault: TVault, risk: RiskAnalysis) -> None:
     vault_info = risk.describe(vault)
 
     with Session(engine) as session:

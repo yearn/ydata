@@ -1,7 +1,7 @@
 import pytest
-from src.yearn.protocols import ProtocolList
-from src.risk_framework.defi_safety import DeFiSafety
 
+from src.risk_framework.defi_safety import DeFiSafety
+from src.yearn.protocols import ProtocolList
 
 defi_safety = DeFiSafety()
 
