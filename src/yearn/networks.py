@@ -13,15 +13,9 @@ from web3.contract import Contract
 from web3.datastructures import AttributeDict
 from web3._utils.filters import construct_event_filter_params
 from web3._utils.events import get_event_data
+from src.constants import BLOCK_SIZE,MAX_BLOCK,USDC_DECIMALS,HEADERS
 
 logger = logging.getLogger(__name__)
-
-BLOCK_SIZE = 100000
-MAX_BLOCK = 99999999
-USDC_DECIMALS = 6
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/43.4"
-}
 
 
 class Network(IntEnum):

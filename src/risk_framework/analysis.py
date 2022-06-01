@@ -17,9 +17,8 @@ from src.risk_framework.scores import (
 
 logger = logging.getLogger(__name__)
 
-RISK_FRAMEWORK = (
-    "https://raw.githubusercontent.com/yearn/yearn-watch/main/utils/risks.json"
-)
+from src.constants import RISK_FRAMEWORK
+
 
 
 @dataclass

@@ -2,6 +2,7 @@ import gc
 import logging
 import os
 import signal
+from dotenv import load_dotenv
 import sys
 from functools import wraps
 from typing import Any, Callable, Optional
@@ -18,6 +19,8 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
+
+load_dotenv()
 
 # create database engine
 engine = create_engine(os.environ["DATABASE_URI"])

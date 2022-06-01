@@ -6,8 +6,8 @@ from src.yearn.networks import Network, Web3Provider
 
 if TYPE_CHECKING:
     from src.yearn.strategies import Strategy
-
-ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
+    
+from src.constants import ZERO_ADDRESS
 
 
 @dataclass
