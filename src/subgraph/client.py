@@ -4,14 +4,16 @@ from decimal import Decimal
 from typing import TYPE_CHECKING, List
 
 from gql import Client, gql
-from gql.transport.exceptions import TransportQueryError
+from gql.transport.exceptions import TransportError
 from gql.transport.requests import RequestsHTTPTransport
+from gql.transport.requests import log as requests_logger
 
 from src.yearn.networks import Network
 
 if TYPE_CHECKING:
     from src.yearn.vaults import Vault
 
+requests_logger.setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
@@ -62,11 +64,18 @@ class SubgraphClient:
         wallets: List[WalletBalance] = []
         try:
             response = self.client.execute(query)
-        except TransportQueryError:
+        except TransportError:
+            logger.error(
+                f"Failed to fetch wallet balance from subgraph for {vault.name}"
+            )
             return wallets
 
         for wallet in response.get('accountVaultPositions', []):
             wallets.append(
-                WalletBalance(wallet['account']['id'], Decimal(wallet['balanceShares']))
+                WalletBalance(
+                    wallet['account']['id'],
+                    Decimal(wallet['balanceShares'])
+                    / Decimal(10**vault.token.decimals),
+                )
             )
         return wallets
