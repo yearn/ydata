@@ -124,7 +124,9 @@ class RiskAnalysis:
             info = jsons.dump(product.describe())
             protocol_info = []
             for protocol in info["protocols"]:
-                protocol_scores = self.defi_safety.scores(protocol)
+                protocol_scores = (
+                    None  # self.defi_safety.scores(protocol)  FIXME: temporary removal
+                )
                 protocol_info.append(
                     {
                         "name": protocol,
@@ -137,7 +139,9 @@ class RiskAnalysis:
             info = jsons.dump(product.describe())
             protocol_info = []
             for protocol in info["protocols"]:
-                protocol_scores = self.defi_safety.scores(protocol["name"])
+                protocol_scores = (
+                    None,
+                )  # self.defi_safety.scores(protocol["name"])  FIXME: temporary removal
                 protocol_info.append(
                     {
                         "name": protocol["name"],
