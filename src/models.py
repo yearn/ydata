@@ -20,4 +20,4 @@ class Strategy(SQLModel, table=True):
 
 
 def create_id(address: str, network: int) -> str:
-    return str(network) + '_' + address.lower()
+    return str(int(network)) + '_' + address.lower()
