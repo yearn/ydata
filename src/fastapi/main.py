@@ -7,7 +7,7 @@ from sqlmodel import Session, create_engine, select
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse, Response
-from src.models import Strategy, Vault
+from src.models import Strategy, Vault, create_id
 
 load_dotenv()
 
@@ -48,11 +48,21 @@ def get_all_vaults():
     return {vault.address: json.loads(vault.info) for vault in vaults}
 
 
-@app.get("/api/vaults/{address}", tags=[Tags.vaults])
-def get_vault(address):
+@app.get("/api/vaults/{chain_id}", tags=[Tags.vaults])
+def get_network_vaults(chain_id):
+    """Fetch vault-level risk metrics for a specific chain"""
+    with Session(engine) as session:
+        query = select(Vault).where(Vault.network == chain_id)
+        vaults = session.exec(query).all()
+    return {vault.address: json.loads(vault.info) for vault in vaults}
+
+
+@app.get("/api/vaults/{chain_id}/{address}", tags=[Tags.vaults])
+def get_vault(chain_id, address):
     """Fetch vault-level risk metrics for a specific vault"""
     with Session(engine) as session:
-        vault = session.get(Vault, address.lower())
+        vault_id = create_id(address, chain_id)
+        vault = session.get(Vault, vault_id)
     if vault is None:
         raise HTTPException(status_code=404, detail="Address not found")
     return json.loads(vault.info)
@@ -67,11 +77,21 @@ def get_all_strategies():
     return {strategy.address: json.loads(strategy.info) for strategy in strategies}
 
 
-@app.get("/api/strategies/{address}", tags=[Tags.strategies])
-def get_strategy(address):
+@app.get("/api/strategies/{chain_id}", tags=[Tags.strategies])
+def get_network_strategies(chain_id):
+    """Fetch strategy-level risk metrics for a specific chain"""
+    with Session(engine) as session:
+        query = select(Strategy).where(Strategy.network == chain_id)
+        strategies = session.exec(query).all()
+    return {strategy.address: json.loads(strategy.info) for strategy in strategies}
+
+
+@app.get("/api/strategies/{chain_id}/{address}", tags=[Tags.strategies])
+def get_strategy(chain_id, address):
     """Fetch strategy-level risk metrics for a specific strategy"""
     with Session(engine) as session:
-        strategy = session.get(Strategy, address.lower())
+        strategy_id = create_id(address, chain_id)
+        strategy = session.get(Strategy, strategy_id)
     if strategy is None:
         raise HTTPException(status_code=404, detail="Address not found")
     return json.loads(strategy.info)

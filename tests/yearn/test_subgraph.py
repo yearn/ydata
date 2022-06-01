@@ -1,8 +1,7 @@
 import pytest
 from dotenv import load_dotenv
 
-from src.subgraph import SubgraphClient
-from src.yearn import Network, Yearn
+from src.yearn import Network, Subgraph, Yearn
 
 load_dotenv()
 
@@ -24,6 +23,6 @@ CRV_VAULT = [
 @pytest.mark.parametrize("vault", [VLT_USDC_VAULT, CRV_VAULT])
 @pytest.mark.parametrize("num_accounts", [10, 20])
 def test_top_wallets(vault, num_accounts):
-    subgraph = SubgraphClient(vault.network)
+    subgraph = Subgraph(vault.network)
     wallets = subgraph.top_wallets(vault, num_accounts)
     assert len(wallets) == num_accounts

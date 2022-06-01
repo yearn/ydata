@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import TYPE_CHECKING, Dict, List, Tuple
 
-from src.subgraph import SubgraphClient
 from src.yearn.networks import Network
+from src.yearn.subgraph import Subgraph
 
 if TYPE_CHECKING:
     from src.yearn.strategies import Strategy
@@ -84,7 +84,7 @@ class Vault:
 
     @property
     def wallets(self) -> List[Tuple[str, Decimal]]:
-        subgraph = SubgraphClient(self.network)
+        subgraph = Subgraph(self.network)
         wallets = subgraph.top_wallets(self, num_accounts=10)
         return [
             (wallet.address, max(Decimal(0), wallet.balanceShares))

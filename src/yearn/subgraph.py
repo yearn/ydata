@@ -23,7 +23,7 @@ class WalletBalance:
     balanceShares: Decimal
 
 
-class SubgraphClient:
+class Subgraph:
     chain_id: Network
     client: Client
 
