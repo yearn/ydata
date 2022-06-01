@@ -4,13 +4,13 @@ import os
 import signal
 import sys
 from functools import wraps
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable, List, Optional, Type
 
 from dotenv import load_dotenv
 from requests.exceptions import HTTPError
 from sqlmodel import Session, SQLModel, create_engine
 
-from src.models import Strategy, Vault
+from src.models import Strategy, Vault, create_id
 from src.risk_framework import RiskAnalysis
 from src.yearn import Network
 from src.yearn import Strategy as TStrategy
@@ -59,12 +59,14 @@ def handle_exception(
 )
 def __commit_strategy(strategy: TStrategy, risk: RiskAnalysis) -> None:
     strategy_info = risk.describe(strategy)
+    strategy_id = create_id(strategy.address, strategy.network)
 
     with Session(engine) as session:
-        _strategy = session.get(Strategy, strategy.address.lower())
+        _strategy = session.get(Strategy, strategy_id)
         if _strategy is None:
             session.add(
                 Strategy(
+                    id=strategy_id,
                     address=strategy.address.lower(),
                     network=strategy.network,
                     name=strategy.name,
@@ -82,12 +84,14 @@ def __commit_strategy(strategy: TStrategy, risk: RiskAnalysis) -> None:
 )
 def __commit_vault(vault: TVault, risk: RiskAnalysis) -> None:
     vault_info = risk.describe(vault)
+    vault_id = create_id(vault.address, vault.network)
 
     with Session(engine) as session:
-        _vault = session.get(Vault, vault.address.lower())
+        _vault = session.get(Vault, vault_id)
         if _vault is None:
             session.add(
                 Vault(
+                    id=vault_id,
                     address=vault.address.lower(),
                     network=vault.network,
                     name=vault.name,
@@ -100,7 +104,7 @@ def __commit_vault(vault: TVault, risk: RiskAnalysis) -> None:
         session.commit()
 
 
-def __refresh(yearn_chains: list[Yearn], risk: RiskAnalysis) -> None:
+def __refresh(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
     logger.info("Refreshing data for all chains")
     for yearn in yearn_chains:
         yearn.refresh()
@@ -108,7 +112,7 @@ def __refresh(yearn_chains: list[Yearn], risk: RiskAnalysis) -> None:
 
 
 @handle_exception()
-def __do_commits(yearn_chains: list[Yearn], risk: RiskAnalysis) -> None:
+def __do_commits(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
     # refresh data
     __refresh(yearn_chains, risk)
 
@@ -130,7 +134,7 @@ def __do_commits(yearn_chains: list[Yearn], risk: RiskAnalysis) -> None:
                 __commit_strategy(strategy, risk)
 
 
-def __get_yearn_chains() -> list[Yearn]:
+def __get_yearn_chains() -> List[Yearn]:
     yearn_chains = []
     for network in Network:
         logger.info(f"Initializing Yearn for {network.name}")
