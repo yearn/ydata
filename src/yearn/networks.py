@@ -66,7 +66,7 @@ class Web3Provider:
         jsoned = parse_json(response)
         if jsoned is None:
             msg = f"Failed to fetch abi from address={address}"
-            logger.debug(msg)
+            logger.error(msg)
             raise ValueError(msg)
         abi = jsoned["result"]
         return json.loads(abi)
@@ -156,8 +156,8 @@ class Web3Provider:
         jsoned = parse_json(response)
         if jsoned is None:
             msg = f"Failed to fetch erc20 transfers from address={address}"
-            logger.debug(msg)
-            raise ValueError(msg)
+            logger.error(msg)
+            return []
         txns = jsoned["result"]
 
         # get the tokens that were handled by the strategy
@@ -183,7 +183,7 @@ class Web3Provider:
         url = self.scan_url + f"/address/{address}"
         response = client('get', url, headers=HEADERS)
         if response is None:
-            logger.debug(f"Failed to get labels from address={address}")
+            logger.error(f"Failed to get labels from address={address}")
             return []
         text = response.text
 
