@@ -12,7 +12,7 @@ from web3.contract import Contract
 from web3.datastructures import AttributeDict
 from web3.exceptions import ContractLogicError
 
-from src.constants import BLOCK_SIZE, HEADERS, MAX_BLOCK, USDC_DECIMALS
+from src.constants import BLOCK_SIZE, MAX_BLOCK, USDC_DECIMALS
 from src.utils.network import client, parse_json
 
 logger = logging.getLogger(__name__)
@@ -163,9 +163,14 @@ class Web3Provider:
         # get the tokens that were handled by the strategy
         result = set({})
         for tx in txns:
-            if tx["from"].lower() == address.lower():
-                token_address = tx["contractAddress"]
-                result.add(token_address.lower())
+            try:
+                if tx["from"].lower() == address.lower():
+                    token_address = tx["contractAddress"]
+                    result.add(token_address.lower())
+            except TypeError:
+                msg = f"Failed to fetch erc20 transfers from address={address}"
+                logger.error(msg)
+                return []
         return list(result)
 
     def get_usdc_price(
@@ -181,22 +186,3 @@ class Web3Provider:
             msg = f"Failed to fetch usdc price for token={token_address}"
             logger.error(msg)
         return Decimal(0)
-
-    def get_scan_labels(self, address: str) -> List[str]:
-        url = self.scan_url + f"/address/{address}"
-        response = client('get', url, headers=HEADERS)
-        if response is None:
-            logger.error(f"Failed to get labels from address={address}")
-            return []
-        text = response.text
-
-        labels = []
-        while True:
-            try:
-                text = text[text.index("/accounts/label/") :]
-                text = text[text.index(">") + 1 :]
-                label = text[: text.index("<")].strip()
-                labels.append(label)
-            except:
-                break
-        return labels

@@ -7,6 +7,7 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 
 from src.constants import (
+    HEADERS,
     REQUESTS_BACKOFF_FACTOR,
     REQUESTS_RETRY_TIMES,
     REQUESTS_STATUS_FORCELIST,
@@ -27,6 +28,7 @@ retry_strategy = Retry(
 )
 
 session = requests.Session()
+session.headers.update(HEADERS)
 
 adapter = HTTPAdapter(max_retries=retry_strategy)
 
@@ -44,7 +46,6 @@ def client(
             method=method.upper(),
             url=url,
             timeout=REQUESTS_TIMEOUT,
-            headers=kwargs.get("headers"),
             params=kwargs.get("params"),
         )
         response.raise_for_status()

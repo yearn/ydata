@@ -83,14 +83,6 @@ class Strategy:
             token = w3.get_contract(address)
             if token is not None and hasattr(token.caller, "symbol"):
                 tokens.append(token.caller.symbol())
-
-        labels = set(
-            [label for address in addresses for label in w3.get_scan_labels(address)]
-        )
-        for label in labels:
-            protocol = get_protocol(label)
-            if protocol is not None:
-                self.protocols.add(protocol)
         return StrategyInfo(
             [protocol.name for protocol in self.protocols], list(set(tokens))
         )
