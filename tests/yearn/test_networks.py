@@ -29,7 +29,7 @@ def test_call(network, address):
     assert value == 2000
 
 
-@pytest.mark.parametrize("num_blocks", [10000])
+@pytest.mark.parametrize("num_blocks", [100000])
 @pytest.mark.parametrize("network, address", [USDC_VAULT, WFTM_VAULT, CRV3_VAULT])
 def test_fetch_events(network, address, num_blocks):
     w3 = Web3Provider(network)
@@ -39,7 +39,7 @@ def test_fetch_events(network, address, num_blocks):
     assert len(events) > 0
 
 
-@pytest.mark.parametrize("num_blocks", [10000])
+@pytest.mark.parametrize("num_blocks", [100000])
 @pytest.mark.parametrize("network, address", [USDC_VAULT, WFTM_VAULT, CRV3_VAULT])
 def test_erc20_tokens(network, address, num_blocks):
     w3 = Web3Provider(network)
@@ -53,10 +53,3 @@ def test_erc20_tokens(network, address, num_blocks):
 def test_get_usdc_price(network, address):
     w3 = Web3Provider(network)
     assert w3.get_usdc_price(address) > 0
-
-
-@pytest.mark.parametrize("network, address", [USDC_MAINNET, USDC_FANTOM, USDC_ARBITRUM])
-def test_get_labels(network, address):
-    w3 = Web3Provider(network)
-    labels = w3.get_scan_labels(address)
-    assert any(["Token" in label for label in labels])
