@@ -21,6 +21,7 @@ env/
 venv/
 
 *.db
+*.sqlite3
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
