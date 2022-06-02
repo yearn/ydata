@@ -23,6 +23,8 @@ services:
       - ETHERSCAN_TOKEN
       - FTM_PROVIDER
       - FTMSCAN_TOKEN
+      - ARB_PROVIDER
+      - ARBISCAN_TOKEN
       - DATABASE_URI
 
 volumes:

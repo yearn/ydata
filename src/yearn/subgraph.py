@@ -39,6 +39,10 @@ class Subgraph:
             endpoint = (
                 "https://api.thegraph.com/subgraphs/name/yearn/yearn-vaults-v2-fantom"
             )
+        elif network == Network.Arbitrum:
+            endpoint = (
+                "https://api.thegraph.com/subgraphs/name/yearn/yearn-vaults-v2-arbitrum"
+            )
         transport = RequestsHTTPTransport(url=endpoint)
         self.client = Client(transport=transport, fetch_schema_from_transport=True)
 

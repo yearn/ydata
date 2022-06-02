@@ -123,9 +123,6 @@ def __do_commits(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
 
             logger.info(f"Updating vault {vault.name} on {vault.network.name}")
 
-            # ====================
-            # Risk Framework
-            # ====================
             # vault-level data
             __commit_vault(vault, risk)
 

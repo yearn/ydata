@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 class Network(IntEnum):
     Mainnet = 1
     Fantom = 250
+    Arbitrum = 42161
 
 
 class Web3Provider:
@@ -50,6 +51,14 @@ class Web3Provider:
                 f"https://api.ftmscan.com/api?&apiKey={os.environ['FTMSCAN_TOKEN']}"
             )
             self.oracle = "0x57aa88a0810dfe3f9b71a9b179dd8bf5f956c46a"
+        elif network == Network.Arbitrum:
+            provider = os.environ["ARB_PROVIDER"]
+            self.scan_url = "https://arbiscan.io"
+            self.endpoint = (
+                f"https://api.arbiscan.io/api?&apiKey={os.environ['ARBISCAN_TOKEN']}"
+            )
+            self.oracle = "0x043518ab266485dc085a1db095b8d9c2fc78e9b9"
+
         self.provider = Web3(Web3.HTTPProvider(provider))
 
     def fetch_abi(self, address: str) -> List[Dict]:
