@@ -2,9 +2,8 @@ import logging
 from dataclasses import dataclass
 from typing import Dict, Union
 
-import requests
-
 from src.constants import DSAFETY_API_ENDPOINT
+from src.utils.network import client, parse_json
 from src.yearn import Protocol, get_protocol
 
 logger = logging.getLogger(__name__)
@@ -65,14 +64,14 @@ class DeFiSafety:
         no_data = False
         while not no_data:
             url = DSAFETY_API_ENDPOINT + "&offset=" + str(offset)
-            response = requests.get(url)
-            if response.status_code == 200:
-                data = response.json()["data"]
-                no_data = len(data) == 0
-                pqrs.extend(data)
-                offset += 20
-            else:
+            response = client('get', url)
+            jsoned = parse_json(response)
+            if jsoned is None:
                 break
+            data = jsoned["data"]
+            no_data = len(data) == 0
+            pqrs.extend(data)
+            offset += 20
         self._scores = {}
         for pqr in pqrs:
             protocol_name = pqr["title"]

@@ -2,10 +2,8 @@ import logging
 from dataclasses import dataclass
 from typing import Dict, List, Literal, Set, TypedDict, Union
 
-import requests
-from requests.exceptions import HTTPError
-
 from src.constants import META_ENDPOINT, YEARN_V1_API_ENDPOINT
+from src.utils.network import client, parse_json
 from src.yearn.networks import Network
 from src.yearn.protocols import Protocol, get_protocol
 from src.yearn.strategies import Strategy
@@ -105,28 +103,22 @@ class Yearn:
     def fetch_vaults(self) -> Union[List[VaultData], Dict]:
         # fetch data from api
         url = YEARN_V1_API_ENDPOINT + f"/{self.network}/vaults/all"
-        try:
-            response = requests.get(url)
-        except HTTPError:
+        response = client('get', url)
+        jsoned = parse_json(response)
+        if jsoned is None:
             logger.error(f"Failed to load vaults for {self.network.name}")
             return {}
-        if response.status_code != 200:
-            logger.error(f"Failed to load vaults for {self.network.name}")
-            return {}
-        return response.json()
+        return jsoned
 
     def fetch_strategy_metadata(self) -> Union[List[StrategyMeta], Dict]:
         # fetch strategy metadata
         url = META_ENDPOINT + f"/strategies/{self.network}/all"
-        try:
-            response = requests.get(url)
-        except HTTPError:
+        response = client('get', url)
+        jsoned = parse_json(response)
+        if jsoned is None:
             logger.error(f"Failed to load metadata for {self.network.name}")
             return {}
-        if response.status_code != 200:
-            logger.error(f"Failed to load metadata for {self.network.name}")
-            return {}
-        return response.json()
+        return jsoned
 
     def map_strategy_protocols(self) -> Dict[str, Set[Protocol]]:
         # map strategy protocols
