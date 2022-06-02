@@ -49,7 +49,10 @@ class Strategy:
         else:
             vault_address = self.vault.address
         params = w3.call(vault_address, "strategies", self.address)
-        return Decimal(time.time()) - params[1]  # activation
+        if params is not None:
+            return Decimal(time.time()) - params[1]  # activation
+        else:
+            return Decimal(0)
 
     @property
     def tvl(self) -> Decimal:
