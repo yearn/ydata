@@ -3,11 +3,8 @@ import logging
 import os
 from decimal import Decimal
 from enum import IntEnum
-from json import JSONDecodeError
 from typing import Dict, List, Literal, Union
 
-import requests
-from requests.exceptions import HTTPError
 from web3 import Web3
 from web3._utils.events import get_event_data
 from web3._utils.filters import construct_event_filter_params
@@ -16,6 +13,7 @@ from web3.datastructures import AttributeDict
 from web3.exceptions import ContractLogicError
 
 from src.constants import BLOCK_SIZE, HEADERS, MAX_BLOCK, USDC_DECIMALS
+from src.utils.network import client, parse_json
 
 logger = logging.getLogger(__name__)
 
@@ -64,11 +62,13 @@ class Web3Provider:
     def fetch_abi(self, address: str) -> List[Dict]:
         address = Web3.toChecksumAddress(address)
         params = {"address": address, "module": "contract", "action": "getabi"}
-        response = requests.get(self.endpoint, params)
-        if response.status_code != 200:
-            logger.debug(f"Failed to fetch abi from address={address}")
-            response.raise_for_status()
-        abi = response.json()["result"]
+        response = client('get', self.endpoint, params=params)
+        jsoned = parse_json(response)
+        if jsoned is None:
+            msg = f"Failed to fetch abi from address={address}"
+            logger.debug(msg)
+            raise ValueError(msg)
+        abi = jsoned["result"]
         return json.loads(abi)
 
     def get_contract(self, address: str) -> Union[Contract, None]:
@@ -76,7 +76,7 @@ class Web3Provider:
             abi = self.fetch_abi(address)
             address = Web3.toChecksumAddress(address)
             return self.provider.eth.contract(address=address, abi=abi)
-        except (JSONDecodeError, HTTPError):
+        except ValueError:
             logger.error(f"Failed to fetch contract for {address}")
         return None
 
@@ -152,11 +152,13 @@ class Web3Provider:
             "startblock": str(from_block),
             "endblock": str(to_block),
         }
-        response = requests.get(self.endpoint, params)
-        if response.status_code != 200:
-            logger.debug(f"Failed to fetch erc20 transfers from address={address}")
-            response.raise_for_status()
-        txns = response.json()["result"]
+        response = client('get', self.endpoint, params=params)
+        jsoned = parse_json(response)
+        if jsoned is None:
+            msg = f"Failed to fetch erc20 transfers from address={address}"
+            logger.debug(msg)
+            raise ValueError(msg)
+        txns = jsoned["result"]
 
         # get the tokens that were handled by the strategy
         result = set({})
@@ -179,12 +181,8 @@ class Web3Provider:
 
     def get_scan_labels(self, address: str) -> List[str]:
         url = self.scan_url + f"/address/{address}"
-        try:
-            response = requests.get(url, headers=HEADERS)
-        except HTTPError:
-            logger.debug(f"Failed to get labels from address={address}")
-            return []
-        if response.status_code != 200:
+        response = client('get', url, headers=HEADERS)
+        if response is None:
             logger.debug(f"Failed to get labels from address={address}")
             return []
         text = response.text
