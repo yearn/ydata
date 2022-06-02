@@ -172,12 +172,15 @@ class Web3Provider:
         self, token_address: str, block: Union[int, Literal["latest"]] = "latest"
     ) -> Decimal:
         token_address = Web3.toChecksumAddress(token_address)
-        usdc_price = Decimal(
-            self.call(
-                self.oracle, "getPriceUsdcRecommended", token_address, block=block
-            )
+        usdc_price = self.call(
+            self.oracle, "getPriceUsdcRecommended", token_address, block=block
         )
-        return usdc_price / Decimal(10**USDC_DECIMALS)
+        if usdc_price is not None:
+            return Decimal(usdc_price) / Decimal(10**USDC_DECIMALS)
+        else:
+            msg = f"Failed to fetch usdc price for token={token_address}"
+            logger.error(msg)
+        return Decimal(0)
 
     def get_scan_labels(self, address: str) -> List[str]:
         url = self.scan_url + f"/address/{address}"
