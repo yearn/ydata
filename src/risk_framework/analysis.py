@@ -6,6 +6,7 @@ from typing import Dict, List, Union
 import jsons
 import pandas as pd
 
+from src.constants import RISK_FRAMEWORK
 from src.risk_framework.defi_safety import DeFiSafety
 from src.risk_framework.scores import (
     StrategyRiskScores,
@@ -17,8 +18,6 @@ from src.utils.network import client, parse_json
 from src.yearn import Network, Strategy, Vault
 
 logger = logging.getLogger(__name__)
-
-from src.constants import RISK_FRAMEWORK
 
 
 @dataclass

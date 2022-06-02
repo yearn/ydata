@@ -21,9 +21,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 retry_strategy = Retry(
-    total=3,
-    backoff_factor=2,
-    status_forcelist=[429, 500, 502, 503, 504],
+    total=REQUESTS_RETRY_TIMES,
+    backoff_factor=REQUESTS_BACKOFF_FACTOR,
+    status_forcelist=REQUESTS_STATUS_FORCELIST,
 )
 
 session = requests.Session()
@@ -37,12 +37,15 @@ session.mount("http://", adapter)
 def client(
     method: Literal['get', 'options', 'head', 'post', 'put', 'patch', 'delete'],
     url: str,
-    *args,
     **kwargs,
 ) -> Optional[requests.Response]:
     try:
         response = session.request(
-            method=method.upper(), url=url, timeout=5, *args, **kwargs
+            method=method.upper(),
+            url=url,
+            timeout=REQUESTS_TIMEOUT,
+            headers=kwargs.get("headers"),
+            params=kwargs.get("params"),
         )
         response.raise_for_status()
         return response
@@ -54,6 +57,7 @@ def client(
         logger.error(f"Timeout error: {err_timeout}")
     except requests.exceptions.RequestException as err:
         logger.error(f"Something went wrong: {err}")
+    return None
 
 
 def parse_json(response: Optional[requests.Response]) -> Optional[Any]:
