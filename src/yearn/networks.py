@@ -83,7 +83,11 @@ class Web3Provider:
             logger.error(msg)
             raise ValueError(msg)
         abi = jsoned["result"]
-        return json.loads(abi)
+        try:
+            return json.loads(abi)
+        except Exception as e:
+            logger.error(abi)
+            raise e
 
     def get_contract(self, address: str) -> Union[Contract, None]:
         try:
@@ -97,7 +101,7 @@ class Web3Provider:
         except JSONDecodeError:
             if self._retries < self.max_retries:
                 self._retries += 1
-                msg = f"Max rate limit reached. Retrying in {self._backoff} seconds ({self._retries}/{self.max_retries})"
+                msg = f"Retrying in {self._backoff} seconds ({self._retries}/{self.max_retries})"
                 logger.error(msg)
                 time.sleep(self._backoff)
                 self._backoff *= 2
@@ -200,9 +204,10 @@ class Web3Provider:
             self._retries = 0
             self._backoff = self.init_backoff
         except TypeError:
+            logger.error(txns)
             if self._retries < self.max_retries:
                 self._retries += 1
-                msg = f"Max rate limit reached. Retrying in {self._backoff} seconds ({self._retries}/{self.max_retries})"
+                msg = f"Retrying in {self._backoff} seconds ({self._retries}/{self.max_retries})"
                 logger.error(msg)
                 time.sleep(self._backoff)
                 self._backoff *= 2
