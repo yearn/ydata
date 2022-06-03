@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from dataclasses import dataclass
@@ -6,7 +7,6 @@ from typing import Dict, List, Union
 import jsons
 import pandas as pd
 
-from src.constants import RISK_FRAMEWORK
 from src.risk_framework.defi_safety import DeFiSafety
 from src.risk_framework.scores import (
     StrategyRiskScores,
@@ -14,7 +14,6 @@ from src.risk_framework.scores import (
     longevity_impact,
     tvl_impact,
 )
-from src.utils.network import client, parse_json
 from src.yearn import Network, Strategy, Vault
 
 logger = logging.getLogger(__name__)
@@ -48,14 +47,10 @@ class RiskAnalysis:
         self.defi_safety = DeFiSafety()
 
         # risk framework scores
-        # XXX: currently fetching the json file from the ywatch repo
-        response = client('get', RISK_FRAMEWORK)
-        jsoned = parse_json(response)
-        if jsoned is None:
-            msg = "Failed to load the risk framework"
-            logger.debug(msg)
-            raise ValueError(msg)
-        self._risk_groups = [RiskGroup(**group) for group in jsoned]
+        risks_path = os.path.join(os.path.dirname(__file__), "risks.json")
+        with open(risks_path) as f:
+            risks = json.load(f)
+        self._risk_groups = [RiskGroup(**group) for group in risks]
 
         # risk weights
         self._risk_weights = pd.read_csv(
