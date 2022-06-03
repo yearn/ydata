@@ -1,8 +1,10 @@
 import json
 import logging
 import os
+import time
 from decimal import Decimal
 from enum import IntEnum
+from json.decoder import JSONDecodeError
 from typing import Dict, List, Literal, Union
 
 from web3 import Web3
@@ -12,7 +14,13 @@ from web3.contract import Contract
 from web3.datastructures import AttributeDict
 from web3.exceptions import ContractLogicError
 
-from src.constants import BLOCK_SIZE, MAX_BLOCK, USDC_DECIMALS
+from src.constants import (
+    BLOCK_SIZE,
+    MAX_BLOCK,
+    REQUESTS_BACKOFF_FACTOR,
+    REQUESTS_RETRY_TIMES,
+    USDC_DECIMALS,
+)
 from src.utils.network import client, parse_json
 
 logger = logging.getLogger(__name__)
@@ -59,6 +67,12 @@ class Web3Provider:
 
         self.provider = Web3(Web3.HTTPProvider(provider))
 
+        # retry for rate limit
+        self.max_retries = REQUESTS_RETRY_TIMES
+        self.init_backoff = REQUESTS_BACKOFF_FACTOR / 2
+        self._retries = 0
+        self._backoff = self.init_backoff
+
     def fetch_abi(self, address: str) -> List[Dict]:
         address = Web3.toChecksumAddress(address)
         params = {"address": address, "module": "contract", "action": "getabi"}
@@ -75,9 +89,25 @@ class Web3Provider:
         try:
             abi = self.fetch_abi(address)
             address = Web3.toChecksumAddress(address)
-            return self.provider.eth.contract(address=address, abi=abi)
-        except ValueError:
-            logger.error(f"Failed to fetch contract for {address}")
+            contract = self.provider.eth.contract(address=address, abi=abi)
+            self._retries = 0
+            self._backoff = self.init_backoff
+            return contract
+
+        except JSONDecodeError:
+            if self._retries < self.max_retries:
+                self._retries += 1
+                msg = f"Max rate limit reached. Retrying in {self._backoff} seconds ({self._retries}/{self.max_retries})"
+                logger.error(msg)
+                time.sleep(self._backoff)
+                self._backoff *= 2
+                return self.get_contract(address)
+            else:
+                logger.error(f"Maximum number of retries reached.")
+                self._retries = 0
+                self._backoff = self.init_backoff
+
+        logger.error(f"Failed to fetch contract for {address}")
         return None
 
     def call(
@@ -162,12 +192,25 @@ class Web3Provider:
 
         # get the tokens that were handled by the strategy
         result = set({})
-        for tx in txns:
-            try:
+        try:
+            for tx in txns:
                 if tx["from"].lower() == address.lower():
                     token_address = tx["contractAddress"]
                     result.add(token_address.lower())
-            except TypeError:
+            self._retries = 0
+            self._backoff = self.init_backoff
+        except TypeError:
+            if self._retries < self.max_retries:
+                self._retries += 1
+                msg = f"Max rate limit reached. Retrying in {self._backoff} seconds ({self._retries}/{self.max_retries})"
+                logger.error(msg)
+                time.sleep(self._backoff)
+                self._backoff *= 2
+                return self.erc20_tokens(address, from_block, to_block)
+            else:
+                logger.error(f"Maximum number of retries reached.")
+                self._retries = 0
+                self._backoff = self.init_backoff
                 msg = f"Failed to fetch erc20 transfers from address={address}"
                 logger.error(msg)
                 return []
