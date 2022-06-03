@@ -4,7 +4,7 @@ services:
   fastapi:
     build:
       context: ./
-      dockerfile: ./src/fastapi/Dockerfile
+      dockerfile: ./src/services/fastapi/Dockerfile
     ports:
       - 80:8000
     volumes:
@@ -15,7 +15,7 @@ services:
   api_cache:
     build:
       context: ./
-      dockerfile: ./src/api_cache/Dockerfile
+      dockerfile: ./src/services/api_cache/Dockerfile
     volumes:
       - database:/data
     environment:

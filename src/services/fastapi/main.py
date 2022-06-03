@@ -3,10 +3,10 @@ import os
 from enum import Enum
 
 from dotenv import load_dotenv
-from sqlmodel import Session, create_engine, select
-
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse, Response
+from sqlmodel import Session, create_engine, select
+
 from src.models import Strategy, Vault, create_id
 
 load_dotenv()

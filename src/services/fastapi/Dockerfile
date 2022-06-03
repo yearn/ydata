@@ -10,6 +10,7 @@ RUN export PATH=$HOME/.local/bin:$PATH \
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi
 
-WORKDIR /app/src/api_cache
+WORKDIR /app/src/services/fastapi
 
-CMD ["python", "main.py"]
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]
