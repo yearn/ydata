@@ -10,6 +10,9 @@ BLOCK_SIZE = 100000
 MAX_BLOCK = 99999999
 USDC_DECIMALS = 6
 
+# imported into risk_framework/analysis.py
+RISK_FRAMEWORK = "https://raw.githubusercontent.com/yearn/yearn-data-analytics/master/src/risk_framework/risks.json"
+
 # imported into risk_framework/defi_safety.py
 DSAFETY_API_ENDPOINT = (
     "https://www.defisafety.com/api/pqrs?status=Active&reviewStatus=Completed"
