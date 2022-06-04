@@ -5,14 +5,7 @@ from dotenv import load_dotenv
 
 from src.risk_framework import RiskAnalysis
 
-from .tst_risk_framework_constants import (
-    CRV3_VAULT,
-    CRV_VAULT,
-    STRAT1,
-    STRAT2,
-    STRAT3,
-    USDC_VAULT,
-)
+from ..constants import CRV3_VAULT, CRV_VAULT, STRAT1, STRAT2, STRAT3, USDC_VAULT
 
 load_dotenv()
 

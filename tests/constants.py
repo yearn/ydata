@@ -1,20 +1,21 @@
+from src.risk_framework.scores import StrategyRiskScores, VaultRiskScores
 from src.yearn import Network, Strategy, Yearn
 from src.yearn.protocols import Protocol, ProtocolList
 
-# import into test_networks
-USDC_VAULT = (Network.Mainnet, "0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE")
-WFTM_VAULT = (Network.Fantom, "0x0DEC85e74A92c52b7F708c4B10207D9560CEFaf0")
-CRV3_VAULT = (Network.Arbitrum, "0x239e14A19DFF93a17339DCC444f74406C17f8E67")
+# imported into utils/test_web3
+USDC_VAULT_ADDRESS = (Network.Mainnet, "0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE")
+WFTM_VAULT_ADDRESS = (Network.Fantom, "0x0DEC85e74A92c52b7F708c4B10207D9560CEFaf0")
+CRV3_VAULT_ADDRESS = (Network.Arbitrum, "0x239e14A19DFF93a17339DCC444f74406C17f8E67")
 
 USDC_MAINNET = (Network.Mainnet, "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
 USDC_FANTOM = (Network.Fantom, "0x04068da6c83afcfa0e13ba15a6696662335d5b75")
 USDC_ARBITRUM = (Network.Arbitrum, "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8")
 
-# imported into test_protocols
+# imported into yearn/test_protocols
 AAVE_V3 = ProtocolList[ProtocolList.index(Protocol("Aave"))]
 AAVE_V2 = ProtocolList[ProtocolList.index(Protocol("Aave V2"))]
 
-# import into test_strategies
+# imported into yearn/test_strategies
 STRAT1 = Strategy(
     Network.Mainnet, "0x1676055fE954EE6fc388F9096210E5EbE0A9070c", "GenLevCompV3"
 )
@@ -30,9 +31,9 @@ STRAT3 = Strategy(
 )
 DAYS = 60 * 60 * 24
 
-# imported into test_vaults
+# imported into yearn/test_vaults, risk_framework/test_analysis
 YEARN_MAINNET = Yearn(Network.Mainnet)
-VLT_USDC_VAULT = [
+USDC_VAULT = [
     vault
     for vault in YEARN_MAINNET.vaults
     if vault.address == "0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE"
@@ -46,13 +47,12 @@ CRV_VAULT = [
 ][0]
 
 YEARN_ARBITRUM = Yearn(Network.Arbitrum)
-VLT_CRV3_VAULT = [
+CRV3_VAULT = [
     vault
     for vault in YEARN_ARBITRUM.vaults
     if vault.address == "0x239e14A19DFF93a17339DCC444f74406C17f8E67"
 ][0]
 
-# imported into test_yearn
-YEARN_MAINNET = Yearn(Network.Mainnet)
-YEARN_FANTOM = Yearn(Network.Fantom)
-YEARN_ARBITRUM = Yearn(Network.Arbitrum)
+# imported into risk_framework/test_scores
+STRAT_SCORE = StrategyRiskScores(1, 2, 1, 2, 1, 2, 1, 2)
+VAULT_SCORE = VaultRiskScores(1, 1, 1, 1, 1, 5)

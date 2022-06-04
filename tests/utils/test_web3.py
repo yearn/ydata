@@ -1,28 +1,35 @@
 import pytest
 from dotenv import load_dotenv
 
-from src.yearn import Web3Provider
+from src.utils.web3 import Web3Provider
 
-from .tst_yearn_constants import (
-    CRV3_VAULT,
+from ..constants import (
+    CRV3_VAULT_ADDRESS,
     USDC_ARBITRUM,
     USDC_FANTOM,
     USDC_MAINNET,
-    USDC_VAULT,
-    WFTM_VAULT,
+    USDC_VAULT_ADDRESS,
+    WFTM_VAULT_ADDRESS,
 )
 
 load_dotenv()
 
+addresses = [USDC_VAULT_ADDRESS, WFTM_VAULT_ADDRESS, CRV3_VAULT_ADDRESS]
+usdc = [
+    USDC_MAINNET,
+    USDC_FANTOM,
+    USDC_ARBITRUM,
+]
 
-@pytest.mark.parametrize("network, address", [USDC_VAULT, WFTM_VAULT, CRV3_VAULT])
+
+@pytest.mark.parametrize("network, address", addresses)
 def test_fetch_abi(network, address):
     w3 = Web3Provider(network)
     abi = w3.fetch_abi(address)
     assert any([f["name"] == "Transfer" for f in abi])
 
 
-@pytest.mark.parametrize("network, address", [USDC_VAULT, WFTM_VAULT, CRV3_VAULT])
+@pytest.mark.parametrize("network, address", addresses)
 def test_call(network, address):
     w3 = Web3Provider(network)
     value = w3.call(address, "performanceFee")
@@ -30,7 +37,7 @@ def test_call(network, address):
 
 
 @pytest.mark.parametrize("num_blocks", [100000])
-@pytest.mark.parametrize("network, address", [USDC_VAULT, WFTM_VAULT, CRV3_VAULT])
+@pytest.mark.parametrize("network, address", addresses)
 def test_fetch_events(network, address, num_blocks):
     w3 = Web3Provider(network)
     current_block = w3.provider.eth.get_block_number()
@@ -40,7 +47,7 @@ def test_fetch_events(network, address, num_blocks):
 
 
 @pytest.mark.parametrize("num_blocks", [100000])
-@pytest.mark.parametrize("network, address", [USDC_VAULT, WFTM_VAULT, CRV3_VAULT])
+@pytest.mark.parametrize("network, address", addresses)
 def test_erc20_tokens(network, address, num_blocks):
     w3 = Web3Provider(network)
     current_block = w3.provider.eth.get_block_number()
@@ -49,7 +56,7 @@ def test_erc20_tokens(network, address, num_blocks):
     assert len(addresses) > 0
 
 
-@pytest.mark.parametrize("network, address", [USDC_MAINNET, USDC_FANTOM, USDC_ARBITRUM])
+@pytest.mark.parametrize("network, address", usdc)
 def test_get_usdc_price(network, address):
     w3 = Web3Provider(network)
     assert w3.get_usdc_price(address) > 0
