@@ -97,10 +97,10 @@ def retry(
                     msg = exception_handler(*args, **kwargs) if exception_handler else e
                     msg_with_retry = f"{msg}; Retrying in {backoff_time} seconds ({fn_call_count}/{retries})"
                     if is_not_last_call:
-                        logger.error(msg_with_retry, exc_info=True)
+                        logger.error(msg_with_retry)
                         time.sleep(backoff_time)
                     else:
-                        logger.error(msg, exc_info=True)
+                        logger.error(msg)
 
             return None
 
