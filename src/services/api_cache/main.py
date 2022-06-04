@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from requests.exceptions import HTTPError
 from sqlmodel import Session, SQLModel, create_engine
 
-from src.models import Strategy, Vault, create_id
+from src.models import RiskGroup, Strategy, Vault, create_id
 from src.risk_framework import RiskAnalysis
 from src.utils.network import retry
 from src.yearn import Network
@@ -90,6 +90,40 @@ def __commit_vault(vault: TVault, risk: RiskAnalysis) -> None:
         session.commit()
 
 
+@retry(retries=0)
+def __commit_risk_group(risk: RiskAnalysis) -> None:
+    with Session(engine) as session:
+        for group in risk.risk_groups:
+            _group = session.get(RiskGroup, group.id)
+            if _group is None:
+                session.add(
+                    RiskGroup(
+                        id=group.id,
+                        network=group.network,
+                        label=group.label,
+                        auditScore=group.auditScore,
+                        codeReviewScore=group.codeReviewScore,
+                        testingScore=group.testingScore,
+                        protocolSafetyScore=group.protocolSafetyScore,
+                        complexityScore=group.complexityScore,
+                        teamKnowledgeScore=group.teamKnowledgeScore,
+                        criteria=group.criteria,
+                    )
+                )
+            else:
+                _group.network = group.network
+                _group.label = group.label
+                _group.auditScore = group.auditScore
+                _group.codeReviewScore = group.codeReviewScore
+                _group.testingScore = group.testingScore
+                _group.protocolSafetyScore = group.protocolSafetyScore
+                _group.complexityScore = group.complexityScore
+                _group.teamKnowledgeScore = group.teamKnowledgeScore
+                _group.criteria = group.criteria
+                session.add(_group)
+            session.commit()
+
+
 def __refresh(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
     logger.info("Refreshing data for all chains")
     for yearn in yearn_chains:
@@ -101,6 +135,10 @@ def __refresh(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
 def __do_commits(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
     # refresh data
     __refresh(yearn_chains, risk)
+
+    # export the risk framework json file
+    logger.info(f"Updating risk groups")
+    __commit_risk_group(risk)
 
     for yearn in yearn_chains:
         for vault in yearn.vaults:

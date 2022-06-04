@@ -36,7 +36,7 @@ class RiskGroup:
 
 class RiskAnalysis:
     defi_safety: DeFiSafety
-    _risk_groups: List[RiskGroup]
+    risk_groups: List[RiskGroup]
     _risk_weights: pd.DataFrame
 
     """
@@ -54,7 +54,7 @@ class RiskAnalysis:
             msg = "Failed to load the risk framework"
             logger.debug(msg)
             raise ValueError(msg)
-        self._risk_groups = [RiskGroup(**group) for group in jsoned]
+        self.risk_groups = [RiskGroup(**group) for group in jsoned]
 
         # risk weights
         self._risk_weights = pd.read_csv(
@@ -70,7 +70,7 @@ class RiskAnalysis:
             msg = "Failed to load the risk framework"
             logger.debug(msg)
             raise ValueError(msg)
-        self._risk_groups = [RiskGroup(**group) for group in jsoned]
+        self.risk_groups = [RiskGroup(**group) for group in jsoned]
 
     def scores(
         self, product: Union[Strategy, Vault]
@@ -83,7 +83,7 @@ class RiskAnalysis:
             raise TypeError("product must be either a strategy or a vault")
 
     def __strategy_scores(self, strategy: Strategy) -> StrategyRiskScores:
-        for group in self._risk_groups:
+        for group in self.risk_groups:
             if group.network != strategy.network:
                 continue
             name = strategy.name.lower()

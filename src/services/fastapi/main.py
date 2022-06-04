@@ -7,7 +7,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse, Response
 from sqlmodel import Session, create_engine, select
 
-from src.models import Strategy, Vault, create_id
+from src.models import RiskGroup, Strategy, Vault, create_id
 
 load_dotenv()
 
@@ -16,8 +16,9 @@ app = FastAPI()
 
 
 class Tags(Enum):
-    vaults = "vaults"
-    strategies = "strategies"
+    vaults = "Vaults"
+    strategies = "Strategies"
+    riskGroups = "Risk Groups"
 
 
 @app.get("/", include_in_schema=False)
@@ -95,3 +96,22 @@ def get_strategy(chain_id, address):
     if strategy is None:
         raise HTTPException(status_code=404, detail="Address not found")
     return json.loads(strategy.info)
+
+
+@app.get("/api/riskgroups", tags=[Tags.riskGroups])
+def get_all_risk_groups():
+    """Fetch all risk groups"""
+    with Session(engine) as session:
+        query = select(RiskGroup)
+        groups = session.exec(query).all()
+    return groups
+
+
+@app.get("/api/riskgroups/{group_id}", tags=[Tags.riskGroups])
+def get_risk_group(group_id):
+    """Fetch a specific risk group"""
+    with Session(engine) as session:
+        group = session.get(RiskGroup, group_id)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group ID not found")
+    return group
