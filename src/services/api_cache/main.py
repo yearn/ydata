@@ -3,8 +3,7 @@ import logging
 import os
 import signal
 import sys
-from functools import wraps
-from typing import Any, Callable, List, Optional, Type
+from typing import Any, List
 
 from dotenv import load_dotenv
 from requests.exceptions import HTTPError
@@ -12,6 +11,7 @@ from sqlmodel import Session, SQLModel, create_engine
 
 from src.models import Strategy, Vault, create_id
 from src.risk_framework import RiskAnalysis
+from src.utils.network import retry
 from src.yearn import Network
 from src.yearn import Strategy as TStrategy
 from src.yearn import Vault as TVault
@@ -36,26 +36,10 @@ def handle_signal(*args: Any) -> None:
     sys.exit()
 
 
-def handle_exception(
-    exception: Type[Exception] = Exception,
-    handler: Optional[Callable[[Any], str]] = None,
-) -> Callable:
-    def decorator(fn: Callable) -> Callable:
-        @wraps(fn)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            try:
-                return fn(*args, **kwargs)
-            except exception as e:
-                msg = handler(*args, **kwargs) if handler else e
-                logger.error(msg, exc_info=True)
-
-        return wrapper
-
-    return decorator
-
-
-@handle_exception(
-    HTTPError, lambda strategy: f"Failed to fetch data from strategy {strategy.name}"
+@retry(
+    retries=0,
+    exception=HTTPError,
+    exception_handler=lambda strategy: f"Failed to fetch data from strategy {strategy.name}",
 )
 def __commit_strategy(strategy: TStrategy, risk: RiskAnalysis) -> None:
     strategy_info = risk.describe(strategy)
@@ -79,8 +63,10 @@ def __commit_strategy(strategy: TStrategy, risk: RiskAnalysis) -> None:
         session.commit()
 
 
-@handle_exception(
-    HTTPError, lambda vault: f"Failed to fetch data from vault {vault.name}"
+@retry(
+    retries=0,
+    exception=HTTPError,
+    exception_handler=lambda vault: f"Failed to fetch data from vault {vault.name}",
 )
 def __commit_vault(vault: TVault, risk: RiskAnalysis) -> None:
     vault_info = risk.describe(vault)
@@ -111,7 +97,7 @@ def __refresh(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
     risk.refresh()
 
 
-@handle_exception()
+@retry(retries=0)
 def __do_commits(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
     # refresh data
     __refresh(yearn_chains, risk)

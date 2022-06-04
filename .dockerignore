@@ -1,4 +1,5 @@
 .env
+.env.example
 *.log
 .cache
 .DS_Store

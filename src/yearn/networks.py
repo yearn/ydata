@@ -1,11 +1,10 @@
 import json
 import logging
 import os
-import time
 from decimal import Decimal
 from enum import IntEnum
 from json.decoder import JSONDecodeError
-from typing import Dict, List, Literal, Union
+from typing import Literal, Optional, Union
 
 from web3 import Web3
 from web3._utils.events import get_event_data
@@ -14,14 +13,8 @@ from web3.contract import Contract
 from web3.datastructures import AttributeDict
 from web3.exceptions import ContractLogicError
 
-from src.constants import (
-    BLOCK_SIZE,
-    MAX_BLOCK,
-    REQUESTS_BACKOFF_FACTOR,
-    REQUESTS_RETRY_TIMES,
-    USDC_DECIMALS,
-)
-from src.utils.network import client, parse_json
+from src.constants import BLOCK_SIZE, MAX_BLOCK, USDC_DECIMALS
+from src.utils.network import client, parse_json, retry
 
 logger = logging.getLogger(__name__)
 
@@ -67,13 +60,7 @@ class Web3Provider:
 
         self.provider = Web3(Web3.HTTPProvider(provider))
 
-        # retry for rate limit
-        self.max_retries = REQUESTS_RETRY_TIMES
-        self.init_backoff = REQUESTS_BACKOFF_FACTOR / 2
-        self._retries = 0
-        self._backoff = self.init_backoff
-
-    def fetch_abi(self, address: str) -> List[Dict]:
+    def fetch_abi(self, address: str) -> list[dict]:
         address = Web3.toChecksumAddress(address)
         params = {"address": address, "module": "contract", "action": "getabi"}
         response = client('get', self.endpoint, params=params)
@@ -83,36 +70,17 @@ class Web3Provider:
             logger.error(msg)
             raise ValueError(msg)
         abi = jsoned["result"]
-        try:
-            return json.loads(abi)
-        except Exception as e:
-            logger.error(abi)
-            raise e
+        return json.loads(abi)
 
-    def get_contract(self, address: str) -> Union[Contract, None]:
-        try:
-            abi = self.fetch_abi(address)
-            address = Web3.toChecksumAddress(address)
-            contract = self.provider.eth.contract(address=address, abi=abi)
-            self._retries = 0
-            self._backoff = self.init_backoff
-            return contract
-
-        except JSONDecodeError:
-            if self._retries < self.max_retries:
-                self._retries += 1
-                msg = f"Retrying in {self._backoff} seconds ({self._retries}/{self.max_retries})"
-                logger.error(msg)
-                time.sleep(self._backoff)
-                self._backoff *= 2
-                return self.get_contract(address)
-            else:
-                logger.error(f"Maximum number of retries reached.")
-                self._retries = 0
-                self._backoff = self.init_backoff
-
-        logger.error(f"Failed to fetch contract for {address}")
-        return None
+    @retry(
+        exception=JSONDecodeError,
+        exception_handler=lambda self, address: f"Failed to fetch contract for {address}",
+    )
+    def get_contract(self, address: str) -> Optional[Contract]:
+        abi = self.fetch_abi(address)
+        address = Web3.toChecksumAddress(address)
+        contract = self.provider.eth.contract(address=address, abi=abi)
+        return contract
 
     def call(
         self,
@@ -135,7 +103,7 @@ class Web3Provider:
         event_name: str,
         from_block: Union[int, Literal["latest"]] = "latest",
         to_block: Union[int, Literal["latest"]] = "latest",
-    ) -> List[AttributeDict]:
+    ) -> list[AttributeDict]:
         # get event abi
         contract = self.get_contract(address)
         if contract is None:
@@ -176,7 +144,7 @@ class Web3Provider:
         address: str,
         from_block: Union[int, Literal["first"]] = "first",
         to_block: Union[int, Literal["latest"]] = "latest",
-    ) -> List[str]:
+    ) -> list[str]:
         from_block = 0 if from_block == "first" else from_block
         to_block = MAX_BLOCK if to_block == "latest" else to_block
         params = {
@@ -195,30 +163,18 @@ class Web3Provider:
         txns = jsoned["result"]
 
         # get the tokens that were handled by the strategy
+        return self.__parse_erc20_transactions(txns, address)
+
+    @retry(
+        exception=TypeError,
+        exception_handler=lambda self, txns, address: f"Failed to fetch erc20 transfers from address={address}",
+    )
+    def __parse_erc20_transactions(self, txns: list[dict], address: str) -> list[str]:
         result = set({})
-        try:
-            for tx in txns:
-                if tx["from"].lower() == address.lower():
-                    token_address = tx["contractAddress"]
-                    result.add(token_address.lower())
-            self._retries = 0
-            self._backoff = self.init_backoff
-        except TypeError:
-            logger.error(txns)
-            if self._retries < self.max_retries:
-                self._retries += 1
-                msg = f"Retrying in {self._backoff} seconds ({self._retries}/{self.max_retries})"
-                logger.error(msg)
-                time.sleep(self._backoff)
-                self._backoff *= 2
-                return self.erc20_tokens(address, from_block, to_block)
-            else:
-                logger.error(f"Maximum number of retries reached.")
-                self._retries = 0
-                self._backoff = self.init_backoff
-                msg = f"Failed to fetch erc20 transfers from address={address}"
-                logger.error(msg)
-                return []
+        for tx in txns:
+            if tx["from"].lower() == address.lower():
+                token_address = tx["contractAddress"]
+                result.add(token_address.lower())
         return list(result)
 
     def get_usdc_price(
