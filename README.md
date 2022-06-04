@@ -9,7 +9,7 @@ We share the research outputs from the YFI Data Analysis team in [the `research`
 ## Vault-level Risk
 
 API endpoint:
-http://yearn-data-analytics.us-west-2.elasticbeanstalk.com/api
+https://d3971bp2359cnv.cloudfront.net/api
 
 This project aims to provide additional quantitative metrics on top of the existing [Risk Framework](https://github.com/yearn/yearn-watch/blob/main/utils/risks.json), to help discover informative risk measures and collect the data necessary to build the metrics.
 Furthermore, the project also aims to provide aggregated views for Yearn's Vaults and associated DeFi protocols.
