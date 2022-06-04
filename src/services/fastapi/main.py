@@ -4,6 +4,7 @@ from enum import Enum
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse, Response
 from sqlmodel import Session, create_engine, select
 
@@ -12,7 +13,15 @@ from src.models import RiskGroup, Strategy, Vault, create_id
 load_dotenv()
 
 engine = create_engine(os.environ["DATABASE_URI"])
+
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class Tags(Enum):
