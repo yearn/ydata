@@ -1,13 +1,14 @@
 import logging
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Union
 
 from gql import Client, gql
 from gql.transport.exceptions import TransportError
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as requests_logger
 
+from src.utils.network import retry
 from src.yearn.networks import Network
 
 if TYPE_CHECKING:
@@ -46,9 +47,13 @@ class Subgraph:
         transport = RequestsHTTPTransport(url=endpoint)
         self.client = Client(transport=transport, fetch_schema_from_transport=True)
 
+    @retry(
+        exception=TransportError,
+        exception_handler=lambda self, vault, num_accounts: f"Failed to fetch contract for {vault.name}",
+    )
     def top_wallets(
         self, vault: "Vault", num_accounts: int = 10
-    ) -> List[WalletBalance]:
+    ) -> Union[List[WalletBalance], None]:
         query = gql(
             f"""
         {{
@@ -66,14 +71,7 @@ class Subgraph:
         """
         )
         wallets: List[WalletBalance] = []
-        try:
-            response = self.client.execute(query)
-        except TransportError:
-            logger.error(
-                f"Failed to fetch wallet balance from subgraph for {vault.name}"
-            )
-            return wallets
-
+        response = self.client.execute(query)
         for wallet in response.get('accountVaultPositions', []):
             wallets.append(
                 WalletBalance(

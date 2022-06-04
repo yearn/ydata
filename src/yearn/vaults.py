@@ -86,6 +86,8 @@ class Vault:
     def wallets(self) -> List[Tuple[str, Decimal]]:
         subgraph = Subgraph(self.network)
         wallets = subgraph.top_wallets(self, num_accounts=10)
+        if wallets is None:
+            return []
         return [
             (wallet.address, max(Decimal(0), wallet.balanceShares))
             for wallet in wallets

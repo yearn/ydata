@@ -3,8 +3,9 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import List, Set, Union
 
-from src.yearn.networks import Network, Web3Provider
-from src.yearn.protocols import Protocol, get_protocol
+from src.utils.web3 import Web3Provider
+from src.yearn.networks import Network
+from src.yearn.protocols import Protocol
 from src.yearn.vaults import Vault
 
 
