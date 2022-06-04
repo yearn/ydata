@@ -79,7 +79,7 @@ def retry(
     retries: int = REQUESTS_RETRY_TIMES,
     backoff_factor: float = REQUESTS_BACKOFF_FACTOR,
     exception: Type[Exception] = Exception,
-    exception_handler: Optional[Callable[[Any], str]] = None,
+    exception_handler: Optional[Callable[..., str]] = None,
 ) -> Callable:
     def decorator(fn: Callable) -> Callable:
         @wraps(fn)
@@ -95,11 +95,11 @@ def retry(
                     fn_call_count += 1
 
                     msg = exception_handler(*args, **kwargs) if exception_handler else e
+                    msg = f"{msg}; Retrying in {backoff_time} seconds ({fn_call_count}/{retries})"
                     if is_not_last_call:
-                        msg = f"{msg}; Retrying in {backoff_time} seconds ({fn_call_count}/{retries})"
-                    logger.error(msg, exc_info=True)
+                        logger.error(msg, exc_info=True)
+                        time.sleep(backoff_time)
 
-                    is_not_last_call and time.sleep(backoff_time)
             return None
 
         return wrapper

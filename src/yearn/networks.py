@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import time
 from decimal import Decimal
 from enum import IntEnum
 from json.decoder import JSONDecodeError
@@ -71,15 +70,11 @@ class Web3Provider:
             logger.error(msg)
             raise ValueError(msg)
         abi = jsoned["result"]
-        try:
-            return json.loads(abi)
-        except Exception as e:
-            logger.error(abi)
-            raise e
+        return json.loads(abi)
 
     @retry(
         exception=JSONDecodeError,
-        exception_handler=lambda address: f"Failed to fetch contract for {address}",
+        exception_handler=lambda self, address: f"Failed to fetch contract for {address}",
     )
     def get_contract(self, address: str) -> Optional[Contract]:
         abi = self.fetch_abi(address)
@@ -172,7 +167,7 @@ class Web3Provider:
 
     @retry(
         exception=TypeError,
-        exception_handler=lambda address: f"Failed to fetch erc20 transfers from address={address}",
+        exception_handler=lambda self, txns, address: f"Failed to fetch erc20 transfers from address={address}",
     )
     def __parse_erc20_transactions(self, txns: list[dict], address: str) -> list[str]:
         result = set({})
