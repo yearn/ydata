@@ -94,11 +94,12 @@ def __commit_vault(vault: TVault, risk: RiskAnalysis) -> None:
 def __commit_risk_group(risk: RiskAnalysis) -> None:
     with Session(engine) as session:
         for group in risk.risk_groups:
-            _group = session.get(RiskGroup, group.id)
+            group_id = create_id(group.id, group.network)
+            _group = session.get(RiskGroup, group_id)
             if _group is None:
                 session.add(
                     RiskGroup(
-                        id=group.id,
+                        id=group_id,
                         network=group.network,
                         label=group.label,
                         auditScore=group.auditScore,

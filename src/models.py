@@ -3,6 +3,10 @@ from typing import Optional
 from sqlmodel import JSON, Column, Field, SQLModel
 
 
+def create_id(id: str, network: int) -> str:
+    return str(int(network)) + '_' + id.lower()
+
+
 class Vault(SQLModel, table=True):
     id: str = Field(primary_key=True)
     address: str = Field(index=True)
@@ -17,10 +21,6 @@ class Strategy(SQLModel, table=True):
     network: int
     name: str
     info: Optional[str]
-
-
-def create_id(address: str, network: int) -> str:
-    return str(int(network)) + '_' + address.lower()
 
 
 class RiskGroup(SQLModel, table=True):

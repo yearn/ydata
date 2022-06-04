@@ -116,10 +116,20 @@ def get_all_risk_groups():
     return groups
 
 
-@app.get("/api/riskgroups/{group_id}", tags=[Tags.riskGroups])
-def get_risk_group(group_id):
+@app.get("/api/riskgroups/{chain_id}", tags=[Tags.riskGroups])
+def get_network_risk_groups(chain_id):
+    """Fetch risk groups for a specific chain"""
+    with Session(engine) as session:
+        query = select(RiskGroup).where(RiskGroup.network == chain_id)
+        groups = session.exec(query).all()
+    return groups
+
+
+@app.get("/api/riskgroups/{chain_id}/{group_id}", tags=[Tags.riskGroups])
+def get_risk_group(chain_id, group_id):
     """Fetch a specific risk group"""
     with Session(engine) as session:
+        group_id = create_id(group_id, chain_id)
         group = session.get(RiskGroup, group_id)
     if group is None:
         raise HTTPException(status_code=404, detail="Group ID not found")
