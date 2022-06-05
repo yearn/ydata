@@ -119,7 +119,10 @@ class Subgraph:
             """
             )
             response = self.client.execute(query)
-            to_block = int(response['vaultUpdates'][0]['blockNumber'])
+            if len(response['vaultUpdates']) > 0:
+                to_block = int(response['vaultUpdates'][0]['blockNumber'])
+            else:
+                return []
 
         # fetch the share prices from vault updates
         query = gql(
@@ -148,11 +151,14 @@ class Subgraph:
         for update in response.get('vaultUpdates', []):
             if int(update['blockNumber']) > blockNumber:
                 blockNumber = int(update['blockNumber'])
+                pricePerShare = Decimal(update['pricePerShare']) / Decimal(
+                    10**vault.token.decimals
+                )
                 prices.append(
                     PricePerShare(
                         update['blockNumber'],
                         update['timestamp'],
-                        update['pricePerShare'],
+                        pricePerShare,
                     )
                 )
 
