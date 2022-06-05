@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, List, Literal, Union
 
 from gql import Client, gql
 from gql.transport.exceptions import TransportError
@@ -22,6 +22,13 @@ logger = logging.getLogger(__name__)
 class WalletBalance:
     address: str
     balanceShares: Decimal
+
+
+@dataclass
+class PricePerShare:
+    blockNumber: int
+    timestamp: int
+    pricePerShare: Decimal
 
 
 class Subgraph:
@@ -49,7 +56,7 @@ class Subgraph:
 
     @retry(
         exception=TransportError,
-        exception_handler=lambda self, vault, num_accounts: f"Failed to fetch contract for {vault.name}",
+        exception_handler=lambda self, vault, num_accounts: f"Failed to fetch top wallets for {vault.name}",
     )
     def top_wallets(
         self, vault: "Vault", num_accounts: int = 10
@@ -81,3 +88,76 @@ class Subgraph:
                 )
             )
         return wallets
+
+    @retry(
+        exception=TransportError,
+        exception_handler=lambda self, vault, from_block, to_block: f"Failed to fetch price per share for {vault.name}",
+    )
+    def price_per_share(
+        self,
+        vault: "Vault",
+        from_block: Union[int, Literal["first"]] = "first",
+        to_block: Union[int, Literal["latest"]] = "latest",
+    ) -> Union[List[PricePerShare], None]:
+        from_block = 0 if from_block == "first" else from_block
+        # fetch the most recent update
+        if to_block == "latest":
+            query = gql(
+                f"""
+            {{
+                vaultUpdates(
+                    where:{{
+                        vault:"{vault.address.lower()}",
+                    }},
+                    orderBy: blockNumber,
+                    orderDirection: desc,
+                    first: 1,
+                ) {{
+                    blockNumber
+                }}
+            }}
+            """
+            )
+            response = self.client.execute(query)
+            to_block = int(response['vaultUpdates'][0]['blockNumber'])
+
+        # fetch the share prices from vault updates
+        query = gql(
+            f"""
+        {{
+            vaultUpdates(
+                where:{{
+                    vault:"{vault.address.lower()}",
+                    blockNumber_gte:"{from_block}",
+                    blockNumber_lte:"{to_block}",
+                }},
+                orderBy: blockNumber,
+                first: 1000,
+            ) {{
+                blockNumber
+                timestamp
+                pricePerShare
+            }}
+        }}
+        """
+        )
+        prices: List[PricePerShare] = []
+        response = self.client.execute(query)
+
+        blockNumber = 0
+        for update in response.get('vaultUpdates', []):
+            if int(update['blockNumber']) > blockNumber:
+                blockNumber = int(update['blockNumber'])
+                prices.append(
+                    PricePerShare(
+                        update['blockNumber'],
+                        update['timestamp'],
+                        update['pricePerShare'],
+                    )
+                )
+
+        if from_block >= to_block:
+            return prices
+        else:
+            from_block = blockNumber + 1
+            return self.price_per_share(vault, from_block, to_block) + prices

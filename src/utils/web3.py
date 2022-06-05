@@ -99,7 +99,7 @@ class Web3Provider:
         self,
         address: str,
         event_name: str,
-        from_block: Union[int, Literal["latest"]] = "latest",
+        from_block: Union[int, Literal["first"]] = "first",
         to_block: Union[int, Literal["latest"]] = "latest",
     ) -> list[AttributeDict]:
         # get event abi
@@ -110,8 +110,8 @@ class Web3Provider:
         event_abi = event._get_event_abi()
         event_abi_codec = event.web3.codec
 
-        if from_block == "latest":
-            from_block = self.provider.eth.get_block("latest")["number"]
+        if from_block == "first":
+            from_block = 0
         if to_block == "latest":
             to_block = self.provider.eth.get_block("latest")["number"]
 
