@@ -1,5 +1,5 @@
 import re
-from typing import List, Union
+from typing import List
 
 
 class Protocol:
@@ -99,9 +99,9 @@ ProtocolList: List[Protocol] = [
 ]
 
 
-def get_protocol(name: str) -> Union[Protocol, None]:
+def get_protocol(name: str) -> Protocol:
     try:
         idx = ProtocolList.index(Protocol(name))
         return ProtocolList[idx]
     except ValueError:
-        return None
+        return Protocol("Unknown Protocol")
