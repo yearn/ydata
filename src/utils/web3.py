@@ -13,7 +13,7 @@ from web3.datastructures import AttributeDict
 from web3.exceptions import ContractLogicError
 
 from src.constants import BLOCK_SIZE, MAX_BLOCK, USDC_DECIMALS
-from src.utils.network import client, parse_json, retry
+from src.utils.network import client, parse_json, rate_limit, retry
 from src.yearn.networks import Network
 
 logger = logging.getLogger(__name__)
@@ -54,6 +54,7 @@ class Web3Provider:
 
         self.provider = Web3(Web3.HTTPProvider(provider))
 
+    @rate_limit()
     def fetch_abi(self, address: str) -> list[dict]:
         address = Web3.toChecksumAddress(address)
         params = {"address": address, "module": "contract", "action": "getabi"}
@@ -137,6 +138,7 @@ class Web3Provider:
 
         return events
 
+    @rate_limit()
     def erc20_tokens(
         self,
         address: str,

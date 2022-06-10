@@ -9,6 +9,8 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 
 from src.constants import (
+    CALL_WINDOW_IN_SECOND,
+    MAX_CALLS_PER_WINDOW,
     REQUESTS_BACKOFF_FACTOR,
     REQUESTS_RETRY_TIMES,
     REQUESTS_STATUS_FORCELIST,
@@ -103,6 +105,41 @@ def retry(
                         logger.error(msg)
 
             return None
+
+        return wrapper
+
+    return decorator
+
+
+def rate_limit(
+    max_calls_per_window: int = MAX_CALLS_PER_WINDOW,
+    call_window: int = CALL_WINDOW_IN_SECOND,
+) -> Callable:
+    def decorator(fn: Callable) -> Callable:
+        calls: list[float] = []
+
+        @wraps(fn)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            def check_is_over_limit() -> tuple[bool, Optional[float]]:
+                call_len = len(calls)
+                if not call_len:
+                    return False, None
+                is_max_len = call_len >= max_calls_per_window
+                delta_time = time.time() - calls[0]
+                in_call_window = delta_time < call_window
+                is_over_limit = is_max_len and in_call_window
+                sleep_time = call_window - delta_time if is_over_limit else None
+                return is_over_limit, sleep_time
+
+            def add_to_limit() -> None:
+                nonlocal calls
+                calls = [*calls, time.time()][-max_calls_per_window:]
+
+            is_over_limit, sleep_time = check_is_over_limit()
+            if is_over_limit:
+                time.sleep(sleep_time)
+            add_to_limit()
+            return fn(*args, **kwargs)
 
         return wrapper
 
