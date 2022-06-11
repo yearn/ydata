@@ -30,6 +30,11 @@ Run the following command to install the dependencies:
 poetry install
 ```
 
+Then run the following command to install the git pre-commit hooks:
+```
+pre-commit install
+```
+
 You will also need to set up the Web3 provider endpoints and chain explorers in the environment file `.env`.
 The necessary variables and some of their default values are shown in [`.env.example`](./.env.example):
 ```

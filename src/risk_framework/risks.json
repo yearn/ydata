@@ -653,7 +653,7 @@
 		},
 		"codeReviewScore": 2,
 		"testingScore": 3,
-		"auditScore": 4,
+		"auditScore": 5,
 		"protocolSafetyScore": 3,
 		"complexityScore": 2,
 		"teamKnowledgeScore": 2
