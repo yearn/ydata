@@ -1,4 +1,5 @@
 import json
+import os
 
 import pytest
 from dotenv import load_dotenv
@@ -7,7 +8,8 @@ from src.risk_framework import RiskAnalysis
 
 from ..constants import CRV3_VAULT, CRV_VAULT, STRAT1, STRAT2, STRAT3, USDC_VAULT
 
-load_dotenv()
+BASE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..")
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
 
 
 risk = RiskAnalysis()

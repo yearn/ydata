@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from dotenv import load_dotenv
 
@@ -12,7 +14,8 @@ from ..constants import (
     WFTM_VAULT_ADDRESS,
 )
 
-load_dotenv()
+BASE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..")
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
 
 addresses = [USDC_VAULT_ADDRESS, WFTM_VAULT_ADDRESS, CRV3_VAULT_ADDRESS]
 usdc = [

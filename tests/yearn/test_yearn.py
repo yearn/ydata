@@ -1,9 +1,12 @@
+import os
+
 import pytest
 from dotenv import load_dotenv
 
 from ..constants import YEARN_ARBITRUM, YEARN_FANTOM, YEARN_MAINNET
 
-load_dotenv()
+BASE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..")
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
 
 yearn_chains = [
     YEARN_MAINNET,
