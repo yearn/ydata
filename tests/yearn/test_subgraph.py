@@ -1,9 +1,9 @@
 import pytest
 from dotenv import load_dotenv
 
-from tests.constants import CRV3_VAULT, CRV_VAULT, USDC_VAULT
 from src.utils.web3 import Web3Provider
 from src.yearn import Subgraph
+from tests.constants import CRV3_VAULT, CRV_VAULT, USDC_VAULT
 
 load_dotenv()
 
@@ -33,7 +33,7 @@ def test_transfers(transfer_type, vault, num_blocks):
     assert transfers.count >= 0
     assert transfers.shares >= 0
 
-    if account_shares := transfers.account_shares:
+    if account_shares := transfers.account_transfers:
         account_share = next(iter(account_shares.items()))[1]
         assert account_share.count >= 0
         assert account_share.shares >= 0

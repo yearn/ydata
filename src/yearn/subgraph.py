@@ -8,6 +8,7 @@ from gql.transport.exceptions import TransportError
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as requests_logger
 
+from src.constants import MAX_BLOCK, MAX_UINT256
 from src.utils.network import retry
 from src.yearn.networks import Network
 
@@ -25,7 +26,7 @@ class WalletBalance:
 
 
 @dataclass
-class AccountShare:
+class AccountTransfers:
     count: int
     shares: float
 
@@ -34,7 +35,7 @@ class AccountShare:
 class Transfers:
     count: int
     shares: float
-    account_shares: dict[str, AccountShare]
+    account_transfers: dict[str, AccountTransfers]
 
 
 class Subgraph:
@@ -97,7 +98,7 @@ class Subgraph:
 
     def transfers(
         self,
-        transfer_type: Literal['deposits', 'withdrawals'],
+        transfer_type: Literal["withdrawals", "deposits"],
         vault: "Vault",
         query_len: int = 1000,
         from_block: Union[int, Literal["first"]] = "first",
@@ -106,26 +107,35 @@ class Subgraph:
         """
         Get all deposits/withdrawals for a vault within a period of time
         """
-        skip: int = 0
+        from_block = 0 if from_block == "first" else from_block
+        to_block = MAX_BLOCK if to_block == "latest" else to_block
+        shares_minted_or_burnt = (
+            "sharesBurnt" if transfer_type == "withdrawals" else "sharesMinted"
+        )
+
+        skip_id: str = ""
         count: int = 0
         shares: float = 0
-        account_shares: dict[str, AccountShare] = {}
-        shares_type = "sharesMinted" if transfer_type == "deposits" else "sharesBurnt"
+        account_transfers: dict[str, AccountTransfers] = {}
+
+        vault_token_decimal = Decimal(10**vault.token.decimals)
 
         while True:
             query = gql(
                 f"""
             {{
-                {transfer_type}(first: {query_len}, skip: {skip},
+                {transfer_type}(first: {query_len},
                     where: {{
+                        id_gt: "{skip_id}",
                         vault: "{vault.address.lower()}",
                         blockNumber_gte: {from_block},
                         blockNumber_lte: {to_block}
                     }}) {{
-                    {shares_type}
+                    id
                     account {{
                         id
                     }}
+                    {shares_minted_or_burnt}
                 }}
             }}
             """
@@ -137,18 +147,21 @@ class Subgraph:
                 break
 
             for transfer in transfers:
-                sharesMintedOrBurnt = Decimal(transfer[shares_type]) / Decimal(
-                    10**vault.token.decimals
+                share_amount = transfer[shares_minted_or_burnt]
+                if share_amount == MAX_UINT256:
+                    continue
+                account = transfer["account"]["id"]
+                share_amount_decimal = float(
+                    Decimal(share_amount) / vault_token_decimal
                 )
-                account = transfer['account']['id']
 
                 count += 1
-                shares += sharesMintedOrBurnt
-                if account_shares.get(account) is None:
-                    account_shares[account] = AccountShare(0, 0)
-                account_shares[account].count += 1
-                account_shares[account].shares += sharesMintedOrBurnt
+                shares += share_amount_decimal
+                if account_transfers.get(account) is None:
+                    account_transfers[account] = AccountTransfers(0, 0)
+                account_transfers[account].count += 1
+                account_transfers[account].shares += share_amount_decimal
 
-            skip += query_len
+            skip_id = transfers[-1]["id"]
 
-        return Transfers(count, shares, account_shares)
+        return Transfers(count, shares, account_transfers)
