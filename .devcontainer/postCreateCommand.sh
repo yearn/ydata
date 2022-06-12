@@ -1,2 +1,1 @@
 poetry install
-pytest
