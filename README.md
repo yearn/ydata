@@ -66,3 +66,12 @@ To run the API locally at port 80:
 docker-compose up --build
 ```
 Auto-generated docs can be seen at [localhost/docs](http://localhost/docs)
+
+### DevContainer
+
+If you're using VSCode, you can use DevContainer to setup all the required dependencies (almost) automatically.
+**But you first need to set up `./.env` file though.**
+If you have filled out `./.env`, open cloned dir in VSC and just press `Reopen in Container` button on the right bottom side.  
+<img width="459" alt="image" src="https://user-images.githubusercontent.com/103443013/173222631-fa280003-24e2-4f49-85da-dc1d88bc2633.png">  
+Or use command palette to search `Remote-Containers: Reopen in Container`.
+Then VSC will do the rest. pytest in the integrated terminal after the build process. You'll pass all tests if your DevContainer has no problem and `.env` is set properly.
