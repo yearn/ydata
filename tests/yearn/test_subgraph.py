@@ -1,11 +1,13 @@
 import os
+
 import pytest
 from dotenv import load_dotenv
 
 from src.yearn import Subgraph
 
 from ..constants import CRV3_VAULT, CRV_VAULT, USDC_VAULT
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+BASE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..")
 load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
 
 vaults = [USDC_VAULT, CRV_VAULT, CRV3_VAULT]
