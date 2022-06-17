@@ -587,6 +587,71 @@
 		"teamKnowledgeScore": 5,
 		"criteria": {
 			"nameLike": [
+				"IBLevComp"
+			],
+			"strategies": [],
+			"exclude": [
+				"1INCHGovernance",
+				"88MPH",
+				"JointProvider",
+				"SSBv3",
+				"SingleSidedBalancer",
+				"SingleSidedBoostedBalancer",
+				"StkAaveCooldown",
+				"StrategyLiquityStabilityPoolLUSD",
+				"StrategyNotionalLP",
+				"StrategyNotionalLending",
+				"StrategyTokemak",
+				"StrategyYearnVECRV",
+				"ToHegicSushiJoint",
+				"WETHSingleSided",
+				"aave",
+				"accumulator",
+				"ah",
+				"ah2",
+				"borrower",
+				"convex",
+				"crv",
+				"curve",
+				"genericlender",
+				"genericlevaave",
+				"genericlevcomp",
+				"genlevaave",
+				"genlevcomp",
+				"idle",
+				"inverse",
+				"kashi",
+				"maker",
+				"makerv2",
+				"pooltogether",
+				"rook",
+				"router",
+				"singlesided",
+				"snx",
+				"snxstaking",
+				"ssc",
+				"stargate",
+				"strategyangle",
+				"strategylender",
+				"stratmm",
+				"synthetix",
+				"vesper",
+				"xsushi-staker"
+			]
+		}
+	},
+	{
+		"id": "inactive",
+		"network": 1,
+		"label": "Inactive",
+		"codeReviewScore": 5,
+		"testingScore": 5,
+		"auditScore": 5,
+		"protocolSafetyScore": 5,
+		"complexityScore": 5,
+		"teamKnowledgeScore": 5,
+		"criteria": {
+			"nameLike": [
 				"StrategyUSDC3pool",
 				"StrategyTUSDypool",
 				"StrategyDAI3pool",
@@ -595,7 +660,6 @@
 				"StrategyMKRVaultDAIDelegate",
 				"StrategyGUSDRescue",
 				"StrategyHegicETH",
-				"IBLevComp",
 				"StrategyMasterchefGenericMod",
 				"RescueMasterchef",
 				"StrategyLeagueDAOStakingLINK",
@@ -1001,9 +1065,55 @@
 		"label": "Others",
 		"criteria": {
 			"nameLike": [
-				"Masterchef",
-				"ProviderOfMIMToHedgilSpiritJoint",
 				"StrategyHECStakerBoo"
+			],
+			"strategies": [],
+			"exclude": [
+				"0xdao",
+				"88MPH",
+				"GeistDAILender",
+				"GeistMIMLender",
+				"GeistUSDCLender",
+				"GeistfUSDTLender",
+				"GenLevCompV3NoFlash",
+				"SingleSidedBeethoven",
+				"StrategyLenderYieldOptimiser",
+				"ToHedgilSpookyJoint",
+				"crv",
+				"curve",
+				"curvegeist",
+				"curvestakerspell",
+				"fbeets compounder",
+				"genlevgeist",
+				"kashi lender",
+				"rebalancer",
+				"singlesided",
+				"solidexjoint",
+				"ssbeetV2",
+				"ssbeetV2.1",
+				"ssc",
+				"stargate",
+				"veLp_Oxdao",
+				"veLp_Solidex",
+				"veLp_arb_Solidex",
+ 				"vedao"
+			]
+		},
+		"codeReviewScore": 5,
+		"testingScore": 5,
+		"auditScore": 5,
+		"protocolSafetyScore": 5,
+		"complexityScore": 5,
+		"teamKnowledgeScore": 5
+	},
+	{
+		"id": "inactive",
+		"network": 250,
+		"label": "Inactive",
+		"criteria": {
+			"nameLike": [
+				"Masterchef",
+				"ProviderOfMIMToHedgilSpiritJoint"
 			],
 			"strategies": [],
 			"exclude": [
@@ -1102,6 +1212,27 @@
 		"id": "others",
 		"network": 42161,
 		"label": "Others",
+		"criteria": {
+			"nameLike": [],
+			"strategies": [],
+			"exclude": [
+				"crv",
+				"curve",
+				"curvestakerspell",
+				"stargate"
+			]
+		},
+		"codeReviewScore": 5,
+		"testingScore": 5,
+		"auditScore": 5,
+		"protocolSafetyScore": 5,
+		"complexityScore": 5,
+		"teamKnowledgeScore": 5
+	},
+	{
+		"id": "inactive",
+		"network": 42161,
+		"label": "Inactive",
 		"criteria": {
 			"nameLike": [],
 			"strategies": [],
