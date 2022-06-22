@@ -5,6 +5,11 @@ META_ENDPOINT = "https://meta.yearn.network"
 # imported into yearn/vaults.py
 ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
+# imported into yearn/subgraph.py
+MAX_UINT256 = (
+    "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+)
+
 # imported into yearn/network.py
 BLOCK_SIZE = 100000
 MAX_BLOCK = 99999999
