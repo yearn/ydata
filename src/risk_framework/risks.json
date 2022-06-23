@@ -90,7 +90,7 @@
 		"complexityScore": 2,
 		"teamKnowledgeScore": 4,
 		"criteria": {
-			"nameLike": ["idle"],
+			"nameLike": ["StrategyIdleV2", "idle"],
 			"strategies": [],
 			"exclude": []
 		}
