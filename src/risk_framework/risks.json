@@ -352,22 +352,6 @@
 		}
 	},
 	{
-		"id": "jointproviderbalancer",
-		"network": 1,
-		"label": "Joint Provider Balancer",
-		"codeReviewScore": 2,
-		"testingScore": 2,
-		"auditScore": 4,
-		"protocolSafetyScore": 1,
-		"complexityScore": 4,
-		"teamKnowledgeScore": 3,
-		"criteria": {
-			"nameLike": ["JointProvider"],
-			"strategies": [],
-			"exclude": []
-		}
-	},
-	{
 		"id": "singlesidedboostedbalancer",
 		"network": 1,
 		"label": "Single Sided Boosted Pool Balancer",
@@ -576,6 +560,22 @@
 		}
 	},
 	{
+		"id": "NoHedgeUniV3StablesJoint",
+		"network": 1,
+		"label": "NoHedgeUniV3StablesJoint",
+		"codeReviewScore": 2,
+		"testingScore": 3,
+		"auditScore": 5,
+		"protocolSafetyScore": 1,
+		"complexityScore": 4,
+		"teamKnowledgeScore": 4,
+		"criteria": {
+			"nameLike": ["NoHedgeUniV3StablesJoint"],
+			"strategies": [],
+			"exclude": []
+		}
+	},
+	{
 		"id": "others",
 		"network": 1,
 		"label": "Others",
@@ -593,7 +593,6 @@
 			"exclude": [
 				"1INCHGovernance",
 				"88MPH",
-				"JointProvider",
 				"SSBv3",
 				"SingleSidedBalancer",
 				"SingleSidedBoostedBalancer",
@@ -636,7 +635,8 @@
 				"stratmm",
 				"synthetix",
 				"vesper",
-				"xsushi-staker"
+				"xsushi-staker",
+				"NoHedgeUniV3StablesJoint"
 			]
 		}
 	},
@@ -670,7 +670,6 @@
 			"exclude": [
 				"1INCHGovernance",
 				"88MPH",
-				"JointProvider",
 				"SSBv3",
 				"SingleSidedBalancer",
 				"SingleSidedBoostedBalancer",
@@ -713,7 +712,8 @@
 				"stratmm",
 				"synthetix",
 				"vesper",
-				"xsushi-staker"
+				"xsushi-staker",
+				"NoHedgeUniV3StablesJoint"
 			]
 		}
 	},
