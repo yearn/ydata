@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import TYPE_CHECKING, Dict, List, Tuple
 
-from src.yearn.networks import Network
+from src.networks import Network
 from src.yearn.subgraph import Subgraph
 
 if TYPE_CHECKING:

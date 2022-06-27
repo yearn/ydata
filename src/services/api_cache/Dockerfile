@@ -12,4 +12,4 @@ RUN poetry config virtualenvs.create false \
 
 WORKDIR /app/src/services/api_cache
 
-CMD ["python", "main.py"]
+ENTRYPOINT []

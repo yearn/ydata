@@ -3,16 +3,16 @@ import logging
 import os
 import signal
 import sys
-from typing import Any, List
+from typing import Any
 
 from dotenv import load_dotenv
 from requests.exceptions import HTTPError
 from sqlmodel import Session, SQLModel, create_engine
 
 from src.models import RiskGroup, Strategy, Vault, create_id
+from src.networks import Network
 from src.risk_framework import RiskAnalysis
 from src.utils.network import retry
-from src.yearn import Network
 from src.yearn import Strategy as TStrategy
 from src.yearn import Vault as TVault
 from src.yearn import Yearn
@@ -39,7 +39,7 @@ def handle_signal(*args: Any) -> None:
 @retry(
     retries=0,
     exception=HTTPError,
-    exception_handler=lambda strategy: f"Failed to fetch data from strategy {strategy.name}",
+    exception_handler=lambda strategy, risk: f"Failed to fetch data from strategy {strategy.name}",
 )
 def __commit_strategy(strategy: TStrategy, risk: RiskAnalysis) -> None:
     strategy_info = risk.describe(strategy)
@@ -66,7 +66,7 @@ def __commit_strategy(strategy: TStrategy, risk: RiskAnalysis) -> None:
 @retry(
     retries=0,
     exception=HTTPError,
-    exception_handler=lambda vault: f"Failed to fetch data from vault {vault.name}",
+    exception_handler=lambda vault, risk: f"Failed to fetch data from vault {vault.name}",
 )
 def __commit_vault(vault: TVault, risk: RiskAnalysis) -> None:
     vault_info = risk.describe(vault)
@@ -82,6 +82,7 @@ def __commit_vault(vault: TVault, risk: RiskAnalysis) -> None:
                     network=vault.network,
                     name=vault.name,
                     info=vault_info,
+                    token_address=vault.token.address,
                 )
             )
         else:
@@ -125,7 +126,7 @@ def __commit_risk_group(risk: RiskAnalysis) -> None:
             session.commit()
 
 
-def __refresh(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
+def __refresh(yearn_chains: list[Yearn], risk: RiskAnalysis) -> None:
     logger.info("Refreshing data for all chains")
     for yearn in yearn_chains:
         yearn.refresh()
@@ -133,7 +134,7 @@ def __refresh(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
 
 
 @retry(retries=0)
-def __do_commits(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
+def __do_commits(yearn_chains: list[Yearn], risk: RiskAnalysis) -> None:
     # refresh data
     __refresh(yearn_chains, risk)
 
@@ -156,7 +157,7 @@ def __do_commits(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
                 __commit_strategy(strategy, risk)
 
 
-def __get_yearn_chains() -> List[Yearn]:
+def __get_yearn_chains() -> list[Yearn]:
     yearn_chains = []
     for network in Network:
         logger.info(f"Initializing Yearn for {network.name}")

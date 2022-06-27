@@ -7,6 +7,7 @@ import jsons
 import pandas as pd
 
 from src.constants import RISK_FRAMEWORK
+from src.networks import Network
 from src.risk_framework.defi_safety import DeFiSafety
 from src.risk_framework.scores import (
     StrategyRiskScores,
@@ -15,7 +16,7 @@ from src.risk_framework.scores import (
     tvl_impact,
 )
 from src.utils.network import client, parse_json
-from src.yearn import Network, Strategy, Vault
+from src.yearn import Strategy, Vault
 
 logger = logging.getLogger(__name__)
 

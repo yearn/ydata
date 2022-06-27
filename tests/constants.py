@@ -1,5 +1,6 @@
+from src.networks import Network
 from src.risk_framework.scores import StrategyRiskScores, VaultRiskScores
-from src.yearn import Network, Strategy, Yearn
+from src.yearn import Strategy, Yearn
 from src.yearn.protocols import Protocol, ProtocolList
 
 # imported into utils/test_web3

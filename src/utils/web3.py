@@ -13,8 +13,8 @@ from web3.datastructures import AttributeDict
 from web3.exceptions import ContractLogicError
 
 from src.constants import BLOCK_SIZE, MAX_BLOCK, USDC_DECIMALS
+from src.networks import Network
 from src.utils.network import client, parse_json, rate_limit, retry
-from src.yearn.networks import Network
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +96,7 @@ class Web3Provider:
         except ContractLogicError:
             return None
 
+    @rate_limit()
     def fetch_events(
         self,
         address: str,
