@@ -41,7 +41,7 @@ def handle_signal(*args: Any) -> None:
     sys.exit()
 
 
-@rate_limit(max_calls_per_window=1, call_window=30)
+@rate_limit(max_calls_per_window=1, call_window=10)
 @retry(retries=0)
 def __commit_vault_transfers_by_web3(
     transfer_type: Literal["withdrawals", "deposits"],
@@ -132,7 +132,7 @@ def get_last_vault_transfer(
     return vault_row, vault_transfer_row, vault_transfer
 
 
-@rate_limit(max_calls_per_window=1, call_window=30)
+@rate_limit(max_calls_per_window=1, call_window=10)
 @retry(
     retries=0,
     exception=TransportError,
