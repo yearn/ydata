@@ -82,7 +82,7 @@ def __commit_vault_transfers_by_web3(
                 share_amount_decimal = float(
                     Decimal(transfer["args"]["value"]) / vault_token_decimal
                 )
-                share_price = get_price(vault_row.token_address, block_number) or 0
+                share_price = get_price(vault_row.token_address, block_number)
 
                 vault_withdrawal = vault_transfer(
                     id=create_id(
@@ -177,7 +177,7 @@ def __commit_vault_transfers_by_subgraph(
                 share_amount_decimal = float(
                     Decimal(share_amount) / vault_token_decimal
                 )
-                share_price = get_price(vault_row.token_address, int(block_number)) or 0
+                share_price = get_price(vault_row.token_address, int(block_number))
                 vault_withdrawal = vault_transfer(
                     id=create_id(transfer["id"], vault_row.network),
                     network=vault_row.network,

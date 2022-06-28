@@ -48,7 +48,7 @@ class VaultWithdrawal(SQLModel, table=True):
     transaction_hash: str
     transfer_address: str
     shares: float
-    share_price: float
+    share_price: Optional[float] = None
 
     vault_id: str = Field(foreign_key="vault.id", index=True)
     vault: "Vault" = Relationship(back_populates="vault_withdrawal")
@@ -62,7 +62,7 @@ class VaultDeposit(SQLModel, table=True):
     transaction_hash: str
     transfer_address: str
     shares: float
-    share_price: float
+    share_price: Optional[float] = None
 
     vault_id: str = Field(foreign_key="vault.id", index=True)
     vault: "Vault" = Relationship(back_populates="vault_deposit")
