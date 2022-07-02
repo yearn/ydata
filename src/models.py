@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlmodel import JSON, Column, Field, SQLModel
+from sqlmodel import JSON, Column, Field, Relationship, SQLModel
 
 
 def create_id(id: str, network: int) -> str:
@@ -22,6 +22,10 @@ class Strategy(SQLModel, table=True):
     name: str
     info: Optional[str]
 
+    allocations: list["StrategyAllocation"] = Relationship(
+        back_populates="strategy",
+    )
+
 
 class RiskGroup(SQLModel, table=True):
     id: str = Field(primary_key=True)
@@ -34,3 +38,20 @@ class RiskGroup(SQLModel, table=True):
     complexityScore: float
     teamKnowledgeScore: float
     criteria: dict = Field(default={}, sa_column=Column(JSON))
+
+    allocations: list["StrategyAllocation"] = Relationship(
+        back_populates="riskGroup",
+    )
+
+
+class StrategyAllocation(SQLModel, table=True):
+    id: str = Field(primary_key=True)
+    method: str
+    currentTVL: float
+    availableTVL: float
+
+    strategy_id: str = Field(default=None, foreign_key="strategy.id")
+    strategy: Strategy = Relationship(back_populates="allocations")
+
+    riskGroup_id: str = Field(default=None, foreign_key="riskgroup.id")
+    riskGroup: RiskGroup = Relationship(back_populates="allocations")

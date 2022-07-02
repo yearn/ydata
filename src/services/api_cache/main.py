@@ -9,8 +9,9 @@ from dotenv import load_dotenv
 from requests.exceptions import HTTPError
 from sqlmodel import Session, SQLModel, create_engine
 
-from src.models import RiskGroup, Strategy, Vault, create_id
+from src.models import RiskGroup, Strategy, StrategyAllocation, Vault, create_id
 from src.risk_framework import RiskAnalysis
+from src.risk_framework.manager import RiskManager
 from src.utils.network import retry
 from src.yearn import Network
 from src.yearn import Strategy as TStrategy
@@ -125,6 +126,66 @@ def __commit_risk_group(risk: RiskAnalysis) -> None:
             session.commit()
 
 
+@retry(retries=0)
+def __commit_allocation(yearn: Yearn) -> None:
+    # initialize risk manager
+    manager = RiskManager(yearn)
+
+    # median score allocation
+    method = "median-score"
+    allocations = manager.median_score_allocation()
+    for allocation in allocations:
+        strategy = allocation.strategy
+        strategy_id = create_id(strategy.address, strategy.network)
+        group = allocation.riskGroup
+        group_id = create_id(group.id, group.network)
+        allocation_id = method.lower() + '_' + strategy_id
+
+        with Session(engine) as session:
+            _strategy = session.get(Strategy, strategy_id)
+            if _strategy is None:
+                _strategy = Strategy(
+                    id=strategy_id,
+                    address=strategy.address.lower(),
+                    network=strategy.network,
+                    name=strategy.name,
+                )
+                session.add(_strategy)
+
+            _group = session.get(RiskGroup, group_id)
+            if _group is None:
+                _group = RiskGroup(
+                    id=group_id,
+                    network=group.network,
+                    label=group.label,
+                    auditScore=group.auditScore,
+                    codeReviewScore=group.codeReviewScore,
+                    testingScore=group.testingScore,
+                    protocolSafetyScore=group.protocolSafetyScore,
+                    complexityScore=group.complexityScore,
+                    teamKnowledgeScore=group.teamKnowledgeScore,
+                    criteria=group.criteria,
+                )
+                session.add(_group)
+
+            _allocation = session.get(StrategyAllocation, allocation_id)
+            if _allocation is None:
+                session.add(
+                    StrategyAllocation(
+                        id=allocation_id,
+                        method=method,
+                        currentTVL=float(allocation.currentTVL),
+                        availableTVL=float(allocation.availableTVL),
+                        strategy=_strategy,
+                        riskGroup=_group,
+                    )
+                )
+            else:
+                _allocation.currentTVL = float(allocation.currentTVL)
+                _allocation.availableTVL = float(allocation.availableTVL)
+            session.commit()
+
+
 def __refresh(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
     logger.info("Refreshing data for all chains")
     for yearn in yearn_chains:
@@ -142,6 +203,10 @@ def __do_commits(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
     __commit_risk_group(risk)
 
     for yearn in yearn_chains:
+        # calculate debt allocations
+        logger.info(f"Updating recommended debt allocations on {yearn.network.name}")
+        __commit_allocation(yearn)
+
         for vault in yearn.vaults:
             # garbage collection to save memory usage
             gc.collect()
