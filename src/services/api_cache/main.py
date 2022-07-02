@@ -203,10 +203,6 @@ def __do_commits(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
     __commit_risk_group(risk)
 
     for yearn in yearn_chains:
-        # calculate debt allocations
-        logger.info(f"Updating recommended debt allocations on {yearn.network.name}")
-        __commit_allocation(yearn)
-
         for vault in yearn.vaults:
             # garbage collection to save memory usage
             gc.collect()
@@ -219,6 +215,10 @@ def __do_commits(yearn_chains: List[Yearn], risk: RiskAnalysis) -> None:
             # strategy-level data
             for strategy in vault.strategies:
                 __commit_strategy(strategy, risk)
+
+        # calculate debt allocations
+        logger.info(f"Updating recommended debt allocations on {yearn.network.name}")
+        __commit_allocation(yearn)
 
 
 def __get_yearn_chains() -> List[Yearn]:
