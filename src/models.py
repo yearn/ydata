@@ -49,6 +49,8 @@ class StrategyAllocation(SQLModel, table=True):
     method: str
     currentTVL: float
     availableTVL: float
+    currentUSDC: float
+    availableUSDC: float
 
     strategy_id: str = Field(default=None, foreign_key="strategy.id")
     strategy: Strategy = Relationship(back_populates="allocations")

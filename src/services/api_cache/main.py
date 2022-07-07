@@ -176,6 +176,8 @@ def __commit_allocation(yearn: Yearn) -> None:
                         method=method,
                         currentTVL=float(allocation.currentTVL),
                         availableTVL=float(allocation.availableTVL),
+                        currentUSDC=float(allocation.currentUSDC),
+                        availableUSDC=float(allocation.availableUSDC),
                         strategy=_strategy,
                         riskGroup=_group,
                     )
@@ -183,6 +185,8 @@ def __commit_allocation(yearn: Yearn) -> None:
             else:
                 _allocation.currentTVL = float(allocation.currentTVL)
                 _allocation.availableTVL = float(allocation.availableTVL)
+                _allocation.currentUSDC = float(allocation.currentUSDC)
+                _allocation.availableUSDC = float(allocation.availableUSDC)
             session.commit()
 
 

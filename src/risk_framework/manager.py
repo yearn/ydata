@@ -1,11 +1,15 @@
+import logging
 from dataclasses import dataclass
 from decimal import Decimal
 
 import numpy as np
 
 from src.risk_framework.analysis import RiskAnalysis, RiskGroup
+from src.utils.web3 import Web3Provider
 from src.yearn.strategies import Strategy
 from src.yearn.yearn import Yearn
+
+logger = logging.getLogger(__name__)
 
 
 def median_to_tvl(group: RiskGroup) -> Decimal:
@@ -34,8 +38,10 @@ def median_to_tvl(group: RiskGroup) -> Decimal:
 class StrategyAllocation:
     strategy: Strategy
     riskGroup: RiskGroup
-    currentTVL: Decimal
+    currentTVL: Decimal  # value in WANT
     availableTVL: Decimal
+    currentUSDC: Decimal  # value in USDC
+    availableUSDC: Decimal
 
 
 class RiskManager:
@@ -94,20 +100,39 @@ class RiskManager:
                 ):
                     max_tvl = median_to_tvl(group)
                     available_tvl = max(Decimal(0.0), max_tvl - group_tvl[group.id])
+                    strategy_tvl = strategy.tvl
+
+                    # get usdc price of underlying
+                    w3 = Web3Provider(self.yearn.network)
+                    if strategy.vault is None:
+                        vault_address = w3.call(strategy.address, "vault")
+                        if vault_address is None:
+                            msg = f"Failed to load vault address from strategy {strategy.name}"
+                            logger.debug(msg)
+                            continue
+                        token_address = w3.call(vault_address, "token")
+                    else:
+                        token_address = strategy.vault.token.address
+                    usdc_price = w3.get_usdc_price(token_address)
+
                     if strategy.address in allocations:
                         allocation = allocations[strategy.address]
                         if available_tvl < allocation.availableTVL:
                             allocations[strategy.address] = StrategyAllocation(
                                 strategy=strategy,
                                 riskGroup=group,
-                                currentTVL=strategy.tvl,
-                                availableTVL=available_tvl,
+                                currentTVL=strategy_tvl / usdc_price,
+                                availableTVL=available_tvl / usdc_price,
+                                currentUSDC=strategy_tvl,
+                                availableUSDC=available_tvl,
                             )
                     else:
                         allocations[strategy.address] = StrategyAllocation(
                             strategy=strategy,
                             riskGroup=group,
-                            currentTVL=strategy.tvl,
-                            availableTVL=available_tvl,
+                            currentTVL=strategy_tvl / usdc_price,
+                            availableTVL=available_tvl / usdc_price,
+                            currentUSDC=strategy.tvl,
+                            availableUSDC=available_tvl,
                         )
         return list(allocations.values())

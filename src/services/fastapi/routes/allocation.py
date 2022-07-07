@@ -33,4 +33,6 @@ def get_median_score_allocation(chain_id: int, address: str, debtToAdd: float = 
         "riskGroup": riskGroup.label,
         "currentTVL": allocation.currentTVL,
         "availableTVL": allocation.availableTVL,
+        "currentUSDC": allocation.currentUSDC,
+        "availableUSDC": allocation.availableUSDC,
     }
