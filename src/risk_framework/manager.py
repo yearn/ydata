@@ -111,9 +111,19 @@ class RiskManager:
                             logger.debug(msg)
                             continue
                         token_address = w3.call(vault_address, "token")
+                        if token_address is None:
+                            msg = f"Failed to load token address from {strategy.name}"
+                            logger.debug(msg)
+                            continue
                     else:
                         token_address = strategy.vault.token.address
                     usdc_price = w3.get_usdc_price(token_address)
+                    if usdc_price == 0:
+                        msg = (
+                            f"Failed to fetch the USDC price for token {token_address}"
+                        )
+                        logger.debug(msg)
+                        continue
 
                     if strategy.address in allocations:
                         allocation = allocations[strategy.address]
