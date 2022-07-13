@@ -576,6 +576,22 @@
 		}
 	},
 	{
+		"id": "strategygoldfinch",
+		"network": 1,
+		"label": "Goldfinch",
+		"codeReviewScore": 3,
+		"testingScore": 4,
+		"auditScore": 4,
+		"protocolSafetyScore": 4,
+		"complexityScore": 3,
+		"teamKnowledgeScore": 3,
+		"criteria": {
+			"nameLike": ["strategygoldfinch"],
+			"strategies": [],
+			"exclude": []
+		}
+	},
+	{
 		"id": "auto-compounding aura",
 		"network": 1,
 		"label": "Auto-Compounding Aura",
@@ -653,6 +669,7 @@
 				"vesper",
 				"xsushi-staker",
 				"NoHedgeUniV3StablesJoint",
+				"strategygoldfinch",
 				"auto-compounding aura"
 			]
 		}

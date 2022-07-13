@@ -3,13 +3,14 @@ from enum import Enum
 from fastapi import APIRouter
 from fastapi.responses import RedirectResponse, Response
 
-from src.services.fastapi.routes import riskgroups, strategies, vaults
+from src.services.fastapi.routes import allocation, riskgroups, strategies, vaults
 
 
 class Tags(Enum):
     vaults = "Vaults"
     strategies = "Strategies"
     riskGroups = "Risk Groups"
+    allocation = "Debt Allocation"
 
 
 router = APIRouter()
@@ -19,6 +20,9 @@ router.include_router(
 )
 router.include_router(
     riskgroups.router, tags=[Tags.riskGroups], prefix="/api/riskgroups"
+)
+router.include_router(
+    allocation.router, tags=[Tags.allocation], prefix="/api/allocation"
 )
 
 
