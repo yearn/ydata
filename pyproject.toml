@@ -3,7 +3,7 @@ skip-string-normalization = true
 
 [tool.poetry]
 name = "yearn-data-analytics"
-version = "0.2.0"
+version = "0.2.2"
 description = ""
 authors = [
     "borrito <yh01dlx@gmail.com>",
@@ -20,6 +20,7 @@ requests = "2.27.1"
 web3 = "5.27.0"
 pandas = "1.4.2"
 jsons = "1.6.2"
+sqlalchemy = "1.4.35"
 sqlmodel = "0.0.6"
 fastapi = "0.78.0"
 uvicorn = "0.17.6"

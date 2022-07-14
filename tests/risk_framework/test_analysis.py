@@ -11,7 +11,6 @@ from ..constants import CRV3_VAULT, CRV_VAULT, STRAT1, STRAT2, STRAT3, USDC_VAUL
 BASE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..")
 load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
 
-
 risk = RiskAnalysis()
 
 

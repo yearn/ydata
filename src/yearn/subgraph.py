@@ -51,7 +51,7 @@ class Subgraph:
     def __init__(self, network: Network):
         self.chain_id = network
         if network == Network.Mainnet:
-            endpoint = "https://api.thegraph.com/subgraphs/name/rareweasel/yearn-vaults-v2-mainnet"
+            endpoint = "https://api.thegraph.com/subgraphs/name/rareweasel/yearn-vaults-v2-subgraph-mainnet"
         elif network == Network.Fantom:
             endpoint = (
                 "https://api.thegraph.com/subgraphs/name/yearn/yearn-vaults-v2-fantom"
