@@ -13,6 +13,10 @@ class Vault(SQLModel, table=True):
     network: int
     name: str
     info: Optional[str]
+    token_address: str
+
+    vault_withdrawal: list["VaultWithdrawal"] = Relationship(back_populates="vault")
+    vault_deposit: list["VaultDeposit"] = Relationship(back_populates="vault")
 
 
 class Strategy(SQLModel, table=True):
@@ -57,3 +61,31 @@ class StrategyAllocation(SQLModel, table=True):
 
     riskGroup_id: str = Field(default=None, foreign_key="riskgroup.id")
     riskGroup: RiskGroup = Relationship(back_populates="allocations")
+
+
+class VaultWithdrawal(SQLModel, table=True):
+    id: str = Field(primary_key=True)
+    network: int
+    block_number: int
+    timestamp: int
+    transaction_hash: str
+    transfer_address: str
+    shares: float
+    share_price: Optional[float] = None
+
+    vault_id: str = Field(foreign_key="vault.id", index=True)
+    vault: "Vault" = Relationship(back_populates="vault_withdrawal")
+
+
+class VaultDeposit(SQLModel, table=True):
+    id: str = Field(primary_key=True)
+    network: int
+    block_number: int
+    timestamp: int
+    transaction_hash: str
+    transfer_address: str
+    shares: float
+    share_price: Optional[float] = None
+
+    vault_id: str = Field(foreign_key="vault.id", index=True)
+    vault: "Vault" = Relationship(back_populates="vault_deposit")

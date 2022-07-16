@@ -30,7 +30,7 @@ def test_transfers(transfer_type, vault, num_blocks):
     from_block = current_block - num_blocks
 
     subgraph = Subgraph(vault.network)
-    transfers = subgraph.transfers(
+    transfers = subgraph.vault_transfers(
         transfer_type, vault, from_block=from_block, to_block=current_block
     )
     assert transfers.count >= 0

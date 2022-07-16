@@ -9,8 +9,10 @@ from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as requests_logger
 
 from src.constants import MAX_BLOCK, MAX_UINT256
+from src.graphql.queries.account_vault_positions import account_vault_positions_query
+from src.graphql.queries.vault_transfers import vault_transfers_query
+from src.networks import Network
 from src.utils.network import retry
-from src.yearn.networks import Network
 
 if TYPE_CHECKING:
     from src.yearn.vaults import Vault
@@ -68,22 +70,7 @@ class Subgraph:
     def top_wallets(
         self, vault: "Vault", num_accounts: int = 10
     ) -> Union[List[WalletBalance], None]:
-        query = gql(
-            f"""
-        {{
-            accountVaultPositions(first: {num_accounts},
-                where:{{vault:"{vault.address.lower()}"}},
-                orderBy: balanceShares,
-                orderDirection: desc) {{
-                id
-                balanceShares
-                account {{
-                id
-                }}
-            }}
-        }}
-        """
-        )
+        query = account_vault_positions_query(vault.address.lower(), num_accounts)
         wallets: List[WalletBalance] = []
         response = self.client.execute(query)
         for wallet in response.get('accountVaultPositions', []):
@@ -96,49 +83,35 @@ class Subgraph:
             )
         return wallets
 
-    def transfers(
+    @retry(
+        exception=TransportError,
+        exception_handler=lambda self, transfer_type, vault, query_len, from_block, to_block: f"Failed to fetch contract for {vault.name}",
+    )
+    def vault_transfers(
         self,
         transfer_type: Literal["withdrawals", "deposits"],
         vault: "Vault",
         query_len: int = 1000,
-        from_block: Union[int, Literal["first"]] = "first",
-        to_block: Union[int, Literal["latest"]] = "latest",
+        from_block: int = 0,
+        to_block: int = MAX_BLOCK,
     ) -> Transfers:
         """
         Get all deposits/withdrawals for a vault within a period of time
         """
-        from_block = 0 if from_block == "first" else from_block
-        to_block = MAX_BLOCK if to_block == "latest" else to_block
-        shares_minted_or_burnt = (
-            "sharesBurnt" if transfer_type == "withdrawals" else "sharesMinted"
-        )
-
         skip_id: str = ""
         count: int = 0
         shares: float = 0
+        vault_token_decimal = Decimal(10**vault.token.decimals)
         account_transfers: dict[str, AccountTransfers] = {}
 
-        vault_token_decimal = Decimal(10**vault.token.decimals)
-
         while True:
-            query = gql(
-                f"""
-            {{
-                {transfer_type}(first: {query_len},
-                    where: {{
-                        id_gt: "{skip_id}",
-                        vault: "{vault.address.lower()}",
-                        blockNumber_gte: {from_block},
-                        blockNumber_lte: {to_block}
-                    }}) {{
-                    id
-                    account {{
-                        id
-                    }}
-                    {shares_minted_or_burnt}
-                }}
-            }}
-            """
+            (query, shares_minted_or_burnt) = vault_transfers_query(
+                transfer_type,
+                vault.address.lower(),
+                query_len,
+                skip_id,
+                from_block,
+                to_block,
             )
 
             response = self.client.execute(query)
