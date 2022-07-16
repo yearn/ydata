@@ -9,15 +9,27 @@ from typing import Any, Literal, Optional, Type, Union, cast
 
 from dotenv import load_dotenv
 from gql.transport.exceptions import TransportError
+from requests.exceptions import HTTPError
 from sqlmodel import Session, SQLModel, col, create_engine, select
 
 from src.constants import BLOCK_SIZE, LONDON_DAY_BLOCK, MAX_UINT256, ZERO_ADDRESS
 from src.graphql.queries.vault_transfers import vault_transfers_query
-from src.models import Vault, VaultDeposit, VaultWithdrawal, create_id
+from src.models import (
+    RiskGroup,
+    Strategy,
+    StrategyAllocation,
+    Vault,
+    VaultDeposit,
+    VaultWithdrawal,
+    create_id,
+)
 from src.networks import Network
+from src.risk_framework.analysis import RiskAnalysis
+from src.risk_framework.manager import RiskManager
 from src.utils.magic import get_price
 from src.utils.network import rate_limit, retry
 from src.utils.web3 import Web3Provider
+from src.yearn import Strategy as TStrategy
 from src.yearn import Subgraph
 from src.yearn import Vault as TVault
 from src.yearn import Yearn
@@ -195,18 +207,193 @@ def __commit_vault_transfers_by_subgraph(
 
 
 @retry(retries=0)
-def __do_commits(yearn: Yearn, subgraph: Subgraph, w3: Web3Provider) -> None:
+def __commit_allocation(yearn: Yearn) -> None:
+    # initialize risk manager
+    manager = RiskManager(yearn)
+
+    # median score allocation
+    method = "median-score"
+    allocations = manager.median_score_allocation()
+    for allocation in allocations:
+        strategy = allocation.strategy
+        strategy_id = create_id(strategy.address, strategy.network)
+        group = allocation.riskGroup
+        group_id = create_id(group.id, group.network)
+        allocation_id = method.lower() + '_' + strategy_id
+
+        with Session(engine) as session:
+            _strategy = session.get(Strategy, strategy_id)
+            if _strategy is None:
+                _strategy = Strategy(
+                    id=strategy_id,
+                    address=strategy.address.lower(),
+                    network=strategy.network,
+                    name=strategy.name,
+                )
+                session.add(_strategy)
+
+            _group = session.get(RiskGroup, group_id)
+            if _group is None:
+                _group = RiskGroup(
+                    id=group_id,
+                    network=group.network,
+                    label=group.label,
+                    auditScore=group.auditScore,
+                    codeReviewScore=group.codeReviewScore,
+                    testingScore=group.testingScore,
+                    protocolSafetyScore=group.protocolSafetyScore,
+                    complexityScore=group.complexityScore,
+                    teamKnowledgeScore=group.teamKnowledgeScore,
+                    criteria=group.criteria,
+                )
+                session.add(_group)
+
+            _allocation = session.get(StrategyAllocation, allocation_id)
+            if _allocation is None:
+                session.add(
+                    StrategyAllocation(
+                        id=allocation_id,
+                        method=method,
+                        currentTVL=float(allocation.currentTVL),
+                        availableTVL=float(allocation.availableTVL),
+                        currentUSDC=float(allocation.currentUSDC),
+                        availableUSDC=float(allocation.availableUSDC),
+                        strategy=_strategy,
+                        riskGroup=_group,
+                    )
+                )
+            else:
+                _allocation.currentTVL = float(allocation.currentTVL)
+                _allocation.availableTVL = float(allocation.availableTVL)
+                _allocation.currentUSDC = float(allocation.currentUSDC)
+                _allocation.availableUSDC = float(allocation.availableUSDC)
+            session.commit()
+
+
+@retry(
+    retries=0,
+    exception=HTTPError,
+    exception_handler=lambda strategy, risk: f"Failed to fetch data from strategy {strategy.name}",
+)
+def __commit_strategy(strategy: TStrategy, risk: RiskAnalysis) -> None:
+    strategy_info = risk.describe(strategy)
+    strategy_id = create_id(strategy.address, strategy.network)
+
+    with Session(engine) as session:
+        _strategy = session.get(Strategy, strategy_id)
+        if _strategy is None:
+            session.add(
+                Strategy(
+                    id=strategy_id,
+                    address=strategy.address.lower(),
+                    network=strategy.network,
+                    name=strategy.name,
+                    info=strategy_info,
+                )
+            )
+        else:
+            _strategy.info = strategy_info
+            session.add(_strategy)
+        session.commit()
+
+
+@retry(
+    retries=0,
+    exception=HTTPError,
+    exception_handler=lambda vault, risk: f"Failed to fetch data from vault {vault.name}",
+)
+def __commit_vault(vault: TVault, risk: RiskAnalysis) -> None:
+    vault_info = risk.describe(vault)
+    vault_id = create_id(vault.address, vault.network)
+
+    with Session(engine) as session:
+        _vault = session.get(Vault, vault_id)
+        if _vault is None:
+            session.add(
+                Vault(
+                    id=vault_id,
+                    address=vault.address.lower(),
+                    network=vault.network,
+                    name=vault.name,
+                    info=vault_info,
+                    token_address=vault.token.address,
+                )
+            )
+        else:
+            _vault.info = vault_info
+            session.add(_vault)
+        session.commit()
+
+
+@rate_limit(max_calls_per_window=1, call_window=10)
+@retry(retries=0)
+def __commit_risk_group(risk: RiskAnalysis) -> None:
+    with Session(engine) as session:
+        for group in risk.risk_groups:
+            group_id = create_id(group.id, group.network)
+            _group = session.get(RiskGroup, group_id)
+            if _group is None:
+                session.add(
+                    RiskGroup(
+                        id=group_id,
+                        network=group.network,
+                        label=group.label,
+                        auditScore=group.auditScore,
+                        codeReviewScore=group.codeReviewScore,
+                        testingScore=group.testingScore,
+                        protocolSafetyScore=group.protocolSafetyScore,
+                        complexityScore=group.complexityScore,
+                        teamKnowledgeScore=group.teamKnowledgeScore,
+                        criteria=group.criteria,
+                    )
+                )
+            else:
+                _group.network = group.network
+                _group.label = group.label
+                _group.auditScore = group.auditScore
+                _group.codeReviewScore = group.codeReviewScore
+                _group.testingScore = group.testingScore
+                _group.protocolSafetyScore = group.protocolSafetyScore
+                _group.complexityScore = group.complexityScore
+                _group.teamKnowledgeScore = group.teamKnowledgeScore
+                _group.criteria = group.criteria
+                session.add(_group)
+            session.commit()
+
+
+@retry(retries=0)
+def __do_commits(
+    yearn: Yearn, risk: RiskAnalysis, subgraph: Subgraph, w3: Web3Provider
+) -> None:
     # refresh data
     logger.info(f"Refreshing data for network {yearn.network}")
     yearn.refresh()
+
+    if yearn.network == Network.Mainnet:
+        logger.info("Refreshing risk data")
+        risk.refresh()
+
+        # export the risk framework json file
+        logger.info(f"Updating risk groups")
+        __commit_risk_group(risk)
 
     for vault in yearn.vaults:
         # garbage collection to save memory usage
         gc.collect()
 
+        logger.info(f"Updating vault {vault.name} on {vault.network.name}")
+
+        # vault-level data
+        __commit_vault(vault, risk)
+
+        # strategy-level data
+        for strategy in vault.strategies:
+            __commit_strategy(strategy, risk)
+
         logger.info(
             f"Updating transfers for vault {vault.name} on {vault.network.name}"
         )
+
         # vault transfer data
         if vault.network == Network.Mainnet:
             __commit_vault_transfers_by_subgraph("withdrawals", vault, subgraph)
@@ -214,6 +401,10 @@ def __do_commits(yearn: Yearn, subgraph: Subgraph, w3: Web3Provider) -> None:
         else:
             __commit_vault_transfers_by_web3("withdrawals", vault, w3)
             __commit_vault_transfers_by_web3("deposits", vault, w3)
+
+    # calculate debt allocations
+    logger.info(f"Updating recommended debt allocations on {yearn.network.name}")
+    __commit_allocation(yearn)
 
 
 def main(network: Network) -> None:
@@ -226,13 +417,17 @@ def main(network: Network) -> None:
     subgraph = Subgraph(network)
     w3 = Web3Provider(network)
 
+    # initialize Risk Analysis
+    logger.info("Initializing Risk Analysis")
+    risk = RiskAnalysis()
+
     # main loop
     logger.info("Entering main loop")
     while True:
         # garbage collection to save memory usage
         gc.collect()
 
-        __do_commits(yearn, subgraph, w3)
+        __do_commits(yearn, risk, subgraph, w3)
 
 
 if __name__ == "__main__":

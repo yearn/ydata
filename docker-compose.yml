@@ -12,22 +12,6 @@ services:
     environment:
       - DATABASE_URI
 
-  api_cache:
-    build:
-      context: ./
-      dockerfile: ./src/services/api_cache/Dockerfile
-    command: sh -c "python main.py;"
-    volumes:
-      - database:/data
-    environment:
-      - ETH_PROVIDER
-      - ETHERSCAN_TOKEN
-      - FTM_PROVIDER
-      - FTMSCAN_TOKEN
-      - ARB_PROVIDER
-      - ARBISCAN_TOKEN
-      - DATABASE_URI
-
   api_cache_eth:
     build:
       context: ./
