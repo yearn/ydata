@@ -747,7 +747,9 @@
 				"synthetix",
 				"vesper",
 				"xsushi-staker",
-				"NoHedgeUniV3StablesJoint"
+				"NoHedgeUniV3StablesJoint",
+				"strategygoldfinch",
+				"auto-compounding aura"
 			]
 		}
 	},
