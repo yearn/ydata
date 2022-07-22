@@ -592,6 +592,22 @@
 		}
 	},
 	{
+		"id": "auto-compounding aura",
+		"network": 1,
+		"label": "Auto-Compounding Aura",
+		"codeReviewScore": 3,
+		"testingScore": 3,
+		"auditScore": 4,
+		"protocolSafetyScore": 4,
+		"complexityScore": 3,
+		"teamKnowledgeScore": 3,
+		"criteria": {
+			"nameLike": ["auto-compounding aura"],
+			"strategies": [],
+			"exclude": []
+		}
+	},
+	{
 		"id": "others",
 		"network": 1,
 		"label": "Others",
@@ -653,7 +669,8 @@
 				"vesper",
 				"xsushi-staker",
 				"NoHedgeUniV3StablesJoint",
-				"strategygoldfinch"
+				"strategygoldfinch",
+				"auto-compounding aura"
 			]
 		}
 	},
@@ -730,7 +747,9 @@
 				"synthetix",
 				"vesper",
 				"xsushi-staker",
-				"NoHedgeUniV3StablesJoint"
+				"NoHedgeUniV3StablesJoint",
+				"strategygoldfinch",
+				"auto-compounding aura"
 			]
 		}
 	},
