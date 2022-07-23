@@ -44,7 +44,7 @@
 		"criteria": {
 			"nameLike": ["maker"],
 			"strategies": [],
-			"exclude": ["makerv2"]
+			"exclude": ["makerv2", "maker-lev"]
 		}
 	},
 	{
@@ -608,6 +608,22 @@
 		}
 	},
 	{
+		"id": "maker-lev",
+		"network": 1,
+		"label": "Maker-lev",
+		"codeReviewScore": 3,
+		"testingScore": 3,
+		"auditScore": 5,
+		"protocolSafetyScore": 1,
+		"complexityScore": 5,
+		"teamKnowledgeScore": 4,
+		"criteria": {
+			"nameLike": ["maker-lev"],
+			"strategies": [],
+			"exclude": []
+		}
+	},
+	{
 		"id": "others",
 		"network": 1,
 		"label": "Others",
@@ -670,7 +686,8 @@
 				"xsushi-staker",
 				"NoHedgeUniV3StablesJoint",
 				"strategygoldfinch",
-				"auto-compounding aura"
+				"auto-compounding aura",
+				"maker-lev"
 			]
 		}
 	},
@@ -749,7 +766,8 @@
 				"xsushi-staker",
 				"NoHedgeUniV3StablesJoint",
 				"strategygoldfinch",
-				"auto-compounding aura"
+				"auto-compounding aura",
+				"maker-lev"
 			]
 		}
 	},
