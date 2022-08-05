@@ -69,7 +69,7 @@
 		"label": "Vesper",
 		"codeReviewScore": 3,
 		"testingScore": 3,
-		"auditScore": 5,
+		"auditScore": 5, 
 		"protocolSafetyScore": 3,
 		"complexityScore": 4,
 		"teamKnowledgeScore": 4,
@@ -715,7 +715,8 @@
 				"RescueMasterchef",
 				"StrategyLeagueDAOStakingLINK",
 				"StrategyUniverseStaking",
-				"StrategyLeagueDAOStakingSUSHI"
+				"StrategyLeagueDAOStakingSUSHI",
+				"CurvecrvRenWBTCVoterProxy"
 			],
 			"strategies": ["0x2923a58c1831205C854DBEa001809B194FDb3Fa5","0x43DC3A717F7436ebC924e547B586C7e2896Cef9C","0x683b5C88D48FcCfB3e778FF0fA954F84cA7Ce9DF","0xBfdD0b4f6Ab0D24896CAf8C892838C26C8b0F7be"],
 			"exclude": [
