@@ -1289,7 +1289,7 @@
 		"label": "Inactive",
 		"criteria": {
 			"nameLike": [],
-			"strategies": [],
+			"strategies": ["0x19e70E3195fEC1A33745D9260Bf26c3f915Bb0CC"],
 			"exclude": [
 				"crv",
 				"curve",
