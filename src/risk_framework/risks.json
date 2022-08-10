@@ -384,7 +384,7 @@
 		}
 	},
 	{
-		"id": "strategyliquitystabilitypoollUSD",
+		"id": "strategyliquitystabilitypoollusd",
 		"network": 1,
 		"label": "Liquity Stability Pool",
 		"codeReviewScore": 2,
