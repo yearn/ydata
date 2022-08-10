@@ -386,7 +386,7 @@
 	{
 		"id": "strategyliquitystabilitypoollusd",
 		"network": 1,
-		"label": "Liquidity Stability Pool",
+		"label": "Liquity Stability Pool",
 		"codeReviewScore": 2,
 		"testingScore": 2,
 		"auditScore": 5,
