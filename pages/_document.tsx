@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react'
 import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document'
+import { SkipNavLink } from '@reach/skip-nav'
 
 type TInitialProps = {
   html: string
@@ -12,10 +13,9 @@ class MyDocument extends Document {
     const initialProps = await Document.getInitialProps(ctx)
     return { ...initialProps } as any // eslint-disable-line
   }
-
   render(): ReactElement {
     return (
-      <Html lang={'en'}>
+      <Html lang={'en'} className={'light'}>
         <Head>
           <link rel={'preconnect'} href={'https://fonts.googleapis.com'} />
           <link rel={'preconnect'} href={'https://fonts.gstatic.com'} crossOrigin={'true'} />
@@ -27,6 +27,7 @@ class MyDocument extends Document {
           />
         </Head>
         <body className={'bg-neutral-200 transition-colors duration-150'} data-theme={'light'}>
+          <SkipNavLink />
           <Main />
           <NextScript />
         </body>

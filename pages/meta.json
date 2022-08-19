@@ -1,0 +1,11 @@
+{
+  "index": {
+    "title": "Messari Frontier Web",
+    "type": "page",
+    "hidden": true
+  },
+  "example-page": {
+    "title": "Example Page",
+    "type": "page"
+  }
+}
