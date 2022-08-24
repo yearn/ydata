@@ -1,5 +1,19 @@
 version: '2'
 
+volumes:
+  solidity_compilers: {}
+  vyper_compilers: {}
+  brownie: {}
+  cache: {}
+  database: {}
+
+x-common-volumes: &common-volumes
+  - solidity_compilers:/root/.solcx
+  - vyper_compilers:/root/.vvm
+  - brownie:/root/.brownie
+  - cache:/app/cache
+  - database:/data
+
 services:
   fastapi:
     build:
@@ -7,6 +21,7 @@ services:
       dockerfile: ./src/services/fastapi/Dockerfile
     ports:
       - 80:8000
+    restart: on-failure
     volumes:
       - database:/data
     environment:
@@ -17,8 +32,8 @@ services:
       context: ./
       dockerfile: ./src/services/api_cache/Dockerfile
     command: sh -c "brownie networks modify mainnet host=$ETH_PROVIDER; python by_network.py --network 1;"
-    volumes:
-      - database:/data
+    restart: on-failure
+    volumes: *common-volumes
     environment:
       - ETH_PROVIDER
       - ETHERSCAN_TOKEN
@@ -30,8 +45,8 @@ services:
       context: ./
       dockerfile: ./src/services/api_cache/Dockerfile
     command: sh -c "brownie networks modify ftm-main host=$FTM_PROVIDER; python by_network.py --network 250;"
-    volumes:
-      - database:/data
+    restart: on-failure
+    volumes: *common-volumes
     environment:
       - FTM_PROVIDER
       - FTMSCAN_TOKEN
@@ -43,13 +58,10 @@ services:
       context: ./
       dockerfile: ./src/services/api_cache/Dockerfile
     command: sh -c "brownie networks modify arbitrum-main host=$ARB_PROVIDER; python by_network.py --network 42161;"
-    volumes:
-      - database:/data
+    restart: on-failure
+    volumes: *common-volumes
     environment:
       - ARB_PROVIDER
       - ARBISCAN_TOKEN
       - DATABASE_URI
       - BROWNIE_NETWORK_ID=arbitrum-main
-
-volumes:
-  database:
