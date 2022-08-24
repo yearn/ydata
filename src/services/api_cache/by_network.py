@@ -26,7 +26,7 @@ from src.models import (
 from src.networks import Network
 from src.risk_framework.analysis import RiskAnalysis
 from src.risk_framework.manager import RiskManager
-from src.utils.magic import get_price
+# from src.utils.magic import get_price
 from src.utils.network import rate_limit, retry
 from src.utils.web3 import Web3Provider
 from src.yearn import Strategy as TStrategy
@@ -390,17 +390,17 @@ def __do_commits(
         for strategy in vault.strategies:
             __commit_strategy(strategy, risk)
 
-        logger.info(
-            f"Updating transfers for vault {vault.name} on {vault.network.name}"
-        )
+        # logger.info(
+        #     f"Updating transfers for vault {vault.name} on {vault.network.name}"
+        # )
 
-        # vault transfer data
-        if vault.network == Network.Mainnet:
-            __commit_vault_transfers_by_subgraph("withdrawals", vault, subgraph)
-            __commit_vault_transfers_by_subgraph("deposits", vault, subgraph)
-        else:
-            __commit_vault_transfers_by_web3("withdrawals", vault, w3)
-            __commit_vault_transfers_by_web3("deposits", vault, w3)
+        # # vault transfer data
+        # if vault.network == Network.Mainnet:
+        #     __commit_vault_transfers_by_subgraph("withdrawals", vault, subgraph)
+        #     __commit_vault_transfers_by_subgraph("deposits", vault, subgraph)
+        # else:
+        #     __commit_vault_transfers_by_web3("withdrawals", vault, w3)
+        #     __commit_vault_transfers_by_web3("deposits", vault, w3)
 
     # calculate debt allocations
     logger.info(f"Updating recommended debt allocations on {yearn.network.name}")
