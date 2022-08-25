@@ -624,6 +624,22 @@
 		}
 	},
 	{
+		"id": "convextempledao-u",
+		"network": 1,
+		"label": "Convex and TempleDAO",
+		"codeReviewScore": 3,
+		"testingScore": 4,
+		"auditScore": 4,
+		"protocolSafetyScore": 3,
+		"complexityScore": 2,
+		"teamKnowledgeScore": 1,
+		"criteria": {
+			"nameLike": ["convextempledao-u"],
+			"strategies": ["0x06aee67AC42473E9F0e7DC1A6687A1F26C8136A3"],
+			"exclude": []
+		}
+	},
+	{
 		"id": "others",
 		"network": 1,
 		"label": "Others",
@@ -687,7 +703,8 @@
 				"NoHedgeUniV3StablesJoint",
 				"strategygoldfinch",
 				"auto-compounding aura",
-				"maker-lev"
+				"maker-lev",
+				"convextempledao-u"
 			]
 		}
 	},
@@ -768,7 +785,8 @@
 				"NoHedgeUniV3StablesJoint",
 				"strategygoldfinch",
 				"auto-compounding aura",
-				"maker-lev"
+				"maker-lev",
+				"convextempledao-u"
 			]
 		}
 	},
