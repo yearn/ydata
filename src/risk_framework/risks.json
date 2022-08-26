@@ -517,7 +517,7 @@
 		"label": "Angle Protocol",
 		"codeReviewScore": 2,
 		"testingScore": 4,
-		"auditScore": 5,
+		"auditScore": 4,
 		"protocolSafetyScore": 2,
 		"complexityScore": 3,
 		"teamKnowledgeScore": 2,
