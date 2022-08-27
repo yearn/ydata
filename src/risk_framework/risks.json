@@ -611,7 +611,7 @@
 		"id": "maker-lev",
 		"network": 1,
 		"label": "Maker-lev",
-		"codeReviewScore": 3,
+		"codeReviewScore": 2,
 		"testingScore": 3,
 		"auditScore": 5,
 		"protocolSafetyScore": 1,
