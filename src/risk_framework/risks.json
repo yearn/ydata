@@ -616,7 +616,7 @@
 		"auditScore": 5,
 		"protocolSafetyScore": 1,
 		"complexityScore": 5,
-		"teamKnowledgeScore": 3,
+		"teamKnowledgeScore": 2,
 		"criteria": {
 			"nameLike": ["maker-lev"],
 			"strategies": [],
