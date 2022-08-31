@@ -1322,5 +1322,59 @@
 		"protocolSafetyScore": 5,
 		"complexityScore": 5,
 		"teamKnowledgeScore": 5
+	},
+	{
+		"id": "strategylender",
+		"network": 10,
+		"label": "Gen Lender",
+		"codeReviewScore": 3,
+		"testingScore": 3,
+		"auditScore": 4,
+		"protocolSafetyScore": 3,
+		"complexityScore": 3,
+		"teamKnowledgeScore": 3,
+		"criteria": {
+			"nameLike": ["strategylender", "genericlender"],
+			"strategies": [],
+			"exclude": []
+		}
+	},
+	{
+		"id": "others",
+		"network": 10,
+		"label": "Others",
+		"criteria": {
+			"nameLike": [],
+			"strategies": [],
+			"exclude": [
+				"strategylender",
+				"genericlender"
+			]
+		},
+		"codeReviewScore": 5,
+		"testingScore": 5,
+		"auditScore": 5,
+		"protocolSafetyScore": 5,
+		"complexityScore": 5,
+		"teamKnowledgeScore": 5
+	},
+	{
+		"id": "inactive",
+		"network": 10,
+		"label": "Inactive",
+		"criteria": {
+			"nameLike": [],
+			"strategies": [],
+			"exclude": [
+				"strategylender",
+				"genericlender"
+			]
+		},
+		"codeReviewScore": 5,
+		"testingScore": 5,
+		"auditScore": 5,
+		"protocolSafetyScore": 5,
+		"complexityScore": 5,
+		"teamKnowledgeScore": 5
 	}
 ]
