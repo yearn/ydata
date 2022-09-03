@@ -1340,6 +1340,22 @@
 		}
 	},
 	{
+		"id": "genlevaavev3-optimism",
+		"network": 10,
+		"label": "Generic Lev Aave v3",
+		"codeReviewScore": 3,
+		"testingScore": 3,
+		"auditScore": 5,
+		"protocolSafetyScore": 3,
+		"complexityScore": 4,
+		"teamKnowledgeScore": 2,
+		"criteria": {
+		"nameLike": ["genlevaavev3-optimism"],
+		"strategies": [],
+		"exclude": []
+		}
+	},
+	{
 		"id": "others",
 		"network": 10,
 		"label": "Others",
@@ -1348,7 +1364,8 @@
 			"strategies": [],
 			"exclude": [
 				"strategylender",
-				"genericlender"
+				"genericlender",
+				"genlevaavev3-optimism"
 			]
 		},
 		"codeReviewScore": 5,
@@ -1367,7 +1384,8 @@
 			"strategies": [],
 			"exclude": [
 				"strategylender",
-				"genericlender"
+				"genericlender",
+				"genlevaavev3-optimism"
 			]
 		},
 		"codeReviewScore": 5,
