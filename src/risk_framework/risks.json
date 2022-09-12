@@ -613,7 +613,7 @@
 		"label": "Maker-lev",
 		"codeReviewScore": 2,
 		"testingScore": 3,
-		"auditScore": 5,
+		"auditScore": 4,
 		"protocolSafetyScore": 1,
 		"complexityScore": 5,
 		"teamKnowledgeScore": 2,
