@@ -48,7 +48,7 @@ def client(
             method=method.upper(),
             url=url,
             timeout=REQUESTS_TIMEOUT,
-            params=kwargs.get("params"),
+            **kwargs,
         )
         response.raise_for_status()
         return response
@@ -137,7 +137,7 @@ def rate_limit(
 
             is_over_limit, sleep_time = check_is_over_limit()
             if is_over_limit:
-                time.sleep(sleep_time)
+                time.sleep(sleep_time or 0)
             add_to_limit()
             return fn(*args, **kwargs)
 

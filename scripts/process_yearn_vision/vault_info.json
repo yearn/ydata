@@ -1,0 +1,341 @@
+{
+  "yvAVAX 0.4.3 - FTM": {
+    "assetType": "Altcoin"
+  },
+  "yvCRV 0.4.3 - FTM": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-UST 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-HUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvMIM 0.4.3 - FTM": {
+    "assetType": "Stable"
+  },
+  "yvWFTM 0.4.3 - FTM": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-EURT 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvBOO 0.4.3 - FTM": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-ankrETH 0.3.5 - ETH": {
+    "assetType": "ETH"
+  },
+  "yvUSDT 0.4.3 - FTM": {
+    "assetType": "Stable"
+  },
+  "yvCurve-CVXETH 0.4.3 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-d3pool 0.4.3 - ETH": {
+    "assetType": "Other"
+  },
+  "yvDAI 0.3.0 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-UST 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvDOLA 0.4.3 - FTM": {
+    "assetType": "Stable"
+  },
+  "yvCurve-ibAUD 0.4.3 - ETH": {
+    "assetType": "Iron Bank"
+  },
+  "yvfBEETS 0.4.3 - FTM": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-tBTC 0.3.5 - ETH": {
+    "assetType": "BTC"
+  },
+  "yvCurve-EURS 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-IronBank 0.3.2 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-USDT 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvYFI 0.4.3 - FTM": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-RAI 0.4.3 - ETH": {
+    "assetType": "Other"
+  },
+  "yvCurve-MIM 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-GUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-DUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvFRAX 0.4.3 - FTM": {
+    "assetType": "Stable"
+  },
+  "yvLUSD 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-Aave 0.3.5 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-USDN 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-USDK 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-triCrypto 0.4.2 - ETH": {
+    "assetType": "Other"
+  },
+  "yvCurve-pBTC 0.3.5 - ETH": {
+    "assetType": "BTC"
+  },
+  "yvCurve-cvxCRV 0.4.3 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-ibCHF 0.4.3 - ETH": {
+    "assetType": "Iron Bank"
+  },
+  "yvCOMP 0.4.3 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-ibKRW 0.4.3 - ETH": {
+    "assetType": "Iron Bank"
+  },
+  "yvCurve-ibJPY 0.4.3 - ETH": {
+    "assetType": "Iron Bank"
+  },
+  "yvCurve-ibGBP 0.4.3 - ETH": {
+    "assetType": "Iron Bank"
+  },
+  "yvCurve-3EUR 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-sUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-rETHwstETH 0.4.3 - ETH": {
+    "assetType": "ETH"
+  },
+  "yvCurve-ibBTC 0.4.3 - ETH": {
+    "assetType": "BTC"
+  },
+  "yvUSDC 0.3.0 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-LUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-stETH-WETH 0.4.3 - ETH": {
+    "assetType": "ETH"
+  },
+  "yvCurve-HBTC 0.3.3 - ETH": {
+    "assetType": "BTC"
+  },
+  "yvDAI 0.4.3 - FTM": {
+    "assetType": "Stable"
+  },
+  "yvLINK 0.4.2 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-ibEUR 0.4.3 - ETH": {
+    "assetType": "Iron Bank"
+  },
+  "yvCurve-CRVETH 0.4.3 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-BUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-USDM 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvSUSHI 0.4.3 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-renBTC 0.3.5 - ETH": {
+    "assetType": "BTC"
+  },
+  "yvCurve-alETH 0.4.3 - ETH": {
+    "assetType": "ETH"
+  },
+  "yvCurve-YFIETH 0.4.3 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvYFIETH-f 0.4.3 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvUSDT 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-EURSUSDC 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-Pax 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-sBTC 0.3.5 - ETH": {
+    "assetType": "BTC"
+  },
+  "yvCurve-3pool 0.3.5 - ETH": {
+    "assetType": "Other"
+  },
+  "yvRAI 0.4.2 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-EURN 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-mUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-yBUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-BBTC 0.3.5 - ETH": {
+    "assetType": "BTC"
+  },
+  "yvCurve-sETH 0.3.2 - ETH": {
+    "assetType": "ETH"
+  },
+  "yvBOOST 0.3.5 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvWBTC 0.3.5 - ETH": {
+    "assetType": "BTC"
+  },
+  "yvCurve-alUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-MIM 0.4.3 - FTM": {
+    "assetType": "Stable"
+  },
+  "yvCurve-FRAX 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yv1INCH 0.3.2 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-EURTUSD 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvDAI 0.2.2 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-rETH 0.3.5 - ETH": {
+    "assetType": "ETH"
+  },
+  "yvCurve-RSV 0.3.5 - ETH": {
+    "assetType": "Other"
+  },
+  "yvCurve-USDP 0.3.5 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-Tricrypto 0.4.3 - FTM": {
+    "assetType": "Other"
+  },
+  "yvWETH 0.4.3 - FTM": {
+    "assetType": "ETH"
+  },
+  "yvSPELL 0.4.3 - FTM": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-Compound 0.3.5 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvYFI 0.3.2 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-3Crypto 0.4.3 - ETH": {
+    "assetType": "Other"
+  },
+  "yvUSDC 0.4.3 - FTM": {
+    "assetType": "Stable"
+  },
+  "yvCurve-Geist 0.4.3 - FTM": {
+    "assetType": "Altcoin"
+  },
+  "yvSNX 0.3.5 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-OUSD 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvUNI 0.3.5 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvTUSD 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvWETH 0.4.2 - ETH": {
+    "assetType": "ETH"
+  },
+  "yvUSDC 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvsUSD 0.3.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvWETH 0.3.2 - ETH": {
+    "assetType": "ETH"
+  },
+  "yvCurve-sAave 0.3.5 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-USDP 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvWBTC 0.3.1 - ETH": {
+    "assetType": "BTC"
+  },
+  "yvWBTC 0.4.3 - FTM": {
+    "assetType": "BTC"
+  },
+  "yvCurve-DOLA 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-MIMUST 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvAAVE 0.4.3 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvDAI 0.4.3 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-stETH 0.3.0 - ETH": {
+    "assetType": "ETH"
+  },
+  "yvYFI 0.4.3 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvHEGIC 0.3.0 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvUSDC 0.2.2 - ETH": {
+    "assetType": "Stable"
+  },
+  "yvCurve-oBTC 0.3.5 - ETH": {
+    "assetType": "BTC"
+  },
+  "yvLINK 0.4.3 - FTM": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-LINK 0.3.5 - ETH": {
+    "assetType": "Altcoin"
+  },
+  "yvCurve-TUSD 0.3.5 - ETH": {
+    "assetType": "Stable"
+  }
+}
