@@ -1,10 +1,16 @@
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Annotated, Any, Callable, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 import pandas as pd
 
+from scripts.process_yearn_vision.expressions import (
+    gen_aum_expr,
+    gen_share_price_expr,
+    gen_total_debt_expr,
+    gen_total_gains_expr,
+)
 from scripts.process_yearn_vision.typings import (
     NetworkStr,
     QueryResult,
@@ -91,7 +97,7 @@ def get_aum_size(aum: Union[int, float]) -> str:
 
 
 def parse_data_and_append_csv(
-    parsed_query_results: Annotated[list[dict[str, QueryResultMap]], 2],
+    parsed_query_results: list[dict[str, QueryResultMap]],
     dates: list[tuple[pd.Timestamp, pd.Timestamp]],
     output_file_path: Path,
 ) -> None:
@@ -102,16 +108,15 @@ def parse_data_and_append_csv(
 
         price_data = parsed_query_results[0]
         aum_data = parsed_query_results[1]
+        debt_data = parsed_query_results[2]
+        gains_data = parsed_query_results[3]
 
         for name, price_query_result_map in price_data.items():
-
-            aum_query_result_map = aum_data.get(name)
-            if not aum_query_result_map:
-                continue
-
             network = price_query_result_map["network"]
             price_values = price_query_result_map["values"]
-            aum_values = aum_query_result_map["values"]
+            aum_values = aum_data.get(name, {}).get("values", {})
+            debt_values = debt_data.get(name, {}).get("values", {})
+            gains_values = gains_data.get(name, {}).get("values", {})
 
             price = 0
             price_start = price_values.get(month_start_ts)
@@ -123,16 +128,43 @@ def parse_data_and_append_csv(
             if aum_end := aum_values.get(month_end_ts):
                 aum = aum_end
 
-            date = f"{month_end.strftime(CSV_DATE_FORMAT).lower()}"
-            row = [name, network, "Other", date, price, 0, aum, get_aum_size(aum)]
+            debt = 0
+            if debt_end := debt_values.get(month_end_ts):
+                debt = debt_end
+
+            gains = 0
+            if gains_end := gains_values.get(month_end_ts):
+                gains = gains_end
+
+            row = []
+            row.append(name)  # Vault
+            row.append(network)  # Chain
+            row.append("Other")  # Type
+            row.append(f"{month_end.strftime(CSV_DATE_FORMAT).lower()}")  # Month
+            row.append(f"{price}")  # Month Return (%)
+            row.append(f"{0}")  # Cumulative Return (%)
+            row.append(f"{aum}")  # AUM ($)
+            row.append(get_aum_size(aum))  # AUM Size
+            row.append(f"{debt}")  # Total Debt
+            row.append(f"{gains}")  # Total Gains
             arr.append(row)
 
     append_csv_rows(output_file_path, arr)
 
 
+def merge_query_result_map(
+    query_result_maps: list[dict[str, QueryResultMap]]
+) -> dict[str, QueryResultMap]:
+    _dict: dict[str, QueryResultMap] = {}
+    for query_result_dict in query_result_maps:
+        for name, query_result_map in query_result_dict.items():
+            _dict[name] = query_result_map
+    return _dict
+
+
 def parse_query_results(
     query_results: list[QueryResult],
-) -> Annotated[list[dict[str, QueryResultMap]], 2]:
+) -> list[dict[str, QueryResultMap]]:
     arr = []
     for query_result in query_results:
         _dict = {}
@@ -148,8 +180,44 @@ def parse_query_results(
     return arr
 
 
+def parse_strategy_exprs(
+    gen_expr_cbs: list[Callable[[str], dict[NetworkStr, str]]],
+    vaults: list[str],
+    start_dt: datetime,
+    end_dt: datetime,
+) -> list[dict[str, QueryResultMap]]:
+    merged_arr: list[dict[str, QueryResultMap]] = []
+    vault_networks = list(map(lambda i: i.split(' - '), vaults))
+    for gen_expr_cb in gen_expr_cbs:
+        arr: list[Optional[QueryResult]] = []
+
+        for vault, _ in vault_networks:
+            expr = gen_expr_cb(vault)
+            data = fetch_yearn_vision(expr, start_dt, end_dt)
+            arr.append(data)
+        filtered: list[QueryResult] = list(filter(lambda i: i is not None, arr))
+        parsed_query_results = parse_query_results(filtered)
+        merged_query_result_map = merge_query_result_map(parsed_query_results)
+        merged_arr.append(merged_query_result_map)
+    return merged_arr
+
+
+def parse_vault_exprs(
+    gen_expr_cbs: list[Callable[[], dict[NetworkStr, str]]],
+    start_dt: datetime,
+    end_dt: datetime,
+) -> list[dict[str, QueryResultMap]]:
+    arr: list[Optional[QueryResult]] = []
+    for gen_expr_cb in gen_expr_cbs:
+        expr = gen_expr_cb()
+        data = fetch_yearn_vision(expr, start_dt, end_dt)
+        arr.append(data)
+    filtered: list[QueryResult] = list(filter(lambda i: i is not None, arr))
+    return parse_query_results(filtered)
+
+
 def gen_json_body(
-    expr: dict[NetworkStr, str], start_datetime: datetime, end_datetime: datetime
+    expr: dict[NetworkStr, str], start_dt: datetime, end_dt: datetime
 ) -> dict[str, Any]:
     return {
         "queries": [
@@ -172,8 +240,8 @@ def gen_json_body(
                 "maxDataPoints": 2000,
             },
         ],
-        "from": f"{to_timestamp(start_datetime)}",
-        "to": f"{to_timestamp(end_datetime)}",
+        "from": f"{to_timestamp(start_dt)}",
+        "to": f"{to_timestamp(end_dt)}",
     }
 
 
@@ -187,10 +255,12 @@ def gen_headers() -> dict[str, str]:
 
 
 def fetch_yearn_vision(
-    expr: dict[NetworkStr, str], start_datetime: datetime, end_datetime: datetime
+    expr: dict[NetworkStr, str],
+    start_dt: datetime,
+    end_dt: datetime,
 ) -> Optional[QueryResult]:
     headers = gen_headers()
-    data = gen_json_body(expr, start_datetime, end_datetime)
+    data = gen_json_body(expr, start_dt, end_dt)
 
     res = client(
         "post", "https://yearn.vision/api/ds/query", headers=headers, json=data
@@ -216,26 +286,25 @@ def main() -> None:
     output_file_path = file_dir / "output.csv"
     vault_info_file_path = file_dir / "vault_info.json"
 
-    share_price_expr = {
-        NetworkStr.Mainnet: "yearn_vault{param=\"pricePerShare\", experimental=\"false\", network=\"ETH\"}",
-        NetworkStr.Fantom: "yearn_vault{param=\"pricePerShare\", experimental=\"false\", network=\"FTM\"}",
-    }
-    aum_expr = {
-        NetworkStr.Mainnet: "yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ETH\"}",
-        NetworkStr.Fantom: "yearn_vault{param=\"tvl\", experimental=\"false\", network=\"FTM\"}",
-    }
+    # Getting the start datetime will require looping all rows in csv file to get the last row
+    start_dt = get_start_datetime(output_file_path)
+    end_dt = datetime.now(timezone.utc)
+    dates = get_start_and_end_of_month(start_dt, end_dt)
 
-    start_datetime = get_start_datetime(output_file_path)
-    end_datetime = datetime.now(timezone.utc)
+    # Vault-level results
+    exprs = [gen_share_price_expr, gen_aum_expr, gen_total_debt_expr]
+    vault_query_results = parse_vault_exprs(exprs, start_dt, end_dt)
 
-    price_data = fetch_yearn_vision(share_price_expr, start_datetime, end_datetime)
-    aum_data = fetch_yearn_vision(aum_expr, start_datetime, end_datetime)
-    dates = get_start_and_end_of_month(start_datetime, end_datetime)
+    # Strategy-level queries parsed to vault-level results
+    exprs = [gen_total_gains_expr]
+    vaults = list(vault_query_results[0].keys())
+    strategy_query_results = parse_strategy_exprs(exprs, vaults, start_dt, end_dt)
 
-    if price_data and aum_data:
-        parsed_query_results = parse_query_results([price_data, aum_data])
-        parse_data_and_append_csv(parsed_query_results, dates, output_file_path)
+    # Process and append data to the csv file
+    vault_query_results.extend(strategy_query_results)
+    parse_data_and_append_csv(vault_query_results, dates, output_file_path)
 
+    # Loop all rows in csv file again to update other data
     update_asset_type_cb = make_update_asset_type_cb(vault_info_file_path)
     update_cum_share_price_cb = make_update_cum_share_price_cb()
     cbs = [update_asset_type_cb, update_cum_share_price_cb]
