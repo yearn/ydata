@@ -220,14 +220,14 @@ for symbol, network in [
                         totalDebt = Decimal(strategy_params[-3])
 
                         # check if the debt is being routed to a different vault
-                        if (abs(_delegatedAssets / totalDebt - 1.0) < 0.1
+                        if (_delegatedAssets > Decimal(0.9) * totalDebt
                             or strategy in [
                                 '0x36822d0b11F4594380181cE6e76bd4986d46c389',
                             ]):
                             continue
                         totalGain += Decimal(strategy_params[-2])
                         totalLoss += Decimal(strategy_params[-1])
-                    except:
+                    except Exception as e:
                         pass
 
                 delegatedAssets /= token_denom
