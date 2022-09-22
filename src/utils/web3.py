@@ -81,6 +81,8 @@ class Web3Provider:
             return json.loads(abi)
         except JSONDecodeError as e:
             logger.error(abi)
+            if abi == "Contract source code not verified":
+                raise ValueError(abi)
             raise e
 
     @retry(
