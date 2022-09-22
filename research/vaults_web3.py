@@ -106,6 +106,16 @@ for symbol, network in [
         frame['schema']['fields'][1]['labels']['address']: frame['schema']['fields'][1]['labels']['vault']
         for frame in result
     }
+
+    print("Fetching ignored vaults in yDaemon...")
+    blacklist = []
+    for vault in vaults:
+        endpoint = os.path.join(YDAEMON, str(network.value), "vaults", vault)
+        response = client('get', endpoint)
+        jsoned = parse_json(response)
+        if jsoned is None:
+            blacklist.append(vault)
+    vaults = [vault for vault in vaults if vault not in blacklist]
     print(f"Fetched {len(vaults)} vaults on {network.name}")
 
     # fetch block numbers
@@ -172,6 +182,8 @@ for symbol, network in [
             endpoint = os.path.join(YDAEMON, str(network.value), "vaults", vault)
             response = client('get', endpoint)
             jsoned = parse_json(response)
+            if jsoned is None:
+                continue
 
             token = jsoned['token']['address']
             token_denom = Decimal(10 ** jsoned['token']['decimals'])
@@ -197,14 +209,31 @@ for symbol, network in [
                     continue
 
                 # strategy-level data
+                delegatedAssets = Decimal(0)
                 totalGain, totalLoss = Decimal(0), Decimal(0)
                 for strategy in strategies:
                     try:
+                        _delegatedAssets = Decimal(w3.call(strategy, "delegatedAssets", block=block))
+                        delegatedAssets += _delegatedAssets
+
                         strategy_params = w3.call(vault, "strategies", strategy, block=block)
+                        totalDebt = Decimal(strategy_params[-3])
+
+                        # check if the debt is being routed to a different vault
+                        if (abs(_delegatedAssets / totalDebt - 1.0) < 0.1
+                            or strategy in [
+                                '0x36822d0b11F4594380181cE6e76bd4986d46c389',
+                            ]):
+                            continue
                         totalGain += Decimal(strategy_params[-2])
                         totalLoss += Decimal(strategy_params[-1])
                     except:
                         pass
+
+                delegatedAssets /= token_denom
+                df.loc[dt, 'totalAssets'] -= delegatedAssets
+                df.loc[dt, 'totalDebt'] -= delegatedAssets
+
                 df.loc[dt, 'totalGain'] = totalGain / token_denom
                 df.loc[dt, 'totalLoss'] = totalLoss / token_denom
                 progress.update(task, advance=1)
