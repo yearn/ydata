@@ -1,15 +1,46 @@
 name: process-yearn-vision
 
 on:
-  schedule:
-    - cron: "13 20 1 * *" # At 20:13 on the first of every month
   workflow_dispatch:
+    inputs:
+      eth_provider:
+        description: "ETH_PROVIDER in .env.example"
+        required: true
+      etherscan_token:
+        description: "ETHERSCAN_TOKEN in .env.example"
+        required: true
+      ftm_provider:
+        description: "FTM_PROVIDER in .env.example"
+        default: https://rpc.ftm.tools/
+        required: false
+      ftmscan_token:
+        description: "FTMSCAN_TOKEN in .env.example"
+        required: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      - name: mask inputs
+        id: mask-inputs
+        run: |
+          eth_provider=$(cat $GITHUB_EVENT_PATH | jq -r '.inputs.eth_provider')
+          echo "::add-mask::$eth_provider"
+          echo "::set-output name=eth-provider::$eth_provider"
+
+          etherscan_token=$(cat $GITHUB_EVENT_PATH | jq -r '.inputs.etherscan_token')
+          echo "::add-mask::$etherscan_token"
+          echo "::set-output name=etherscan-token::$etherscan_token"
+
+          ftm_provider=$(cat $GITHUB_EVENT_PATH | jq -r '.inputs.ftm_provider')
+          echo "::add-mask::$ftm_provider"
+          echo "::set-output name=ftm-provider::$ftm_provider"
+
+          ftmscan_token=$(cat $GITHUB_EVENT_PATH | jq -r '.inputs.ftmscan_token')
+          echo "::add-mask::$ftmscan_token"
+          echo "::set-output name=ftmscan-token::$ftmscan_token"
+
       - name: generate random number
         id: random
         run: echo ::set-output name=value::$(echo $RANDOM)
@@ -30,7 +61,13 @@ jobs:
         run: poetry install
 
       - name: execute python script
-        run: poetry run python scripts/process_yearn_vision/main.py
+        env:
+          ETH_PROVIDER: ${{ steps.mask-inputs.outputs.eth-provider }}
+          ETHERSCAN_TOKEN: ${{ steps.mask-inputs.outputs.etherscan-token }}
+          FTM_PROVIDER: ${{ steps.mask-inputs.outputs.ftm-provider }}
+          FTMSCAN_TOKEN: ${{ steps.mask-inputs.outputs.ftmscan-token }}
+        run: |
+          poetry run python scripts/process_yearn_vision/main.py
 
       - name: check for modified files
         id: git-check

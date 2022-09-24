@@ -56,8 +56,35 @@ class QueryResult(TypedDict):
 class QueryResultMap(TypedDict):
     name: str
     network: NetworkStr
+    address: Address
     values: dict[int, int]
 
 
 class VaultInfo(TypedDict):
     assetType: Literal["BTC", "ETH", "Stable", "Altcoin", "Iron Bank", "Other"]
+
+
+class Strategy(TypedDict):
+    address: Address
+    name: str
+    description: str
+
+
+class Token(TypedDict):
+    address: Address
+    name: str
+    display_name: str
+    symbol: str
+    description: str
+    decimals: int
+    icon: str
+
+
+class Vault(TypedDict):
+    strategies: list[Strategy]
+    token: Token
+
+
+class Block(TypedDict):
+    number: int
+    timestamp: int  # seconds

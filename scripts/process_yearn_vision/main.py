@@ -17,7 +17,7 @@ from scripts.process_yearn_vision.typings import (
     QueryResultMap,
     VaultInfo,
 )
-from scripts.process_yearn_vision.util import (
+from scripts.process_yearn_vision.utils.common import (
     add_months,
     append_csv_rows,
     get_csv_row,
@@ -25,9 +25,21 @@ from scripts.process_yearn_vision.util import (
     to_timestamp,
     update_csv,
 )
+from scripts.process_yearn_vision.utils.yearn import (
+    get_delegated_assets,
+    get_vault,
+    timestamp_to_block,
+)
+from src.networks import Network
 from src.utils.network import client
+from src.utils.web3 import Web3Provider
 
 CSV_DATE_FORMAT = "%b/%y"
+
+network_mapping = {
+    NetworkStr.Mainnet: Network.Mainnet,
+    NetworkStr.Fantom: Network.Fantom,
+}
 
 
 def make_update_cum_share_price_cb() -> Callable[[int, list[str]], list]:
@@ -112,7 +124,8 @@ def parse_data_and_append_csv(
         gains_data = parsed_query_results[3]
 
         for name, price_query_result_map in price_data.items():
-            network = price_query_result_map["network"]
+            network_str = price_query_result_map["network"]
+            address = price_query_result_map["address"]
             price_values = price_query_result_map["values"]
             aum_values = aum_data.get(name, {}).get("values", {})
             debt_values = debt_data.get(name, {}).get("values", {})
@@ -130,7 +143,12 @@ def parse_data_and_append_csv(
 
             debt = 0
             if debt_end := debt_values.get(month_end_ts):
-                debt = debt_end
+                network_int = network_mapping[network_str]
+                vault = get_vault(address, network_int)
+                w3 = Web3Provider(network_int)
+                block = timestamp_to_block(w3, month_end_ts // 10**3)
+                delegated_assets = get_delegated_assets(w3, vault, block)
+                debt = max(debt_end - delegated_assets, 0)
 
             gains = 0
             if gains_end := gains_values.get(month_end_ts):
@@ -138,7 +156,7 @@ def parse_data_and_append_csv(
 
             row = []
             row.append(name)  # Vault
-            row.append(network)  # Chain
+            row.append(network_str)  # Chain
             row.append("Other")  # Type
             row.append(f"{month_end.strftime(CSV_DATE_FORMAT).lower()}")  # Month
             row.append(f"{price}")  # Month Return (%)
@@ -168,11 +186,25 @@ def parse_query_results(
     arr = []
     for query_result in query_results:
         _dict = {}
-        for networkStr, frames in query_result["results"].items():
+        for network_str, frames in query_result["results"].items():
             for frame in frames["frames"]:
                 name = frame["schema"]["name"]
+                try:
+                    address = list(
+                        filter(
+                            lambda i: i.get("labels", {}).get("address"),
+                            frame["schema"]["fields"],
+                        )
+                    )[0]["labels"]["address"]
+                except IndexError:
+                    continue
                 timestamps, prices = frame["data"]["values"]
-                _dict[name] = {"name": name, "network": networkStr, "values": {}}
+                _dict[name] = {
+                    "name": name,
+                    "network": network_str,
+                    "address": address,
+                    "values": {},
+                }
 
                 for timestamp, price in zip(timestamps, prices):
                     _dict[name]["values"][timestamp] = price
