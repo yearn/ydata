@@ -4,8 +4,8 @@
     "type": "page",
     "hidden": true
   },
-  "example-page": {
-    "title": "Example Page",
+  "visualizations": {
+    "title": "Visualizations",
     "type": "page"
   }
 }
