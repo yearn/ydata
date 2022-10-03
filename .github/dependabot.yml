@@ -6,11 +6,9 @@
 version: 2
 updates:
   - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+    directory: "/app" # Location of package manifests
     schedule:
       interval: "weekly"
-    assignees:
-      - "majorfi"
     ignore:
       - dependency-name: "@types/*" #Ignore updates for all `@types/` packages
       - dependency-name: "eslint*" #Ignore updates for all `eslint` packages
@@ -22,5 +20,3 @@ updates:
       - dependency-name: "sass" #Ignore updates for sass
       - dependency-name: "typescript" #Ignore patch for typescript
         update-types: ["version-update:semver-patch"]
-
-      
