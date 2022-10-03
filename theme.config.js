@@ -117,7 +117,7 @@ export default {
     );
   },
   nextLinks: true,
-  nextThemes: { defaultTheme: "dark" },
+  nextThemes: { defaultTheme: "light" },
   darkMode: true,
   prevLinks: true,
   projectLink: GITHUB_URI,
