@@ -5,9 +5,6 @@ env:
 on:
   pull_request:
   workflow_dispatch:
-  push:
-    branches-ignore:
-      - main
 jobs:
   Deploy-Preview:
     runs-on: ubuntu-latest
