@@ -1641,9 +1641,9 @@
     eventemitter3 "^4.0.7"
 
 "@yearn-finance/web-lib@*":
-  version "0.13.24"
-  resolved "https://registry.yarnpkg.com/@yearn-finance/web-lib/-/web-lib-0.13.24.tgz#325e63efd98525d4008b3ba492d2333e26067923"
-  integrity sha512-B4YiQanAY4999uKM8Z2jlzMW+XgdXHSWgrSPO5nmz26DymDfrh3Nqa05kSryL9Njg9FqGswPtvLrxC6coA0dlQ==
+  version "0.13.28"
+  resolved "https://registry.yarnpkg.com/@yearn-finance/web-lib/-/web-lib-0.13.28.tgz#76f3a55a72ca7e4003179bba5000fbb80f8f51e3"
+  integrity sha512-YbXOchUBWfqlQbSUiqTNeJGrldiQ4YnprXad96RFhReDDC0YUtQlFY7BThg0djhGTChjhFf6Z8fTbMXbZCZaGA==
   dependencies:
     "@coinbase/wallet-sdk" "^3.4.2"
     "@ethersproject/experimental" "^5.6.3"
