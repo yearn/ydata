@@ -1,14 +1,14 @@
-import {useState, useEffect} from 'react';
+import React, {useState, useEffect, ReactElement} from 'react';
 
-type IProps = {
+type TProps = {
   src: string;
 }
 
-export const IFrame: React.FC<IProps> = ({src}) => {
-	const [isMounted, setIsMounted] = useState(false);
+export const IFrame: React.FC<TProps> = ({src}): ReactElement | null => {
+	const [isMounted, set_isMounted] = useState(false);
 
-	useEffect(() => {
-		setIsMounted(true);
+	useEffect((): void => {
+		set_isMounted(true);
 	}, []);
 
 	return isMounted ? (

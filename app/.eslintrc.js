@@ -19,7 +19,8 @@ module.exports = {
 		},
 		ecmaVersion: 12,
 		sourceType: 'module',
-		project: ['./tsconfig.json']
+		project: ['./tsconfig.json'],
+		tsconfigRootDir: __dirname
 	},
 	plugins: ['@typescript-eslint', 'react', 'tailwindcss'],
 	settings: {

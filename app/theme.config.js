@@ -5,17 +5,17 @@ const GITHUB_URI = 'https://github.com/yearn/yearn-data-analytics';
 
 export default {
 	docsRepositoryBase: GITHUB_URI,
-	feedback: { labels: 'feedback', content: 'Question? Give us feedback →' },
-	toc: { float: true },
-	sidebar: { defaultMenuCollapsed: true },
-	editLink: { text:'Edit this page on GitHub' },
-	footer: { text: () => (
-      <div className={'text-current text-sm'}>
-        {'Yearn Finance '}
-        {new Date().getFullYear()}
-      </div>
-    )
-  },
+	feedback: {labels: 'feedback', content: 'Question? Give us feedback →'},
+	toc: {float: true},
+	sidebar: {defaultMenuCollapsed: true},
+	editLink: {text:'Edit this page on GitHub'},
+	footer: {text: () => (
+		<div className={'text-current text-sm'}>
+			{'Yearn Finance '}
+			{new Date().getFullYear()}
+		</div>
+	)
+	},
 	GITHUB_URI,
 	head: (
 		<>
@@ -106,10 +106,10 @@ export default {
 			</>
 		);
 	},
-  navigation: { next: true, prev: true },
+	navigation: {next: true, prev: true},
 	nextThemes: {defaultTheme: 'light'},
 	darkMode: true,
-  project: { link: GITHUB_URI },
+	project: {link: GITHUB_URI},
 	titleSuffix: ' – Yearn',
 	unstable_flexsearch: true
 };
