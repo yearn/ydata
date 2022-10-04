@@ -1,6 +1,7 @@
 # imported into yearn/yearn.py
 YEARN_V1_API_ENDPOINT = "https://api.yearn.finance/v1/chains"
 META_ENDPOINT = "https://meta.yearn.network"
+YDAEMON_ENDPOINT = "https://ydaemon.yearn.finance"
 
 # imported into yearn/vaults.py
 ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
@@ -14,7 +15,7 @@ MAX_UINT256 = (
 LONDON_DAY_BLOCK = 12965000
 
 # imported into yearn/network.py
-BLOCK_SIZE = 10000
+BLOCK_SIZE = 5000
 MAX_BLOCK = 99999999
 USDC_DECIMALS = 6
 

@@ -11,6 +11,7 @@ from web3._utils.filters import construct_event_filter_params
 from web3.contract import Contract
 from web3.datastructures import AttributeDict
 from web3.exceptions import ContractLogicError
+from web3.middleware import geth_poa_middleware
 
 from src.constants import BLOCK_SIZE, MAX_BLOCK, USDC_DECIMALS
 from src.networks import Network
@@ -37,6 +38,13 @@ class Web3Provider:
                 f"https://api.etherscan.io/api?&apiKey={os.environ['ETHERSCAN_TOKEN']}"
             )
             self.oracle = "0x83d95e0d5f402511db06817aff3f9ea88224b030"
+        elif network == Network.Optimism:
+            provider = os.environ["OPT_PROVIDER"]
+            self.scan_url = "https://optimistic.etherscan.io/"
+            self.endpoint = (
+                f"https://api-optimistic.etherscan.io/api?&apiKey={os.environ['FTMSCAN_TOKEN']}"
+            )
+            self.oracle = "0xB082d9f4734c535D9d80536F7E87a6f4F471bF65"
         elif network == Network.Fantom:
             provider = os.environ["FTM_PROVIDER"]
             self.scan_url = "https://ftmscan.com"
@@ -53,6 +61,10 @@ class Web3Provider:
             self.oracle = "0x043518ab266485dc085a1db095b8d9c2fc78e9b9"
 
         self.provider = Web3(Web3.HTTPProvider(provider))
+        if network == Network.Optimism:
+            self.provider.middleware_onion.inject(
+                geth_poa_middleware, layer=0
+            )
 
     @rate_limit()
     def fetch_abi(self, address: str) -> list[dict]:
@@ -69,6 +81,8 @@ class Web3Provider:
             return json.loads(abi)
         except JSONDecodeError as e:
             logger.error(abi)
+            if abi == "Contract source code not verified":
+                raise ValueError(abi)
             raise e
 
     @retry(

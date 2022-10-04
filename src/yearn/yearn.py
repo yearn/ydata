@@ -2,7 +2,7 @@ import logging
 from dataclasses import dataclass
 from typing import Dict, List, Literal, Set, TypedDict, Union
 
-from src.constants import META_ENDPOINT, YEARN_V1_API_ENDPOINT
+from src.constants import META_ENDPOINT, YEARN_V1_API_ENDPOINT, YDAEMON_ENDPOINT
 from src.networks import Network
 from src.utils.network import client, parse_json
 from src.yearn import Protocol, Strategy, Vault, get_protocol
@@ -101,7 +101,8 @@ class Yearn:
 
     def fetch_vaults(self) -> Union[List[VaultData], Dict]:
         # fetch data from api
-        url = YEARN_V1_API_ENDPOINT + f"/{self.network}/vaults/all"
+        # url = YEARN_V1_API_ENDPOINT + f"/{self.network}/vaults/all"
+        url = YDAEMON_ENDPOINT + f"/{self.network}/vaults/all"
         response = client('get', url)
         jsoned = parse_json(response)
         if jsoned is None:
@@ -133,7 +134,8 @@ class Yearn:
         return protocol_map
 
     def refresh(self):
-        protocol_map = self.map_strategy_protocols()
+        # FIXME: yDaemon currently does not fetch the protocol data from meta
+        # protocol_map = self.map_strategy_protocols()
         self._vaults = set({})
         self._strategies = set({})
         for vault in self.fetch_vaults():
@@ -155,8 +157,9 @@ class Yearn:
                     address=_strategy["address"],
                     name=_strategy["name"],
                 )
-                if _strategy["address"] in protocol_map:
-                    strategy.protocols = protocol_map[_strategy["address"]]
+                # FIXME: yDaemon currently does not fetch the protocol data from meta
+                # if _strategy["address"] in protocol_map:
+                #     strategy.protocols = protocol_map[_strategy["address"]]
                 strategies.append(strategy)
 
             self._vaults.add(
