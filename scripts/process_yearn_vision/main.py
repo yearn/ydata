@@ -64,7 +64,8 @@ def make_update_cum_share_price_cb() -> Callable[[int, list[str]], list]:
             name = row[name_index or 0]
             price = float(row[price_index])
             cum_price = cum_price_dict.get(name)
-            cum_price_dict[name] = price if cum_price is None else cum_price + price
+            cum_price_new = price if cum_price is None else ((1 + cum_price / 100) * (1 + price / 100) - 1) * 100
+            cum_price_dict[name] = cum_price_new
             row[cum_price_index] = str(cum_price_dict[name])
         return row
 
