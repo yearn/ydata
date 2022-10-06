@@ -34,6 +34,22 @@ background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #111 300px),
 	fixed 10px 10px / 20px 20px radial-gradient(#313131 1px, transparent 0);
 }
 
+#app {
+	max-width: 1635px;
+}
+
+.nextra-nav-container + div {
+	max-width: 128rem;
+}
+
+.nextra-nav-container + div > article > main {
+	max-width: 96rem;
+}
+
+.nextra-toc {
+	display: none !important;
+}
+
 .callout a {
   color: inherit;
 }
