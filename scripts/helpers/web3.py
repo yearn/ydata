@@ -4,13 +4,12 @@ import os
 from json.decoder import JSONDecodeError
 from typing import Literal, Optional, Union
 
+from helpers.constants import Network
+from helpers.network import client, parse_json, rate_limit, retry
 from web3 import Web3
 from web3.contract import Contract
 from web3.exceptions import ContractLogicError
 from web3.middleware import geth_poa_middleware
-
-from helpers.constants import Network
-from helpers.network import client, parse_json, rate_limit, retry
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +60,7 @@ class Web3Provider:
     def fetch_abi(self, address: str) -> list[dict]:
         address = Web3.toChecksumAddress(address)
         params = {"address": address, "module": "contract", "action": "getabi"}
-        response = client('get', self.endpoint, params=params)
+        response = client("get", self.endpoint, params=params)
         jsoned = parse_json(response)
         if jsoned is None:
             msg = f"Failed to fetch abi from address={address}"

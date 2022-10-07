@@ -10,11 +10,15 @@ from expressions import (
     gen_total_debt_expr,
     gen_total_gains_expr,
 )
-from typings import NetworkStr, QueryResult, QueryResultMap, VaultInfo
-
 from helpers.constants import Network
 from helpers.network import client
 from helpers.web3 import Web3Provider
+from process_yearn_vision.typings import (
+    NetworkStr,
+    QueryResult,
+    QueryResultMap,
+    VaultInfo,
+)
 from process_yearn_vision.utils.common import (
     add_months,
     append_csv_rows,
@@ -55,7 +59,7 @@ def make_update_cum_share_price_cb() -> Callable[[int, list[str]], list]:
             cum_price_index = row.index("Cumulative Return (%)")
         else:
             if name_index is None or price_index is None or cum_price_index is None:
-                raise ValueError('Header indexes not found')
+                raise ValueError("Header indexes not found")
             name = row[name_index or 0]
             price = float(row[price_index])
             cum_price = cum_price_dict.get(name)
@@ -86,7 +90,7 @@ def make_update_asset_type_cb(
             type_index = row.index("Type")
         else:
             if name_index is None or type_index is None:
-                raise ValueError('Header indexes not found')
+                raise ValueError("Header indexes not found")
             name = row[name_index]
             asset_type = vault_info.get(name, {}).get("assetType", "Other")
             row[type_index] = asset_type
@@ -216,7 +220,7 @@ def parse_strategy_exprs(
     end_dt: datetime,
 ) -> list[dict[str, QueryResultMap]]:
     merged_arr: list[dict[str, QueryResultMap]] = []
-    vault_networks = list(map(lambda i: i.split(' - '), vaults))
+    vault_networks = list(map(lambda i: i.split(" - "), vaults))
     for gen_expr_cb in gen_expr_cbs:
         arr: list[Optional[QueryResult]] = []
 

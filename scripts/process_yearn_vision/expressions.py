@@ -3,22 +3,22 @@ from process_yearn_vision.typings import NetworkStr
 
 def gen_share_price_expr() -> dict[NetworkStr, str]:
     return {
-        NetworkStr.Mainnet: "yearn_vault{param=\"pricePerShare\", experimental=\"false\", network=\"ETH\"}",
-        NetworkStr.Fantom: "yearn_vault{param=\"pricePerShare\", experimental=\"false\", network=\"FTM\"}",
+        NetworkStr.Mainnet: 'yearn_vault{param="pricePerShare", experimental="false", network="ETH"}',
+        NetworkStr.Fantom: 'yearn_vault{param="pricePerShare", experimental="false", network="FTM"}',
     }
 
 
 def gen_aum_expr() -> dict[NetworkStr, str]:
     return {
-        NetworkStr.Mainnet: "yearn_vault{param=\"tvl\", experimental=\"false\", network=\"ETH\"}",
-        NetworkStr.Fantom: "yearn_vault{param=\"tvl\", experimental=\"false\", network=\"FTM\"}",
+        NetworkStr.Mainnet: 'yearn_vault{param="tvl", experimental="false", network="ETH"}',
+        NetworkStr.Fantom: 'yearn_vault{param="tvl", experimental="false", network="FTM"}',
     }
 
 
 def gen_total_debt_expr() -> dict[NetworkStr, str]:
     return {
-        NetworkStr.Mainnet: "yearn_vault{param=\"totalDebt\", experimental=\"false\", network=\"ETH\"}",
-        NetworkStr.Fantom: "yearn_vault{param=\"totalDebt\", experimental=\"false\", network=\"FTM\"}",
+        NetworkStr.Mainnet: 'yearn_vault{param="totalDebt", experimental="false", network="ETH"}',
+        NetworkStr.Fantom: 'yearn_vault{param="totalDebt", experimental="false", network="FTM"}',
     }
 
 
