@@ -53,8 +53,10 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: install poetry
-        run: pipx install poetry
+      - name: use poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.2.0"
 
       - name: install python packages
         run: poetry install
