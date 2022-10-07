@@ -9,8 +9,8 @@ from web3.contract import Contract
 from web3.exceptions import ContractLogicError
 from web3.middleware import geth_poa_middleware
 
-from src.networks import Network
-from src.utils.network import client, parse_json, rate_limit, retry
+from helpers.constants import Network
+from helpers.network import client, parse_json, rate_limit, retry
 
 logger = logging.getLogger(__name__)
 
@@ -36,9 +36,7 @@ class Web3Provider:
         elif network == Network.Optimism:
             provider = os.environ["OPT_PROVIDER"]
             self.scan_url = "https://optimistic.etherscan.io/"
-            self.endpoint = (
-                f"https://api-optimistic.etherscan.io/api?&apiKey={os.environ['FTMSCAN_TOKEN']}"
-            )
+            self.endpoint = f"https://api-optimistic.etherscan.io/api?&apiKey={os.environ['FTMSCAN_TOKEN']}"
             self.oracle = "0xB082d9f4734c535D9d80536F7E87a6f4F471bF65"
         elif network == Network.Fantom:
             provider = os.environ["FTM_PROVIDER"]
@@ -57,9 +55,7 @@ class Web3Provider:
 
         self.provider = Web3(Web3.HTTPProvider(provider))
         if network == Network.Optimism:
-            self.provider.middleware_onion.inject(
-                geth_poa_middleware, layer=0
-            )
+            self.provider.middleware_onion.inject(geth_poa_middleware, layer=0)
 
     @rate_limit()
     def fetch_abi(self, address: str) -> list[dict]:

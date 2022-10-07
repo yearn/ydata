@@ -3,14 +3,14 @@ skip-string-normalization = true
 
 [tool.poetry]
 name = "yearn-data-analytics"
-version = "0.2.2"
+version = "0.3.0"
 description = ""
 authors = [
     "borrito <yh01dlx@gmail.com>",
     "huggingbot <83656073+huggingbot@users.noreply.github.com>",
 ]
 packages = [
-    { include = "src" }
+    { include = "helpers" }
 ]
 
 [tool.poetry.dependencies]
@@ -24,7 +24,7 @@ requests-toolbelt = "0.9.1"
 [tool.poetry.dev-dependencies]
 pytest = "6.2.5"
 mypy = "0.950"
-black = "22.1.0"
+black = "22.3.0"
 isort = "5.10.1"
 pre-commit = "2.19.0"
 pre-commit-hooks = "4.2.0"

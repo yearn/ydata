@@ -1,6 +1,0 @@
-from src.networks import Network
-
-# imported into utils/test_web3
-USDC_VAULT_ADDRESS = (Network.Mainnet, "0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE")
-WFTM_VAULT_ADDRESS = (Network.Fantom, "0x0DEC85e74A92c52b7F708c4B10207D9560CEFaf0")
-CRV3_VAULT_ADDRESS = (Network.Arbitrum, "0x239e14A19DFF93a17339DCC444f74406C17f8E67")

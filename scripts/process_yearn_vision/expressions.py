@@ -1,4 +1,4 @@
-from scripts.process_yearn_vision.typings import NetworkStr
+from process_yearn_vision.typings import NetworkStr
 
 
 def gen_share_price_expr() -> dict[NetworkStr, str]:

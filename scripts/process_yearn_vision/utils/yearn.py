@@ -3,10 +3,10 @@ from typing import Optional
 
 from web3 import exceptions
 
-from scripts.process_yearn_vision.typings import Address, Block, Vault
-from src.networks import Network
-from src.utils.network import client, parse_json
-from src.utils.web3 import Web3Provider
+from helpers.constants import Network
+from helpers.network import client, parse_json
+from helpers.web3 import Web3Provider
+from process_yearn_vision.typings import Address, Block, Vault
 
 
 def get_vault(vault_address: Address, network: Network) -> Optional[Vault]:

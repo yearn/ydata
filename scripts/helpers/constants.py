@@ -1,4 +1,13 @@
-# imported into utils/network.py
+from enum import IntEnum
+
+
+class Network(IntEnum):
+    Mainnet = 1
+    Optimism = 10
+    Fantom = 250
+    Arbitrum = 42161
+
+
 REQUESTS_RETRY_TIMES = 5
 REQUESTS_BACKOFF_FACTOR = 2
 REQUESTS_STATUS_FORCELIST = [429, 500, 502, 503, 504]
