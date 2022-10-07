@@ -8,7 +8,7 @@ from typing import Any, Callable, Literal, Optional, Type
 import requests
 from requests.adapters import HTTPAdapter, Retry
 
-from src.constants import (
+from helpers.constants import (
     CALL_WINDOW_IN_SECOND,
     MAX_CALLS_PER_WINDOW,
     REQUESTS_BACKOFF_FACTOR,

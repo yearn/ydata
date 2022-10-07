@@ -49,9 +49,6 @@ FTMSCAN_TOKEN=
 # Arbitrum
 ARB_PROVIDER=https://arb1.arbitrum.io/rpc
 ARBISCAN_TOKEN=
-
-# Database
-DATABASE_URI=sqlite:////data/api_cache.sqlite3
 ```
 
 Furthermore, you need to have Docker and Docker Compose that can support compose file format of version 2.0 or higher, see the [documentation](https://docs.docker.com/compose/compose-file/compose-versioning/) for the list of compatible versions and installation guides.

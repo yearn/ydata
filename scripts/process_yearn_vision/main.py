@@ -4,20 +4,18 @@ from pathlib import Path
 from typing import Any, Callable, Optional, Union
 
 import pandas as pd
-
-from scripts.process_yearn_vision.expressions import (
+from expressions import (
     gen_aum_expr,
     gen_share_price_expr,
     gen_total_debt_expr,
     gen_total_gains_expr,
 )
-from scripts.process_yearn_vision.typings import (
-    NetworkStr,
-    QueryResult,
-    QueryResultMap,
-    VaultInfo,
-)
-from scripts.process_yearn_vision.utils.common import (
+from typings import NetworkStr, QueryResult, QueryResultMap, VaultInfo
+
+from helpers.constants import Network
+from helpers.network import client
+from helpers.web3 import Web3Provider
+from process_yearn_vision.utils.common import (
     add_months,
     append_csv_rows,
     get_csv_row,
@@ -25,14 +23,11 @@ from scripts.process_yearn_vision.utils.common import (
     to_timestamp,
     update_csv,
 )
-from scripts.process_yearn_vision.utils.yearn import (
+from process_yearn_vision.utils.yearn import (
     get_delegated_assets,
     get_vault,
     timestamp_to_block,
 )
-from src.networks import Network
-from src.utils.network import client
-from src.utils.web3 import Web3Provider
 
 CSV_DATE_FORMAT = "%b/%y"
 
@@ -64,7 +59,9 @@ def make_update_cum_share_price_cb() -> Callable[[int, list[str]], list]:
             name = row[name_index or 0]
             price = float(row[price_index])
             cum_price = cum_price_dict.get(name)
-            cum_price_dict[name] = price if cum_price is None else (1 + cum_price) * (1 + price) - 1
+            cum_price_dict[name] = (
+                price if cum_price is None else (1 + cum_price) * (1 + price) - 1
+            )
             row[cum_price_index] = str(cum_price_dict[name])
         return row
 

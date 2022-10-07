@@ -3,14 +3,14 @@ skip-string-normalization = true
 
 [tool.poetry]
 name = "yearn-data-analytics"
-version = "0.2.2"
+version = "0.3.0"
 description = ""
 authors = [
     "borrito <yh01dlx@gmail.com>",
     "huggingbot <83656073+huggingbot@users.noreply.github.com>",
 ]
 packages = [
-    { include = "src" }
+    { include = "helpers" }
 ]
 
 [tool.poetry.dependencies]
@@ -19,24 +19,16 @@ python-dotenv = "0.16.0"
 requests = "2.27.1"
 web3 = "5.27.0"
 pandas = "1.4.2"
-jsons = "1.6.2"
-sqlalchemy = "1.4.35"
-sqlmodel = "0.0.6"
-fastapi = "0.78.0"
-uvicorn = "0.17.6"
-gql = "3.3.0"
 requests-toolbelt = "0.9.1"
-ypricemagic = {version = "1.1.1.*", allow-prereleases = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.5"
 mypy = "0.950"
-black = "22.1.0"
+black = "22.3.0"
 isort = "5.10.1"
 pre-commit = "2.19.0"
 pre-commit-hooks = "4.2.0"
 types-requests = "2.27.29"
-ipykernel = "^6.13.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
