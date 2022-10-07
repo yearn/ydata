@@ -5,31 +5,18 @@ from typing import Any, Callable, Optional, Union
 
 import pandas as pd
 
-from scripts.process_yearn_vision.expressions import (
-    gen_aum_expr,
-    gen_share_price_expr,
-    gen_total_debt_expr,
-    gen_total_gains_expr,
-)
-from scripts.process_yearn_vision.typings import (
-    NetworkStr,
-    QueryResult,
-    QueryResultMap,
-    VaultInfo,
-)
+from scripts.process_yearn_vision.expressions import (gen_aum_expr,
+                                                      gen_share_price_expr,
+                                                      gen_total_debt_expr,
+                                                      gen_total_gains_expr)
+from scripts.process_yearn_vision.typings import (NetworkStr, QueryResult,
+                                                  QueryResultMap, VaultInfo)
 from scripts.process_yearn_vision.utils.common import (
-    add_months,
-    append_csv_rows,
-    get_csv_row,
-    get_start_and_end_of_month,
-    to_timestamp,
-    update_csv,
-)
-from scripts.process_yearn_vision.utils.yearn import (
-    get_delegated_assets,
-    get_vault,
-    timestamp_to_block,
-)
+    add_months, append_csv_rows, get_csv_row, get_start_and_end_of_month,
+    to_timestamp, update_csv)
+from scripts.process_yearn_vision.utils.yearn import (get_delegated_assets,
+                                                      get_vault,
+                                                      timestamp_to_block)
 from src.networks import Network
 from src.utils.network import client
 from src.utils.web3 import Web3Provider

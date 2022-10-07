@@ -8,14 +8,9 @@ from typing import Any, Callable, Literal, Optional, Type
 import requests
 from requests.adapters import HTTPAdapter, Retry
 
-from src.constants import (
-    CALL_WINDOW_IN_SECOND,
-    MAX_CALLS_PER_WINDOW,
-    REQUESTS_BACKOFF_FACTOR,
-    REQUESTS_RETRY_TIMES,
-    REQUESTS_STATUS_FORCELIST,
-    REQUESTS_TIMEOUT,
-)
+from src.constants import (CALL_WINDOW_IN_SECOND, MAX_CALLS_PER_WINDOW,
+                           REQUESTS_BACKOFF_FACTOR, REQUESTS_RETRY_TIMES,
+                           REQUESTS_STATUS_FORCELIST, REQUESTS_TIMEOUT)
 
 logging.basicConfig(
     level=logging.INFO,
