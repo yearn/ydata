@@ -1,74 +1,73 @@
-# Yearn DATA Analytics
+# Turborepo starter
 
+This is an official Yarn v1 starter turborepo.
 
-## Research Reports
+## What's inside?
 
-We share the research outputs from the YFI Data Analysis team in [the `research` directory](./research/).
+This turborepo uses [Yarn](https://classic.yarnpkg.com/) as a package manager. It includes the following packages/apps:
 
+### Apps and Packages
 
-## Vault-level Risk
+- `docs`: a [Next.js](https://nextjs.org) app
+- `web`: another [Next.js](https://nextjs.org) app
+- `ui`: a stub React component library shared by both `web` and `docs` applications
+- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
-API endpoint:
-https://d3971bp2359cnv.cloudfront.net/api
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-This project aims to provide additional quantitative metrics on top of the existing [Risk Framework](https://github.com/yearn/yearn-watch/blob/main/utils/risks.json), to help discover informative risk measures and collect the data necessary to build the metrics.
-Furthermore, the project also aims to provide aggregated views for Yearn's Vaults and associated DeFi protocols.
-See [the project README](./src/risk_framework/README.md) for more details.
+### Utilities
 
-~~Usage examples for this project can be seen in [`examples/risk.ipynb`](./examples/risk.ipynb).~~
+This turborepo has some additional tools already setup for you:
 
-TODO: need to rewrite examples for the new structure
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
 
+### Build
 
-## Prerequisites
+To build all apps and packages, run the following command:
 
-This project uses Poetry for dependency management.
-Please refer to the [documentation](https://python-poetry.org/docs/master/) for installing Poetry.
-
-Run the following command to install the dependencies:
 ```
-poetry install
-```
-
-Then run the following command to install the git pre-commit hooks:
-```
-pre-commit install
+cd my-turborepo
+yarn run build
 ```
 
-You will also need to set up the Web3 provider endpoints and chain explorers in the environment file `.env`.
-The necessary variables and some of their default values are shown in [`.env.example`](./.env.example):
+### Develop
+
+To develop all apps and packages, run the following command:
+
 ```
-# Mainnet
-ETH_PROVIDER=
-ETHERSCAN_TOKEN=
-
-# Fantom
-FTM_PROVIDER=https://rpc.ftm.tools/
-FTMSCAN_TOKEN=
-
-# Arbitrum
-ARB_PROVIDER=https://arb1.arbitrum.io/rpc
-ARBISCAN_TOKEN=
+cd my-turborepo
+yarn run dev
 ```
 
-Furthermore, you need to have Docker and Docker Compose that can support compose file format of version 2.0 or higher, see the [documentation](https://docs.docker.com/compose/compose-file/compose-versioning/) for the list of compatible versions and installation guides.
+### Remote Caching
 
+Turborepo can use a technique known as [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
 
-## Usage Examples
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
 
-### Running the API
-
-To run the API locally at port 80:
-```bash
-docker-compose up --build
 ```
-Auto-generated docs can be seen at [localhost/docs](http://localhost/docs)
+cd my-turborepo
+npx turbo login
+```
 
-### DevContainer
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
 
-If you're using VSCode, you can use DevContainer to setup all the required dependencies (almost) automatically.
-**But you first need to set up `./.env` file though.**
-If you have filled out `./.env`, open cloned dir in VSC and just press `Reopen in Container` button on the right bottom side.  
-<img width="459" alt="image" src="https://user-images.githubusercontent.com/103443013/173222631-fa280003-24e2-4f49-85da-dc1d88bc2633.png">  
-Or use command palette to search `Remote-Containers: Reopen in Container`.
-Then VSC will do the rest. pytest in the integrated terminal after the build process. You'll pass all tests if your DevContainer has no problem and `.env` is set properly.
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
+
+```
+npx turbo link
+```
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Pipelines](https://turborepo.org/docs/core-concepts/pipelines)
+- [Caching](https://turborepo.org/docs/core-concepts/caching)
+- [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching)
+- [Scoped Tasks](https://turborepo.org/docs/core-concepts/scopes)
+- [Configuration Options](https://turborepo.org/docs/reference/configuration)
+- [CLI Usage](https://turborepo.org/docs/reference/command-line-reference)
