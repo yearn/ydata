@@ -1,5 +1,28 @@
 ---
-title: "Messari Frontier Web"
+title: "index page"
 ---
 
-**Messari Frontier Web** displays reports built using Datapane and Flourish Studio.
+import Image from 'next/image'
+import Card from '../components/Card';
+
+<section className={'mt-4 grid w-full grid-cols-1 gap-10 pb-10 md:mt-20 md:grid-cols-2'}>
+	<Card
+		link='/visualizations/yearn-v2-vaults'
+		title='Yearn V2 Vaults'
+		body={[
+			"A bird's eye view of the various vaults at Yearn.",
+			"We show the historical change in AUM, APY, and some notable deposits \& withdrawals."
+		]}
+	/>
+	<div className='row-span-2'>
+		<Image src="/hero.png" width="100%" height="100%" layout="responsive" objectFit="contain"/>
+	</div>
+	<Card
+			link='/visualizations/efficient-frontier'
+			title='Efficient Frontier'
+			body={[
+				"The risk-adjusted performance of Yearn's assets.",
+				"Compare our assets within the whole frontier of DeFi."
+		]}
+		/>
+</section>

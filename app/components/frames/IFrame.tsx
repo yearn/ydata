@@ -12,7 +12,7 @@ export const IFrame: React.FC<TProps> = ({src}): ReactElement | null => {
 	}, []);
 
 	return isMounted ? (
-		<iframe src={src} className={'h-screen w-full border-none'}>
+		<iframe src={src} className={'mt-5 h-5/6 w-full border-none'}>
 			{'IFrame not supported'}
 		</iframe>
 	) : null;
