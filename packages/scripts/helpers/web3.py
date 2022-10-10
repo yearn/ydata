@@ -4,12 +4,13 @@ import os
 from json.decoder import JSONDecodeError
 from typing import Literal, Optional, Union
 
-from helpers.constants import Network
-from helpers.network import client, parse_json, rate_limit, retry
 from web3 import Web3
 from web3.contract import Contract
 from web3.exceptions import ContractLogicError
 from web3.middleware import geth_poa_middleware
+
+from helpers.constants import Network
+from helpers.network import client, parse_json, rate_limit, retry
 
 logger = logging.getLogger(__name__)
 

@@ -6,6 +6,8 @@ from typing import Callable, Iterator, Optional
 
 import pandas as pd
 
+CSV_DATE_FORMAT = "%b/%y"
+
 
 def to_timestamp(date: datetime) -> int:
     """Returned timestamp is offset-aware"""
@@ -89,3 +91,14 @@ def get_start_and_end_of_month(
         return []
 
     return [rng for rng in zip(start_rng, end_rng)]
+
+
+def get_start_datetime(output_file_path: Path) -> datetime:
+    header = get_csv_row(output_file_path, 0)
+    date_index = header.index("Month")
+    last_row = get_csv_row(output_file_path, -1)
+    try:
+        naive_dt = datetime.strptime(last_row[date_index], CSV_DATE_FORMAT)
+        return add_months(naive_dt.replace(tzinfo=timezone.utc), 1)
+    except ValueError:
+        return datetime.strptime("01/12/2020", "%d/%m/%Y").replace(tzinfo=timezone.utc)

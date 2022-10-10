@@ -6,6 +6,8 @@ from http import HTTPStatus
 from typing import Any, Callable, Literal, Optional, Type
 
 import requests
+from requests.adapters import HTTPAdapter, Retry
+
 from helpers.constants import (
     CALL_WINDOW_IN_SECOND,
     MAX_CALLS_PER_WINDOW,
@@ -14,7 +16,6 @@ from helpers.constants import (
     REQUESTS_STATUS_FORCELIST,
     REQUESTS_TIMEOUT,
 )
-from requests.adapters import HTTPAdapter, Retry
 
 logging.basicConfig(
     level=logging.INFO,
