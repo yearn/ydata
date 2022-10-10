@@ -62,13 +62,14 @@ jobs:
         run: poetry install
         working-directory: ./scripts
 
-      - name: execute python script
+      - name: execute python scripts
         env:
           ETH_PROVIDER: ${{ steps.mask-inputs.outputs.eth-provider }}
           ETHERSCAN_TOKEN: ${{ steps.mask-inputs.outputs.etherscan-token }}
           FTM_PROVIDER: ${{ steps.mask-inputs.outputs.ftm-provider }}
           FTMSCAN_TOKEN: ${{ steps.mask-inputs.outputs.ftmscan-token }}
         run: |
+          poetry run python process_yearn_vision/apy.py
           poetry run python process_yearn_vision/main.py
         working-directory: ./scripts
 
