@@ -60,7 +60,7 @@ jobs:
 
       - name: install python packages
         run: poetry install
-        working-directory: ./scripts
+        working-directory: ./packages/scripts
 
       - name: execute python script
         env:
@@ -70,7 +70,7 @@ jobs:
           FTMSCAN_TOKEN: ${{ steps.mask-inputs.outputs.ftmscan-token }}
         run: |
           poetry run python process_yearn_vision/main.py
-        working-directory: ./scripts
+        working-directory: ./packages/scripts
 
       - name: check for modified files
         id: git-check
