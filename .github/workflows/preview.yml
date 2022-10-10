@@ -5,7 +5,7 @@ env:
 on:
   pull_request:
     paths:
-      - 'app/**'
+      - 'apps/**'
 jobs:
   Deploy-Preview:
     runs-on: ubuntu-latest
@@ -15,11 +15,11 @@ jobs:
         run: |
           npx ci
           npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: ./app
+        working-directory: ./apps/web
       - name: Build Project Artifacts
         run: |
           npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: ./app
+        working-directory: ./apps/web
       - name: Deploy Project Artifacts to Vercel
         uses: amondnet/vercel-action@v25.1.0
         with:
@@ -28,4 +28,4 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           scope: yearn-data-analytics
-          working-directory: ./app
+          working-directory: ./apps/web
