@@ -60,7 +60,7 @@ jobs:
 
       - name: install python packages
         run: poetry install
-        working-directory: ./scripts
+        working-directory: ./packages/scripts
 
       - name: execute python scripts
         env:
@@ -71,7 +71,7 @@ jobs:
         run: |
           poetry run python process_yearn_vision/apy.py
           poetry run python process_yearn_vision/main.py
-        working-directory: ./scripts
+        working-directory: ./packages/scripts
 
       - name: check for modified files
         id: git-check
