@@ -1,73 +1,55 @@
-# Turborepo starter
+# yData
 
-This is an official Yarn v1 starter turborepo.
+<div align="center"><img height="250px" src="https://i.imgur.com/0c0VUEH.png" /></div>
+<br/>
 
-## What's inside?
 
-This turborepo uses [Yarn](https://classic.yarnpkg.com/) as a package manager. It includes the following packages/apps:
+Explore the realm of yearn through the lens of data analysis
 
-### Apps and Packages
+- Live Link: https://yearn-data-analytics.vercel.app/
 
-- `docs`: a [Next.js](https://nextjs.org) app
-- `web`: another [Next.js](https://nextjs.org) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+# About
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+yData is a web app with analytics for the yearn ecosystem. These are the available visualizations:
 
-### Utilities
+## Yearn V2 Vaults
 
-This turborepo has some additional tools already setup for you:
+You can scroll through many views in this section, including:
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- Group vaults by many factors like Chain, Assets Under Management (AUM) size, Cumulative Return, Asset Type, and others.
+- Daily Variation of Deposits and Withdraws, helps you track how much Total Value Locked (TVL) is entering and leaving the yearn protocol.
+- Overview of cumulative return since inception plotted against monthly returns.
 
-### Build
+## Efficient Frontier
 
-To build all apps and packages, run the following command:
+A performance overview of yearn's vaults that considers risk factors so you can compare them with other DeFi assets. This table will plot yield options in the following axes:
 
-```
-cd my-turborepo
-yarn run build
-```
+- **Return:** How much yield does this option generates (higher is better)
+- **Volatility:** How much does the yield vary over time (lower means less risk)
 
-### Develop
+In this graph you will find a region where the most risk-efficient assets are, that is the "Efficient Frontier" (highlighted with the red crayon square):
 
-To develop all apps and packages, run the following command:
+![](https://i.imgur.com/USsUmqB.png)
 
-```
-cd my-turborepo
-yarn run dev
-```
+# Set up and run
+1) Clone this repo: `git clone git@github.com:yearn/yearn-data-analytics.git`
+2) Install [npm](https://nodejs.org/en/) dependencies: `npm install`
+3) Run dev environment: `npm run dev`
 
-### Remote Caching
+## Available scripts
+- `npm run dev`: start dev environment
+- `npm run build`: build for production
+- `npm run format`: apply prettier formatting
+- `npm run lint`: run linter
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+# More data resources
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+- [Yearn official docs](https://docs.yearn.finance/)
+- [About yVaults V2](https://docs.yearn.finance/getting-started/products/yvaults/overview)
+- [About yearn risk scores](https://docs.yearn.finance/resources/risks/risk-score)
+- [yDaemon: unified yearn data API](https://medium.com/@marcoworms/ydaemon-one-api-to-unify-all-yearn-data-4fc74dc9a33b)
 
-```
-cd my-turborepo
-npx turbo login
-```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Pipelines](https://turborepo.org/docs/core-concepts/pipelines)
-- [Caching](https://turborepo.org/docs/core-concepts/caching)
-- [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching)
-- [Scoped Tasks](https://turborepo.org/docs/core-concepts/scopes)
-- [Configuration Options](https://turborepo.org/docs/reference/configuration)
-- [CLI Usage](https://turborepo.org/docs/reference/command-line-reference)
+<br/>
+<div align="center"><img height=700px" src="https://i.imgur.com/9oRSSXn.jpg" /></div>
+<br/>
