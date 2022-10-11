@@ -317,7 +317,7 @@ def get_start_datetime(output_file_path: Path) -> datetime:
 def main() -> None:
     file_dir = Path(__file__).parent.resolve()
     output_file_path = file_dir / "output.csv"
-    vault_info_file_path = file_dir / "vault_info.json"
+    vault_info_file_path = file_dir / ".." / "vault_info.json"
 
     # Getting the start datetime will require looping all rows in csv file to get the last row
     start_dt = get_start_datetime(output_file_path)
