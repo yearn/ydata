@@ -22,7 +22,7 @@ You can scroll through many views in this section, including:
 
 ## Efficient Frontier
 
-A performance overview of yearn's vaults that considers risk factors so you can compare them with other DeFi assets. This table will plot yield options in the following axes:
+An overview of yearn's vaults performance that considers risk factors so you can compare them with other DeFi assets. This table will plot yield options in the following axes:
 
 - **Return:** How much yield does this option generates (higher is better)
 - **Volatility:** How much does the yield vary over time (lower means less risk)
