@@ -1,6 +1,6 @@
 # yData
 
-<div align="center"><img height="250px" src="https://i.imgur.com/0c0VUEH.png" /></div>
+<div align="center"><img src="https://i.imgur.com/0c0VUEH.png" /></div>
 <br/>
 
 
@@ -33,14 +33,14 @@ In this graph you will find a region where the most risk-efficient assets are, t
 
 # Set up and run
 1) Clone this repo: `git clone git@github.com:yearn/yearn-data-analytics.git`
-2) Install [npm](https://nodejs.org/en/) dependencies: `npm install`
-3) Run dev environment: `npm run dev`
+2) Install dependencies: `yarn`
+3) Run dev environment: `yarn dev`
 
 ## Available scripts
-- `npm run dev`: start dev environment
-- `npm run build`: build for production
-- `npm run format`: apply prettier formatting
-- `npm run lint`: run linter
+- `yarn dev`: start dev environment
+- `yarn build`: build for production
+- `yarn format`: apply prettier formatting
+- `yarn lint`: run linter
 
 # More data resources
 
