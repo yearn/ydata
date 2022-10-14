@@ -1,8 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import LogoYearn from 'components/icons/LogoYearn';
-
-const GITHUB_URI = 'https://github.com/yearn/yearn-data-analytics';
+const GITHUB_URI = 'https://github.com/yearn/ydata';
 
 export default {
 	docsRepositoryBase: GITHUB_URI,
@@ -13,7 +11,7 @@ export default {
 	GITHUB_URI,
 	head: (
 		<>
-			<title>{'Yearn Data Analytics'}</title>
+			<title>{'yData'}</title>
 			<meta httpEquiv={'X-UA-Compatible'} content={'IE=edge'} />
 			<meta
 				name={'viewport'}
@@ -22,7 +20,7 @@ export default {
 			<meta name={'description'} content={"Yearn web Lib is a library of standard components used through Yearn's Projects. This library is made for React projects with the idea to be light, efficient and easy to use. We are using React + Tailwindcss + ethersjs for the web3 package, and some contexts are available to correctly wrap your app."} />
 			<meta name={'msapplication-TileColor'} content={'#62688F'} />
 			<meta name={'theme-color'} content={'#ffffff'} />
-
+		
 			<link
 				rel={'shortcut icon'}
 				type={'image/x-icon'}
@@ -57,7 +55,7 @@ export default {
 				sizes={'512x512'}
 				href={'/favicons/android-chrome-512x512.png'}
 			/>
-
+		
 			<meta name={'robots'} content={'index,nofollow'} />
 			<meta name={'googlebot'} content={'index,nofollow'} />
 			<meta charSet={'utf-8'} />
@@ -66,16 +64,16 @@ export default {
 	logo: () => {
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		return (
-			<>
-				<div className={'mr-4'}>
-					<LogoYearn />
+			<div className={'flex items-center'}>
+				<div className={'mr-2'}>
+					<img src={'https://i.imgur.com/oSvrf9g.png'} style={{width:50, height:50}}></img>
 				</div>
 				<span
 					className={'text-xl font-bold md:inline'}
 				>
-					{'Yearn Data Analytics'}
+					{'yData'}
 				</span>
-			</>
+			</div>
 		);
 	},
 	navigation: {next: true, prev: true},
