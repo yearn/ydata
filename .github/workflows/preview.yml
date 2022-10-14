@@ -6,6 +6,8 @@ on:
   pull_request:
     paths:
       - 'apps/**'
+  workflow_dispatch:
+
 jobs:
   Deploy-Preview:
     runs-on: ubuntu-latest
