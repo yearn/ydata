@@ -6,7 +6,7 @@
 
 Explore the realm of yearn through the lens of data analysis
 
-- Live Link: https://yearn-data-analytics.vercel.app/
+- Live Link: https://ydata.vercel.app/
 
 # About
 
