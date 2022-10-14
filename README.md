@@ -32,7 +32,7 @@ In this graph you will find a region where the most risk-efficient assets are, t
 ![](https://i.imgur.com/USsUmqB.png)
 
 # Set up and run
-1) Clone this repo: `git clone git@github.com:yearn/yearn-data-analytics.git`
+1) Clone this repo: `git clone git@github.com:yearn/ydata.git`
 2) Install dependencies: `yarn`
 3) Run dev environment: `yarn dev`
 
