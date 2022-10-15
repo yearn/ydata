@@ -4,15 +4,15 @@ from pathlib import Path
 from typing import Any, Callable, Optional, Union
 
 import pandas as pd
-from expressions import (
+from helpers.constants import Network
+from helpers.network import client
+from helpers.web3 import Web3Provider
+from process_yearn_vision.expressions import (
     gen_aum_expr,
     gen_share_price_expr,
     gen_total_debt_expr,
     gen_total_gains_expr,
 )
-from helpers.constants import Network
-from helpers.network import client
-from helpers.web3 import Web3Provider
 from process_yearn_vision.typings import (
     NetworkStr,
     QueryResult,
@@ -267,6 +267,15 @@ def gen_json_body(
                 "expr": expr[NetworkStr.Fantom],
                 "legendFormat": f"{{{{vault}}}} - {NetworkStr.Fantom}",
                 "refId": NetworkStr.Fantom,
+                "utcOffsetSec": 0,
+                "datasourceId": 1,
+                "intervalMs": 86400000,  # 1 day
+                "maxDataPoints": 2000,
+            },
+            {
+                "expr": expr[NetworkStr.Optimism],
+                "legendFormat": f"{{{{vault}}}} - {NetworkStr.Optimism}",
+                "refId": NetworkStr.Optimism,
                 "utcOffsetSec": 0,
                 "datasourceId": 1,
                 "intervalMs": 86400000,  # 1 day

@@ -9,6 +9,7 @@ Address = NewType("Address", str)
 class NetworkStr(str, Enum):
     Mainnet = "ETH"
     Fantom = "FTM"
+    Optimism = "OPT"
 
 
 class Data(TypedDict):

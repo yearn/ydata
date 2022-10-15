@@ -1,22 +1,15 @@
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
-from helpers.constants import Network
-from helpers.network import client, parse_json
-from helpers.web3 import Web3Provider
+from pandas.tseries.offsets import MonthEnd
+from process_yearn_vision.main import CSV_DATE_FORMAT, fetch_yearn_vision
+from process_yearn_vision.typings import NetworkStr
 
-CSV_DATE_FORMAT = "%b/%y"
-YDAEMON = "https://ydaemon.yearn.finance/{0}/vaults/all"
-
-NETWORK_NAME = {
-    Network.Mainnet: "ETH",
-    Network.Fantom: "FTM",
-    Network.Optimism: "OPT",
-    Network.Arbitrum: "ARB",
-}
+share_price_expr = (
+    '(yearn_vault{{network="{0}", param="pricePerShare", experimental="false"}})'
+)
 
 
 def main() -> None:
@@ -24,81 +17,71 @@ def main() -> None:
     output_file_path = file_dir / ".." / ".." / ".." / "data" / "apy.csv"
     vault_info_file_path = file_dir / ".." / "vault_info.json"
 
-    data = pd.read_csv(output_file_path, index_col=0)
-    if len(data) == 0:
-        start_dt = datetime.strptime("01/12/2020", "%d/%m/%Y").replace(
-            tzinfo=timezone.utc
-        )
-    else:
-        data.index = data.index.to_series().apply(pd.to_datetime)
-        start_dt = (data.index[-1] + timedelta(days=40)).replace(day=1)
-    end_dt = datetime.now(timezone.utc)
-    dt_rng = pd.date_range(start_dt, end_dt, freq="MS", tz=timezone.utc)
+    start_dt = datetime.strptime("01/12/2020", "%d/%m/%Y").replace(tzinfo=timezone.utc)
+    end_dt = datetime.now(timezone.utc) + MonthEnd(-1)
 
-    # fetch vault info
-    vaults = {
-        network: parse_json(client("get", YDAEMON.format(network.value)))
-        for network in Network
-    }
+    # fetch yearn vision
+    expr = {network: share_price_expr.format(network) for network in NetworkStr}
+    result = fetch_yearn_vision(expr, start_dt, end_dt)["results"]
+
+    # get vault info
     with open(vault_info_file_path, "r") as f:
-        vaults["info"] = json.load(f)
+        vault_info = json.load(f)
 
-    # fetch web3 providers
-    w3_providers = {network: Web3Provider(network) for network in Network}
+    # parse query data
+    data = []
+    for network in result.keys():
+        frames = result[network]["frames"]
+        for frame in frames:
+            vault = frame["schema"]["name"]
+            address = frame["schema"]["fields"][1]["labels"]["address"]
 
-    # collect share prices
-    for dt in dt_rng:
-        for network in Network:
-            w3 = w3_providers[network]
-            network_name = NETWORK_NAME[network]
+            ts = frame["data"]["values"][0]
+            prices = frame["data"]["values"][1]
 
-            try:
-                block = w3.get_closest_block(dt)
-            except ValueError:
-                continue
+            # detect change in share price
+            prices = pd.Series(prices, index=ts)
+            prices.index = pd.to_datetime(prices.index, unit="ms")
+            prices = prices[prices.diff() > 0]
 
-            for vault in vaults[network]:
-                inception = vault["inception"]
-                if dt.value / 1e9 < inception:
-                    continue
+            # monthly samples
+            prices = prices.resample("1M").last().dropna()
+            days = prices.index.to_series().diff().dt.days
+            apys = (1 + prices.pct_change()) ** (365.2425 / days) - 1
 
-                vault_id = " ".join(
-                    [vault["symbol"], vault["version"], "- {}".format(network_name)]
+            apys.name = (vault, address)
+            data.append(apys)
+
+    data = pd.DataFrame(data).T
+    data.index = pd.to_datetime(data.index, unit="ms")
+    data.sort_index(inplace=True)
+    data.dropna(axis=0, how="all", inplace=True)
+    data = data.ffill().where(data.bfill().notna())
+
+    # rearrange columns into fields
+    output = []
+    for vault_name, address in data.columns:
+        chain = vault_name[-3:]
+        vault_type = vault_info.get(vault_name, {}).get("assetType", "Other")
+        for idx in data.index:
+            output.append(
+                (
+                    idx,
+                    vault_name,
+                    chain,
+                    address,
+                    vault_type,
+                    idx.strftime(CSV_DATE_FORMAT).lower(),
+                    data[vault_name, address].loc[idx],
                 )
-                share_price = w3.call(vault["address"], "pricePerShare", block=block)
-                share_price /= 10 ** vault["decimals"]
-
-                row = pd.DataFrame(
-                    [
-                        [
-                            vault_id,  # Vault
-                            network_name,  # Chain
-                            vaults["info"]
-                            .get(vault_id, {})
-                            .get("assetType", "Other"),  # Type
-                            dt.strftime(CSV_DATE_FORMAT).lower(),  # Month
-                            share_price,  # SharePrice
-                            np.nan,  # APY
-                        ]
-                    ],
-                    index=[dt],
-                    columns=data.columns,
-                )
-                if len(data) == 0:
-                    data = row
-                else:
-                    data = pd.concat([data, row], axis=0)
-
-    # calculate apy from monthly data
-    data.columns = ["Vault", "Chain", "Type", "Month", "SharePrice", "APY"]
-    data.index.name = "Timestamp"
-    for vault_name, df in data.groupby("Vault"):
-        days = df.index.to_series().diff().dt.days
-        df.APY = (1 + df.SharePrice.pct_change()) ** (365.2425 / days) - 1
-        data.loc[data.Vault == vault_name] = df
+            )
+    output = pd.DataFrame(
+        output,
+        columns=["Timestamp", "Vault", "Chain", "Address", "Type", "Month", "APY"],
+    )
 
     # save output
-    data.to_csv(output_file_path)
+    output.to_csv(output_file_path, index=False)
 
 
 if __name__ == "__main__":
