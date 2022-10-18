@@ -1,0 +1,85 @@
+---
+title: "about page"
+---
+
+import Image from 'next/image'
+import Card from '../components/Card';
+
+<section>
+
+<div className={'flex justify-center'}>
+    
+</div>
+
+<div className={'flex justify-around items-center'}>
+    <div>
+        <Image src="/logo-black-font.png" width="506" height="261" layout="fixed" />
+    </div>
+
+    <div>
+        # About
+
+        yData is a web app with data analytics for the yearn ecosystem
+    </div>
+</div>
+
+<div className={'flex justify-around items-center mb-16'}>
+    <div className={'mr-8'}>
+        <Image src="/hero.png" width="400" height="400" layout="fixed" />
+    </div>
+
+    <div>
+        # Yearn V2 Vaults
+
+        You can scroll through many views in this section, including:
+
+        - Group vaults by many factors like Chain, Assets Under Management (AUM) size, Cumulative Return, Asset Type, and others.
+        - Daily Variation of Deposits and Withdraws, helps you track how much Total Value Locked (TVL) is entering and leaving the yearn protocol.
+        - Overview of cumulative return since inception plotted against monthly returns.
+    </div>
+</div>
+
+
+<div className={'flex justify-around items-center mb-8'}>
+    <div>
+        # Efficient Frontier
+
+        An overview of yearn's vaults performance that considers risk factors so you can compare them with other DeFi assets. This table will plot yield options in the following axes:
+
+        - **Return:** How much yield does this option generates (higher is better)
+        - **Volatility:** How much does the yield vary over time (lower means less risk)
+
+        In this graph you will find a region where the most risk-efficient assets are, that is the "Efficient Frontier" (highlighted with the red crayon square):
+    </div>
+
+    <div className={'ml-8'}>
+        ![](https://i.imgur.com/wHNeCTN.png)
+    </div>
+</div>
+
+<br />
+
+<div className={'flex justify-around items-center mt-4'}>
+    <Image src="/reader.png" width="416" height="608" layout="fixed" />
+    <div>
+        # Set up and run locally
+
+        See the Github [repository](https://github.com/yearn/ydata#set-up-and-run) for instructions
+
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+
+        # More data resources
+
+        - [Yearn official docs](https://docs.yearn.finance/)
+        - [About yVaults V2](https://docs.yearn.finance/getting-started/products/yvaults/overview)
+        - [About yearn risk scores](https://docs.yearn.finance/resources/risks/risk-score)
+        - [yDaemon: unified yearn data API](https://medium.com/@marcoworms/ydaemon-one-api-to-unify-all-yearn-data-4fc74dc9a33b)
+    </div>
+</div>
+
+</section>
