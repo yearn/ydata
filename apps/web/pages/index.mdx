@@ -5,23 +5,43 @@ title: "index page"
 import Image from 'next/image'
 import Card from '../components/Card';
 
-<section className={'mt-4 grid w-full grid-cols-1 gap-10 pb-10 md:mt-20 md:grid-cols-2'}>
-    <Card
-        link='/visualizations/yearn-v2-vaults'
-        title='Yearn V2 Vaults'
-        body={[
-            "Analyze the data for various vaults at Yearn.",
-            "Contains historical changes in Assets Under Management (AUM), Anual Percentage Yield (APY), and statistics for deposits and withdrawals."
-        ]}
-    />
-    <div className='row-span-2'>
-        <Image src="/hero.png" width="100%" height="100%" layout="responsive" objectFit="contain"/>
+<section className={'flex flex-col items-center'}>
+    
+    <h1 className='text-2xl font-bold mt-2 mb-4'>Welcome to the realm of yearn data analysis.</h1>
+    
+    <div className='mb-4'>
+        <Image src="/library1.png" width="571" height="384" layout="fixed"/>
     </div>
-    <Card
-        link='/visualizations/efficient-frontier'
-        title='Efficient Frontier'
-        body={[
-            "Overview of yearn's vaults performance compared to other assets across DeFi",
-        ]}
-    />
+
+    <h1 className='text-2xl font-bold mt-1 mb-8'>Enter the library and get ready to explore!</h1>
+
+    <div  className={''}>
+
+        <Card
+            link='/visualizations/yearn-v2-vaults'
+            title='Yearn V2 Vaults'
+            body={[
+                "Analyze the data for various vaults at Yearn:",
+                "- Historical changes in Assets Under Management (AUM), Anual Percentage Yield (APY)",
+                "- Statistics for deposits and withdrawals",
+                "- Cumulative and monthly return comparisons",
+            ]}
+            image="/vaults.png"
+            inverseImage
+        />
+
+        <Card
+            link='/visualizations/efficient-frontier'
+            title='Efficient Frontier'
+            body={[
+                "An overview of yearn's vaults performance that considers risk factors so you can compare them with other DeFi assets.",
+                "- Return: How much yield does this option generates",
+                "- Volatility: How much does the yield vary over time",
+            ]}
+            image="/frontier.png"
+            
+        />
+
+    </div>
+
 </section>

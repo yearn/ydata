@@ -3,8 +3,7 @@
 <div align="center"><img src="https://i.imgur.com/0c0VUEH.png" /></div>
 <br/>
 
-
-Explore the realm of yearn through the lens of data analysis
+Explore yearn through the realm of data analysis
 
 - Live Link: https://ydata.vercel.app/
 
