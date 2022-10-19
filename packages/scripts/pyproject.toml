@@ -20,6 +20,10 @@ requests = "2.27.1"
 web3 = "5.27.0"
 pandas = "1.4.2"
 requests-toolbelt = "0.9.1"
+joblib = "^1.2.0"
+altair = "^4.2.0"
+datapane = "^0.15.3"
+scipy = "^1.9.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.5"

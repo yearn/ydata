@@ -1,0 +1,32 @@
+name: Script - Efficient Frontier
+
+env:
+  DATAPANE_TOKEN: ${{ secrets.DATAPANE_TOKEN }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v3
+
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: use poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.2.0"
+
+      - name: install python packages
+        run: poetry install
+        working-directory: ./packages/scripts
+
+      - name: execute python script
+        run: poetry run python efficient_frontier/main.py
+        working-directory: ./packages/scripts
