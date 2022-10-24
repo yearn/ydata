@@ -39,7 +39,9 @@ jobs:
         working-directory: ./packages/scripts
 
       - name: execute python script
-        run: poetry run python yearn_v2_vaults/main.py
+        run: |
+          poetry run python yearn_v2_vaults/main.py
+          poetry run python yearn_v2_vaults/strategies.py
         working-directory: ./packages/scripts
 
       - name: check for modified files

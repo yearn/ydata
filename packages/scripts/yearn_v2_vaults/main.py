@@ -11,9 +11,7 @@ from process_yearn_vision.typings import NetworkStr
 share_price_expr = (
     '(yearn_vault{{network="{0}", param="pricePerShare", experimental="false"}})'
 )
-tvl_expr = (
-    '(yearn_vault{{network="{0}", param="tvl", experimental="false"}})'
-)
+tvl_expr = '(yearn_vault{{network="{0}", param="tvl", experimental="false"}})'
 
 
 def fetch_apy(start_dt, end_dt):
@@ -125,7 +123,16 @@ def main() -> None:
             )
     output = pd.DataFrame(
         output,
-        columns=["Timestamp", "Vault", "Chain", "Address", "Type", "Month", "APY", "TVL"],
+        columns=[
+            "Timestamp",
+            "Vault",
+            "Chain",
+            "Address",
+            "Type",
+            "Month",
+            "APY",
+            "TVL",
+        ],
     )
 
     # save output
