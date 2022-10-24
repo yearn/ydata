@@ -199,6 +199,10 @@ def main() -> None:
         vault_name, strategy_name, address = col
         chain = vault_name[-3:]
 
+        vault_debt = data_strat[0][vault_name].sum(axis=1)
+        if vault_debt[-1] == 0:
+            continue
+
         total_assets = data_vault[0][vault_name]
         token_price = data_vault[1][vault_name]
         vault_apy = data_vault[2][vault_name]
@@ -212,6 +216,13 @@ def main() -> None:
 
         for idx in indices:
             price = token_price[vault_address][idx]
+            total_debt = data_strat[0][col][idx]
+            net_gain = (data_strat[1][col] - data_strat[2][col]).diff()[idx]
+            if total_debt == 0:
+                strat_apy = 0.0
+            else:
+                strat_apy = net_gain / total_debt
+
             output.append(
                 (
                     idx,
@@ -224,20 +235,22 @@ def main() -> None:
                     vault_type,
                     vault_apy[vault_address][idx],
                     vault_tvl[vault_address][idx],
+                    # strategy apy
+                    strat_apy,
                     # amounts in WANT
-                    data_strat[0][col][idx],
+                    total_debt,
                     data_strat[1][col][idx] - data_strat[2][col][idx],
                     vault_gain[idx],
                     total_assets[vault_address][idx],
                     # amounts in USD
-                    data_strat[0][col][idx] * price,
+                    total_debt * price,
                     (data_strat[1][col][idx] - data_strat[2][col][idx]) * price,
                     vault_gain[idx] * price,
                     total_assets[vault_address][idx] * price,
                     # monthly diffs
-                    (data_strat[1][col] - data_strat[2][col]).diff()[idx],
+                    net_gain,
                     vault_gain.diff()[idx],
-                    (data_strat[1][col] - data_strat[2][col]).diff()[idx] * price,
+                    net_gain * price,
                     vault_gain.diff()[idx] * price,
                 )
             )
@@ -255,6 +268,8 @@ def main() -> None:
             "Type",
             "VaultAPY",
             "VaultTVL",
+
+            "StratAPY",
 
             "TotalDebt",
             "TotalGainStrat",
