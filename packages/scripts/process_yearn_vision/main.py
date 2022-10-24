@@ -4,15 +4,15 @@ from pathlib import Path
 from typing import Any, Callable, Optional, Union
 
 import pandas as pd
-from expressions import (
+from helpers.constants import Network
+from helpers.network import client
+from helpers.web3 import Web3Provider
+from process_yearn_vision.expressions import (
     gen_aum_expr,
     gen_share_price_expr,
     gen_total_debt_expr,
     gen_total_gains_expr,
 )
-from helpers.constants import Network
-from helpers.network import client
-from helpers.web3 import Web3Provider
 from process_yearn_vision.typings import (
     NetworkStr,
     QueryResult,
@@ -272,6 +272,15 @@ def gen_json_body(
                 "intervalMs": 86400000,  # 1 day
                 "maxDataPoints": 2000,
             },
+            {
+                "expr": expr[NetworkStr.Optimism],
+                "legendFormat": f"{{{{vault}}}} - {NetworkStr.Optimism}",
+                "refId": NetworkStr.Optimism,
+                "utcOffsetSec": 0,
+                "datasourceId": 1,
+                "intervalMs": 86400000,  # 1 day
+                "maxDataPoints": 2000,
+            },
         ],
         "from": f"{to_timestamp(start_dt)}",
         "to": f"{to_timestamp(end_dt)}",
@@ -317,7 +326,7 @@ def get_start_datetime(output_file_path: Path) -> datetime:
 def main() -> None:
     file_dir = Path(__file__).parent.resolve()
     output_file_path = file_dir / "output.csv"
-    vault_info_file_path = file_dir / "vault_info.json"
+    vault_info_file_path = file_dir / ".." / "vault_info.json"
 
     # Getting the start datetime will require looping all rows in csv file to get the last row
     start_dt = get_start_datetime(output_file_path)

@@ -4,6 +4,7 @@ import os
 from json.decoder import JSONDecodeError
 from typing import Literal, Optional, Union
 
+import pandas as pd
 from helpers.constants import Network
 from helpers.network import client, parse_json, rate_limit, retry
 from web3 import Web3
@@ -99,3 +100,25 @@ class Web3Provider:
             return getattr(contract.caller, fn)(*fn_args, block_identifier=block)
         except ContractLogicError:
             return None
+
+    def get_closest_block(
+        self, target: Union[int, pd.Timestamp], threshold: int = 600
+    ) -> int:
+        if isinstance(target, pd.Timestamp):
+            target = int(target.value) // 1e9
+        block_ts = 0
+        low = 0
+        high = self.provider.eth.getBlock("latest").number
+        while abs(target - block_ts) > threshold:
+            mid = (low + high) // 2
+            block = self.provider.eth.getBlock(mid)
+            block_ts = block.timestamp
+            if block_ts >= target:
+                high = mid
+            else:
+                low = mid
+            if block.number == 0:
+                raise ValueError(
+                    "target timestamp seems to be earlier than the genesis block"
+                )
+        return block.number
