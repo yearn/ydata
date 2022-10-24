@@ -25,6 +25,80 @@ total_debt_expr = (
     '(yearn_strategy{{network="{0}", param="totalDebt", experimental="false"}})'
 )
 
+share_price_expr = (
+    '(yearn_vault{{network="{0}", param="pricePerShare", experimental="false"}})'
+)
+tvl_expr = '(yearn_vault{{network="{0}", param="tvl", experimental="false"}})'
+
+
+def fetch_apy(start_dt, end_dt):
+    # get query expression
+    expr = {network: share_price_expr.format(network) for network in NetworkStr}
+    result = fetch_yearn_vision(expr, start_dt, end_dt)["results"]
+
+    # parse query data
+    data = []
+    for network in result.keys():
+        frames = result[network]["frames"]
+        for frame in frames:
+            vault = frame["schema"]["name"]
+            address = frame["schema"]["fields"][1]["labels"]["address"]
+
+            ts = frame["data"]["values"][0]
+            prices = frame["data"]["values"][1]
+
+            # detect change in share price
+            prices = pd.Series(prices, index=ts)
+            prices.index = pd.to_datetime(prices.index, unit="ms")
+            prices = prices[prices.diff() > 0]
+
+            # monthly samples
+            prices = prices.resample("1M").last().dropna()
+            days = prices.index.to_series().diff().dt.days
+            apys = (1 + prices.pct_change()) ** (365.2425 / days) - 1
+
+            apys.name = (vault, address)
+            data.append(apys)
+
+    data = pd.DataFrame(data).T
+    data.index = pd.to_datetime(data.index, unit="ms")
+    data.sort_index(inplace=True)
+    data.dropna(axis=0, how="all", inplace=True)
+    data = data.ffill().where(data.bfill().notna())
+    return data
+
+
+def fetch_tvl(start_dt, end_dt):
+    # get query expression
+    expr = {network: tvl_expr.format(network) for network in NetworkStr}
+    result = fetch_yearn_vision(expr, start_dt, end_dt)["results"]
+
+    # parse query data
+    data = []
+    for network in result.keys():
+        frames = result[network]["frames"]
+        for frame in frames:
+            vault = frame["schema"]["name"]
+            address = frame["schema"]["fields"][1]["labels"]["address"]
+
+            ts = frame["data"]["values"][0]
+            tvls = frame["data"]["values"][1]
+            tvls = pd.Series(tvls, index=ts)
+            tvls.index = pd.to_datetime(tvls.index, unit="ms")
+
+            # monthly samples
+            tvls = tvls.resample('1M').last().dropna()
+
+            tvls.name = (vault, address)
+            data.append(tvls)
+
+    data = pd.DataFrame(data).T
+    data.index = pd.to_datetime(data.index, unit="ms")
+    data.sort_index(inplace=True)
+    data.dropna(axis=0, how="all", inplace=True)
+    data = data.ffill().where(data.bfill().notna())
+    return data
+
 
 def fetch_vault_values(expr, start_dt, end_dt):
     # get query expression
@@ -90,14 +164,21 @@ def main() -> None:
     output_file_path = (
         file_dir / ".." / ".." / ".." / "data" / "yearn_v2_strategies.csv"
     )
+    vault_info_file_path = file_dir / ".." / "vault_info.json"
 
     start_dt = datetime.strptime("01/12/2020", "%d/%m/%Y").replace(tzinfo=timezone.utc)
     end_dt = datetime.now(timezone.utc) + MonthEnd(-1)
+
+    # get vault info
+    with open(vault_info_file_path, "r") as f:
+        vault_info = json.load(f)
 
     # fetch vault level data
     data_vault = [
         fetch_vault_values(total_assets_expr, start_dt, end_dt),
         fetch_vault_values(token_price_expr, start_dt, end_dt),
+        fetch_apy(start_dt, end_dt),
+        fetch_tvl(start_dt, end_dt),
     ]
 
     # fetch strategy level data
@@ -120,10 +201,14 @@ def main() -> None:
 
         total_assets = data_vault[0][vault_name]
         token_price = data_vault[1][vault_name]
+        vault_apy = data_vault[2][vault_name]
+        vault_tvl = data_vault[3][vault_name]
         if vault_name == 'st-yCRV 0.4.3 - ETH':
             vault_address = "0x27B5739e22ad9033bcBf192059122d163b60349D"
         else:
             vault_address = total_assets.columns[0]
+        vault_gain = (data_strat[1][vault_name] - data_strat[2][vault_name]).sum(axis=1)
+        vault_type = vault_info.get(vault_name, {}).get("assetType", "Other")
 
         for idx in indices:
             price = token_price[vault_address][idx]
@@ -135,12 +220,25 @@ def main() -> None:
                     chain,
                     address,
                     idx.strftime(CSV_DATE_FORMAT).lower(),
+                    # vault info
+                    vault_type,
+                    vault_apy[vault_address][idx],
+                    vault_tvl[vault_address][idx],
+                    # amounts in WANT
                     data_strat[0][col][idx],
                     data_strat[1][col][idx] - data_strat[2][col][idx],
+                    vault_gain[idx],
                     total_assets[vault_address][idx],
+                    # amounts in USD
                     data_strat[0][col][idx] * price,
                     (data_strat[1][col][idx] - data_strat[2][col][idx]) * price,
+                    vault_gain[idx] * price,
                     total_assets[vault_address][idx] * price,
+                    # monthly diffs
+                    (data_strat[1][col] - data_strat[2][col]).diff()[idx],
+                    vault_gain.diff()[idx],
+                    (data_strat[1][col] - data_strat[2][col]).diff()[idx] * price,
+                    vault_gain.diff()[idx] * price,
                 )
             )
 
@@ -153,12 +251,25 @@ def main() -> None:
             "Chain",
             "Address",
             "Month",
+
+            "Type",
+            "VaultAPY",
+            "VaultTVL",
+
             "TotalDebt",
-            "TotalGain",
+            "TotalGainStrat",
+            "TotalGainVault",
             "TotalAssets",
+
             "TotalDebtUSD",
-            "TotalGainUSD",
+            "TotalGainStratUSD",
+            "TotalGainVaultUSD",
             "TotalAssetsUSD",
+
+            "MonthlyGainStrat",
+            "MonthlyGainVault",
+            "MonthlyGainStratUSD",
+            "MonthlyGainVaultUSD",
         ],
     )
 
